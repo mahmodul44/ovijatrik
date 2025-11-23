@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[x-cloak] {
+    display: none !important;
+}
+
+body {
+  font-family: 'Hind Siliguri', sans-serif;
+}
+
+  /* Add gap between search box and table */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter{
+  padding: 0.5rem !important;
+}
+
+/* 🌙 Dark mode fixes for DataTables */
+.dark .dataTables_wrapper {
+    color: #e5e7eb; /* text-gray-200 */
+}
+
+.dark .dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: #e5e7eb !important; /* pagination text */
+    background: #1f2937 !important; /* bg-gray-800 */
+    border: 1px solid #374151 !important; /* border-gray-700 */
+}
+
+.dark .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: #2563eb !important; /* active button blue */
+    color: #fff !important;
+}
+
+.dark .dataTables_wrapper .dataTables_filter input,
+.dark .dataTables_wrapper .dataTables_length select {
+    background: #111827; /* bg-gray-900 */
+    color: #f9fafb; /* text-white */
+    border: 1px solid #374151; /* border-gray-700 */
+    border-radius: 0.375rem; /* rounded */
+    padding: 0.25rem 0.5rem;
+}
+
