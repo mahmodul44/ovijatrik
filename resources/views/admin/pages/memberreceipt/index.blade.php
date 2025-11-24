@@ -114,7 +114,7 @@
                                     {{ getStatusLabel($value->status)['label'] }}
                                 </span>
                             </td>
-                            <td style="text-align: center" class="px-6 py-4 border border-r flex gap-3 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-center text-sm">
+                            <td style="text-align: center" class="px-6 py-4 border border-r border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-center">
                                 <!-- Preview -->
                                 <button onclick="openPreviewWindow('{{ route('memberreceipt.invoicedownload', $value->mr_id) }}')" 
                                     title="Preview"

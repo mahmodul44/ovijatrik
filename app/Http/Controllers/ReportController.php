@@ -14,7 +14,7 @@ class ReportController extends Controller
 {
     function index()
     {
-    $data['ledgers'] = Ledger::with('project')->get();
+    $data['ledgers'] = Ledger::with('account')->get();
 
     // $totalDebit = $ledgers->where('ledger_type', 1)->sum('ledger_amount');
     // $totalCredit = $ledgers->where('ledger_type', -1)->sum('ledger_amount');
@@ -40,6 +40,7 @@ function projectWiseSearch(Request $request)
         ->leftJoin('expenses','expenses.expense_id','=','transactions.reference_id')
         ->leftJoin('expense_categories','expense_categories.expense_cat_id','=','expenses.expense_cat_id')
         ->leftJoin('money_receipts','money_receipts.mr_id','=','transactions.reference_id')
+        ->leftJoin('projects', 'projects.project_id', '=', 'transactions.project_id')
         ->whereNotNull('transactions.project_id')
         ->orderBy('transactions.transaction_date', 'asc')
            ->select(
@@ -50,7 +51,8 @@ function projectWiseSearch(Request $request)
         'transactions.transaction_amount',
         'accounts.*',
         'users.name as member_name','users.member_id as memberID',
-        'expenses.*','money_receipts.mr_no','expense_categories.expense_cat_name'
+        'expenses.*','money_receipts.mr_no','expense_categories.expense_cat_name',
+        'projects.project_title','projects.project_code'
     );
 
     if ($projectId) {
@@ -79,6 +81,7 @@ function projectWiseSearch(Request $request)
         'reportData' => $reportData,
         'from' => $from,
         'to' => $to,
+        'projectId' => $projectId,
         'projectInfo' => $projectInfo
     ]);
 }

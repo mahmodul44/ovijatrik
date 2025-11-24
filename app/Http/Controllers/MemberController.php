@@ -17,7 +17,6 @@ class MemberController extends Controller
 
     function store(Request $request)
    {
-    // Validation rules
     $request->validate([
         'name'              => 'required|string|max:255',
         'email'             => 'required|email|unique:users,email',
@@ -29,7 +28,6 @@ class MemberController extends Controller
         'member_id'         => 'nullable|string',
     ]);
 
-    // Validate member_id format (OBM / OBBM / OBBBM + number)
     if ($request->member_id) {
         if (!preg_match('/^(OBM|OBBM|OBBBM)\d{3}$/', $request->member_id)) {
             return response()->json([
@@ -84,4 +82,55 @@ class MemberController extends Controller
         $data['users'] = User::where(['role' => 3,'status' => '0'])->get();
         return view('admin.pages.user.pendinglist',$data);
    }
+
+   function edit($id){
+    $data['member'] = User::findOrFail($id);
+    return view('admin.pages.member.edit',$data);
+   }
+
+   function update(Request $request,$id){
+        $member = User::findOrFail($id);
+        $rules = [
+            'name'              => 'required|string|max:255',
+            'occupation'        => 'required|string|max:255',
+            'phone_no'          => 'required',
+            'monthly_donate'    => 'required',
+            'email'             => 'required|email|unique:users,email,' . $id,
+        ];
+
+        if ($request->filled('password') || $request->filled('password_confirmation')) {
+            $rules['password'] = 'required|string|min:6|confirmed';
+        }
+
+        $request->validate($rules);
+
+        $member->name           = $request->name;
+        $member->phone_no       = $request->phone_no;
+        $member->email          = $request->email;
+        $member->occupation     = $request->occupation;
+        $member->monthly_donate = $request->monthly_donate;
+
+        if ($request->filled('password')) {
+            $member->password = bcrypt($request->password);
+        }
+
+        $member->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Member updated successfully!',
+            'data'    => $member
+        ]);
+   }
+
+   function show($id){
+
+   }
+
+   function destroy($id){
+      $member = User::findOrFail($id);
+      $member->delete();
+
+      return response()->json(['success' => true, 'message' => 'Deleted successfully']);
+    }
 }

@@ -16,4 +16,9 @@ class Ledger extends Model
     {
         return $this->belongsTo(Project::class, 'project_id');
     }
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class, 'account_id');
+    }
 }

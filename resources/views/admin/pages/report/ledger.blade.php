@@ -6,9 +6,9 @@
     <!-- Page Header -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Project Expense Report</h1>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Account Ledger</h1>
             <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                Overview of all project-wise and general expenses
+                Overview of all Project Account Balance
             </p>
         </div>
     </div>
@@ -19,8 +19,8 @@
             <thead class="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100 dark:from-gray-700 dark:via-gray-800 dark:to-gray-700">
                 <tr>
                     <th class="px-6 py-3 text-left font-semibold uppercase text-xs tracking-wider">#</th>
-                    <th class="px-6 py-3 text-left font-semibold uppercase text-xs tracking-wider">Project</th>
-                    <th class="px-6 py-3 text-left font-semibold uppercase text-xs tracking-wider">Amount</th>
+                    <th class="px-6 py-3 text-left font-semibold uppercase text-xs tracking-wider">Account</th>
+                    <th class="px-6 py-3 text-left font-semibold uppercase text-xs tracking-wider">Balance</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -28,8 +28,8 @@
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition duration-200">
                         <td class="px-6 py-4">{{ $index + 1 }}</td>
                         <td class="px-6 py-4 text-gray-800 dark:text-gray-100">
-                            @if($value->project_id)
-                                {{ $value->project->project_title ?? 'N/A' }}
+                            @if($value->account_id)
+                                {{ $value->account->account_name.' '. $value->account->account_no ?? 'N/A' }}
                             @else
                                 <span class="italic text-gray-500 dark:text-gray-400">Others Expense</span>
                             @endif

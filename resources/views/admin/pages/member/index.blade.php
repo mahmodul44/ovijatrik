@@ -34,6 +34,7 @@
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-15%" style="text-align: center">Email</th>
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-15%" style="text-align: center">Occupation</th>
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-10%" style="text-align: center">Monthly Amount</th>
+                                <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-10%" style="text-align: center">Status</th>
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-10%" style="text-align: center">Actions</th>
             </tr>
             </thead>
@@ -48,45 +49,51 @@
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 truncate" style="text-align: left">{{ $value->occupation }}</td>
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 truncate" style="text-align: right">{{ $value->monthly_donate }}</td>
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 space-x-2 text-center">
-                        {{-- <a href="{{ route('member.show', $value->id) }}" 
-                        class="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded hover:bg-blue-100 mr-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" 
-                                class="w-4 h-4 mr-1" 
-                                fill="none" 
-                                viewBox="0 0 24 24" 
-                                stroke="currentColor" 
-                                stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" 
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" 
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 
-                                        4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-
-                            Preview
-                        </a> --}}
-                            <!-- Edit Button -->
-                            {{-- <a href="{{ route('member.edit', $value->id) }}" class="inline-flex items-center gap-1 px-3 py-1 text-sm text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900 rounded hover:bg-blue-100 dark:hover:bg-blue-800 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z" />
-                                </svg>
-                                Edit
-                            </a> --}}
-                            <!-- Delete Button -->
-                            {{-- <form action="{{ route('member.destroy', $value->id) }}" method="POST" class="deleteProjectForm inline-block">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="inline-flex items-center gap-1 px-3 py-1 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900 rounded hover:bg-red-100 dark:hover:bg-red-800 transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                    Delete
-                                </button>
-                            </form> --}}
                             <span class="px-3 py-1 text-xs font-medium rounded-full {{ getStatusLabel($value->status)['class'] }}">
                                 {{ getStatusLabel($value->status)['label'] }}
                             </span>
                         </td>
+                       <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center flex items-center justify-center gap-3">
+                        <!-- Preview -->
+                        <a href="{{ route('member.show', $value->id) }}"
+                        class="p-2 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300
+                                hover:bg-blue-200 dark:hover:bg-blue-800 transition shadow-sm hover:shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M1.5 12s4.5-7.5 10.5-7.5S22.5 12 22.5 12 18 19.5 12 19.5 1.5 12 1.5 12z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </a>
+
+                        <!-- Edit -->
+                        <a href="{{ route('member.edit', $value->id) }}"
+                        class="p-2 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300
+                                hover:bg-yellow-200 dark:hover:bg-yellow-800 transition shadow-sm hover:shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15.232 5.232l3.536 3.536M14.121 4.121a3 3 0 014.243 4.243L7.5 19.207H3v-4.5z" />
+                            </svg>
+                        </a>
+
+                        <!-- Delete -->
+                        <form action="{{ route('member.destroy', $value->id) }}" method="POST" class="inline-block deleteMember">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="p-2 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300
+                                    hover:bg-red-200 dark:hover:bg-red-800 transition shadow-sm hover:shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </form>
+
+                    </td>
+
                     </tr>
                 @empty
                     <tr>
@@ -107,32 +114,59 @@ $(document).ready(function () {
         searching: true,
         responsive: true,
         columnDefs: [
-        { orderable: false, targets: [1, 2, 3, 4, 5] } // disable sort on Image & Actions
+        { orderable: false, targets: [1, 2, 3, 4, 5] } 
       ]
     });
 });
 
-// Delete confirmation
-$('.deleteProjectForm').on('submit', function (e) {
-    e.preventDefault();
-    if (!confirm("Are you sure you want to delete this project?")) return;
+$('.deleteMember').on('submit', function (e) {
+    e.preventDefault(); 
 
-    const form = $(this);
-    $.ajax({
-        url: form.attr('action'),
-        type: 'POST',
-        data: form.serialize(),
-        success: function (response) {
-            if (response.success) {
-                toastr.success(response.message);
-                setTimeout(() => window.location.reload(), 1000);
-            }
-        },
-        error: function () {
-            toastr.error('Failed to delete project.');
+    let form = $(this);
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: "This member will be permanently deleted!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it",
+        cancelButtonText: "Cancel"
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: response.message,
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Failed to delete member.",
+                        icon: "error"
+                    });
+                }
+            });
         }
     });
 });
+
 </script>
 @endpush
 @endsection

@@ -141,12 +141,10 @@
                 <td>{{ \Carbon\Carbon::parse($row->transaction_date)->format('d/m/Y') }}</td>
 
                 <td>
-                    <!-- Dynamic description bank statement style -->
-
-                     @if($row->transaction_type == '1')
-                     @if(empty($projectId) && !empty($projectInfo) && !empty($projectInfo->project_code))
-                        <b>{{ $projectInfo->project_code }} - {{ $projectInfo->project_title }}</b><br>
+                    @if(!$projectId)
+                        <b>{{ $row->project_code }} - {{ $row->project_title }}</b><br>
                     @endif
+                     @if($row->transaction_type == '1')
                         Receipt No: {{ $row->mr_no }}
                         Name: {{ $row->member_name }}
                         Account: {{ $row->account_no }}
