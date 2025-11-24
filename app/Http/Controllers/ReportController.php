@@ -35,42 +35,51 @@ function projectWiseSearch(Request $request)
     $to   = $request->to_date   ? Carbon::createFromFormat('d/m/Y', $request->to_date)->format('Y-m-d') : null;
 
     $query = DB::table('transactions')
-        ->select(
-            'transaction_date',
-            'project_id',
-            DB::raw("SUM(CASE WHEN transaction_type = 1 THEN transaction_amount ELSE 0 END) as total_receipt"),
-            DB::raw("SUM(CASE WHEN transaction_type = -1 THEN transaction_amount ELSE 0 END) as total_expense")
-        )
-        ->groupBy('transaction_date', 'project_id')
-         ->whereNotNull('project_id')
-        ->orderBy('transaction_date', 'asc');
+        ->leftJoin('accounts', 'accounts.account_id', '=', 'transactions.account_id')
+        ->leftJoin('users','users.id','=','transactions.member_id')
+        ->leftJoin('expenses','expenses.expense_id','=','transactions.reference_id')
+        ->leftJoin('expense_categories','expense_categories.expense_cat_id','=','expenses.expense_cat_id')
+        ->leftJoin('money_receipts','money_receipts.mr_id','=','transactions.reference_id')
+        ->whereNotNull('transactions.project_id')
+        ->orderBy('transactions.transaction_date', 'asc')
+           ->select(
+        'transactions.transaction_id',
+        'transactions.transaction_date',
+        'transactions.project_id',
+        'transactions.transaction_type',
+        'transactions.transaction_amount',
+        'accounts.*',
+        'users.name as member_name','users.member_id as memberID',
+        'expenses.*','money_receipts.mr_no','expense_categories.expense_cat_name'
+    );
 
-    // ✅ Apply filters dynamically
     if ($projectId) {
-        $query->where('project_id', $projectId);
+        $query->where('transactions.project_id', $projectId);
     }
 
     if ($from && $to) {
-        $query->whereBetween('transaction_date', [$from, $to]);
+        $query->whereBetween('transactions.transaction_date', [$from, $to]);
     } elseif ($from) {
-        $query->where('transaction_date', '>=', $from);
+        $query->where('transactions.transaction_date', '>=', $from);
     } elseif ($to) {
-        $query->where('transaction_date', '<=', $to);
+        $query->where('transactions.transaction_date', '<=', $to);
     }
 
     $reportData = $query->get();
+    $projectInfo = null;
 
-    // ✅ Project Name (if selected)
-    $projectName = null;
     if ($projectId) {
-        $projectName = DB::table('projects')->where('project_id', $projectId)->value('project_title');
+        $projectInfo = DB::table('projects')
+            ->where('project_id', $projectId)
+            ->select('project_title', 'project_code', 'project_details', 'project_start_date', 'project_end_date')
+            ->first();
     }
-
+   //dd($reportData);
     return view('admin.pages.report.project-wise-view', [
         'reportData' => $reportData,
         'from' => $from,
         'to' => $to,
-        'projectName' => $projectName
+        'projectInfo' => $projectInfo
     ]);
 }
 

@@ -91,18 +91,14 @@
 
 <div class="statement-container">
 
-    <!-- Header -->
-    <div class="header-area">
-        <img src="{{ asset('your_logo.png') }}" alt="logo">
-        <div class="org-name">Your Organization Name</div>
-        <div class="org-sub">Address, Email, Contact</div>
-    </div>
+   @include('layouts.banner')
 
     <!-- Project Info -->
-    @if($projectName)
+    @if($projectInfo)
     <div class="project-info">
-        <div><span class="bold">Project:</span> {{ $projectName }}</div>
-        <div><span class="bold">Description:</span> {{ $projectDetails ?? '---' }}</div>
+        <div><span class="bold">Project:</span> {{ $projectInfo->project_code }} - {{ $projectInfo->project_title }}</div>
+        <div><span class="bold">Duration:</span> {{ $projectInfo->project_start_date ?? '---' }} - {{ $projectInfo->project_end_date ?? '---' }}</div>
+        <div><span class="bold">Description:</span> {{ $projectInfo->project_details ?? '---' }}</div>
     </div>
     @endif
 
@@ -134,8 +130,8 @@
         @foreach($reportData as $row)
 
             @php
-                $deposit  = $row->total_receipt;
-                $withdraw = $row->total_expense;
+            $deposit = $row->transaction_type == 1 ? $row->transaction_amount : 0;
+            $withdraw = $row->transaction_type == -1 ? $row->transaction_amount : 0;
                 $totalDeposit  += $deposit;
                 $totalWithdraw += $withdraw;
                 $balance += ($deposit - $withdraw);
@@ -147,22 +143,20 @@
                 <td>
                     <!-- Dynamic description bank statement style -->
 
-                     {{-- @if($row->transaction_type == '1')
-                        <b>Deposit</b><br>
-                        Member Receipt No: {{ $row->member_receipt_no }}<br>
-                        Money Receipt No: {{ $row->money_receipt_no }}<br>
-                        Name: {{ $row->member_name }}<br>
-                        Payment Type: {{ $row->payment_type }}<br>
-                        Account: {{ $row->account_no }}<br>
-                        Transaction No: {{ $row->transaction_no }}<br>
+                     @if($row->transaction_type == '1')
+                     @if(empty($projectId) && !empty($projectInfo) && !empty($projectInfo->project_code))
+                        <b>{{ $projectInfo->project_code }} - {{ $projectInfo->project_title }}</b><br>
+                    @endif
+                        Receipt No: {{ $row->mr_no }}
+                        Name: {{ $row->member_name }}
+                        Account: {{ $row->account_no }}
                     @else
-                        <b>Expense</b><br>
-                        Expense Title: {{ $row->expense_title }}<br>
-                        Voucher No: {{ $row->voucher_no }}<br>
-                        Paid From: {{ $row->payment_type }}<br>
-                        Account: {{ $row->account_no }}<br>
-                        Transaction No: {{ $row->transaction_no }}<br>
-                    @endif  --}}
+                     @if(!empty($row->expense_cat_name))
+                        <b>{{ $row->expense_cat_name }}</b><br>
+                    @endif
+                        Voucher No: {{ $row->expense_no }}
+                        Account: {{ $row->account_no }}
+                    @endif  
 
                 </td>
 
