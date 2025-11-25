@@ -27,6 +27,10 @@ class MoneyReceipt extends Model
         'selected_months',
         'payment_date',
         'payment_amount',
+        'bank_account_no',
+        'mobile_account_no',
+        'transaction_no',
+        'bank_name',
         'payment_remarks',
         'decline_remarks',
         'status'

@@ -262,7 +262,7 @@ public function memberreceiptApprove(Request $request)
             'reference_id'         => $moneyReceipt->mr_id, 
             'transaction_added_by' => Auth::id(),
             'transaction_added_on' => now(),
-            'operation_ip' => $request->ip()
+            'operation_ip'         => $request->ip()
         ]);
 
          if ($moneyReceipt->project_id) {

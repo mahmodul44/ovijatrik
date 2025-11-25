@@ -53,7 +53,7 @@
                     <th class="px-6 py-3 text-left font-bold uppercase">Date</th>
                     <th class="px-6 py-3 text-left font-bold uppercase">Invoice No</th>
                     <th class="px-6 py-3 text-left font-bold uppercase">Project</th>
-                    <th class="px-6 py-3 text-left font-bold uppercase">Doner</th>
+                    <th class="px-6 py-3 text-left font-bold uppercase">Details</th>
                     <th class="px-6 py-3 text-left font-bold uppercase">Amount</th>
                     <th class="px-6 py-3 text-left font-bold uppercase">Actions</th>
                 </tr>
@@ -72,7 +72,7 @@
                             {{ $value->project_id ? $value->project_title : '' }}
                         </td>
                         <td class="px-6 py-4 text-gray-700 dark:text-gray-200 truncate max-w-xs">
-                            {{ $value->member_id ? $value->member_name : $value->donar_name }}
+                            {{ $value->donar_name }} <br>  {{ $value->paymentmethod->pay_method_name }} {{ $value->mobile_account_no }} {{ $value->transaction_no }}
                         </td>
                         <td class="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">
                             {{ $value->payment_amount }}

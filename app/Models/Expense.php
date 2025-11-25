@@ -19,6 +19,11 @@ class Expense extends Model
         'expense_date',
         'expense_remarks',
         'expense_amount',
+        'pay_method_id',
+        'bank_account_no',
+        'mobile_account_no',
+        'bank_name',
+        'transaction_no',
         'status',
         'decline_remarks'
     ];

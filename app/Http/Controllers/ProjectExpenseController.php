@@ -42,6 +42,7 @@ class ProjectExpenseController extends Controller
                 'bank_account_no'   => 'nullable|Max:50',
                 'mobile_account_no' => 'nullable|Max:15',
                 'expense_remarks'   => 'nullable|Max:200',
+                'transaction_no'    => 'nullable|Max:100',
             ]);
 
             if ($validate->fails()) {
@@ -88,6 +89,7 @@ class ProjectExpenseController extends Controller
             $expense->bank_account_no   = $request->bank_account_no;
             $expense->mobile_account_no = $request->mobile_account_no;
             $expense->bank_name         = $request->bank_name;
+            $expense->transaction_no    = $request->transaction_no;
             $expense->expense_remarks   = $request->expense_remarks;
             $expense->expense_added_by  = Auth::id();
             $expense->status            = $request->status ? $request->status : 0;
@@ -132,6 +134,7 @@ class ProjectExpenseController extends Controller
             'bank_account_no'   => 'nullable|Max:50',
             'mobile_account_no' => 'nullable|Max:15',
             'expense_remarks'   => 'nullable|Max:200',
+            'transaction_no'    => 'nullable|Max:100',
         ]);
 
         if ($validate->fails()) {
@@ -157,6 +160,7 @@ class ProjectExpenseController extends Controller
         $expense->bank_account_no   = $request->bank_account_no;
         $expense->mobile_account_no = $request->mobile_account_no;
         $expense->bank_name         = $request->bank_name;
+        $expense->transaction_no    = $request->transaction_no;
         $expense->expense_remarks   = $request->expense_remarks;
         $expense->status            = $request->status ? $request->status : 0;
 

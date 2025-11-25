@@ -195,35 +195,52 @@
         </select>
     </div>
 </div>
+    <!-- Hidden common field (backend will read transaction_no) -->
+<input type="hidden" id="transaction_no" name="transaction_no" value="{{ $expense->transaction_no ?? '' }}">
 
 <!-- Mobile Banking Fields -->
 <div id="mobileFields" class="hidden mt-4">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
                 Account No <span class="text-red-600">*</span>
             </label>
             <input type="text" id="mobile_account_no" name="mobile_account_no"
-                value="{{ $expense->mobile_account_no }}"
-                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
-                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
-                focus:ring-2 focus:ring-blue-500">
+                   value="{{ old('mobile_account_no', $expense->mobile_account_no ?? '') }}"
+                   class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
+                          bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
+                          focus:ring-2 focus:ring-blue-500">
         </div>
+
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Transaction No
+            </label>
+            <!-- visible mobile transaction field -->
+            <input type="text" id="mobile_transaction_no"
+                   value="{{ old('transaction_no', $expense->transaction_no ?? '') }}"
+                   class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
+                          bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
+                          focus:ring-2 focus:ring-blue-500">
+        </div>
+
     </div>
 </div>
 
 <!-- Bank Payment Fields -->
 <div id="bankFields" class="hidden mt-4">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
                 Bank Account No <span class="text-red-600">*</span>
             </label>
             <input type="text" id="bank_account_no" name="bank_account_no"
-                value="{{ $expense->bank_account_no }}"
-                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
-                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
-                focus:ring-2 focus:ring-blue-500">
+                   value="{{ old('bank_account_no', $expense->bank_account_no ?? '') }}"
+                   class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
+                          bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
+                          focus:ring-2 focus:ring-blue-500">
         </div>
 
         <div>
@@ -231,11 +248,24 @@
                 Bank Name <span class="text-red-600">*</span>
             </label>
             <input type="text" id="bank_name" name="bank_name"
-                value="{{ $expense->bank_name }}"
-                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
-                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
-                focus:ring-2 focus:ring-blue-500">
+                   value="{{ old('bank_name', $expense->bank_name ?? '') }}"
+                   class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
+                          bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
+                          focus:ring-2 focus:ring-blue-500">
         </div>
+
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Transaction No
+            </label>
+            <!-- visible bank transaction field -->
+            <input type="text" id="bank_transaction_no"
+                   value="{{ old('transaction_no', $expense->transaction_no ?? '') }}"
+                   class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
+                          bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
+                          focus:ring-2 focus:ring-blue-500">
+        </div>
+
     </div>
 </div>
 
@@ -279,30 +309,46 @@ flatpickr("#expense_date", {
 });
 
 
-function togglePaymentFields(selected) {
-    let mobileFields = $('#mobileFields');
-    let bankFields = $('#bankFields');
+$(document).ready(function () {
+    $('#mobileFields').addClass('hidden');
+    $('#bankFields').addClass('hidden');
 
-    mobileFields.addClass('hidden');
-    bankFields.addClass('hidden');
-
+    let selected = $('#pay_method_id').val();
     if (selected === '102' || selected === '103' || selected === '104') {
-        mobileFields.removeClass('hidden');
+        $('#mobileFields').removeClass('hidden');
+    } else if (selected === '105') {
+        $('#bankFields').removeClass('hidden');
     }
 
-    if (selected === '105') {
-        bankFields.removeClass('hidden');
+    let existingTx = $('#transaction_no').val() || '';
+    if (existingTx) {
+        $('#mobile_transaction_no').val(existingTx);
+        $('#bank_transaction_no').val(existingTx);
     }
-}
+});
+
 
 $('#pay_method_id').on('change', function () {
-    togglePaymentFields($(this).val());
+    let selected = $(this).val();
+
+    $('#mobileFields').addClass('hidden');
+    $('#bankFields').addClass('hidden');
+
+    if (selected === '102' || selected === '103' || selected === '104') {
+        $('#mobileFields').removeClass('hidden');
+    } else if (selected === '105') {
+        $('#bankFields').removeClass('hidden');
+    }
 });
 
-$(document).ready(function () {
-    let oldPaymentMethod = "{{ $expense->pay_method_id }}";
-    togglePaymentFields(oldPaymentMethod);
+$('#mobile_transaction_no').on('input', function () {
+    $('#transaction_no').val($(this).val());
 });
+
+$('#bank_transaction_no').on('input', function () {
+    $('#transaction_no').val($(this).val());
+});
+
 
 $('#account_id').on('change', function () {
     let accountId = $(this).val();

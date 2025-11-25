@@ -119,6 +119,7 @@
     <input type="hidden" id="transaction_no" name="transaction_no">
     </div>
 </div>
+
 <div id="mobileFields" class="hidden mt-3">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 

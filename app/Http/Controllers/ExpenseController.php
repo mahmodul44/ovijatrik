@@ -49,6 +49,7 @@ class ExpenseController extends Controller
                 'bank_name'         => 'nullable|Max:100',
                 'bank_account_no'   => 'nullable|Max:50',
                 'mobile_account_no' => 'nullable|Max:15',
+                'transaction_no'    => 'nullable|Max:100',
                 'expense_remarks'   => 'nullable|Max:200',
             ]);
 
@@ -96,6 +97,7 @@ class ExpenseController extends Controller
             $expense->bank_account_no   = $request->bank_account_no;
             $expense->mobile_account_no = $request->mobile_account_no;
             $expense->bank_name         = $request->bank_name;
+            $expense->transaction_no    = $request->transaction_no;
             $expense->expense_added_by  = Auth::id();
             $expense->status            = $request->status ? $request->status : 0;
 
@@ -143,6 +145,7 @@ class ExpenseController extends Controller
             'bank_name'         => 'nullable|Max:100',
             'bank_account_no'   => 'nullable|Max:50',
             'mobile_account_no' => 'nullable|Max:15',
+            'transaction_no'    => 'nullable|Max:100',
             'expense_remarks'   => 'nullable|Max:200',
         ]);
 
@@ -170,6 +173,7 @@ class ExpenseController extends Controller
         $expense->pay_method_id     = $request->pay_method_id;
         $expense->bank_account_no   = $request->bank_account_no;
         $expense->mobile_account_no = $request->mobile_account_no;
+        $expense->transaction_no    = $request->transaction_no;
         $expense->bank_name         = $request->bank_name;
         $expense->status            = $request->status ? $request->status : 0;
 

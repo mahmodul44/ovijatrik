@@ -142,7 +142,6 @@
                 </div>
             </div>
                     
-       <!-- Hidden common field (backend will read transaction_no) -->
 <input type="hidden" id="transaction_no" name="transaction_no" value="{{ $invoiceInfo->transaction_no ?? '' }}">
 
 <!-- Mobile Banking Fields -->
@@ -348,12 +347,11 @@ $('#member_id').on('change', function () {
         }
     });
 });
+
 $(document).ready(function () {
-    // প্রথমে হাইড করে রাখি, পরে শো করব প্রয়োজন মতো
     $('#mobileFields').addClass('hidden');
     $('#bankFields').addClass('hidden');
 
-    // যদি edit page-এ pay_method_id আগে থেকেই সেট থাকে, সেখান অনুযায়ী ফিল্ড দেখান
     let selected = $('#pay_method_id').val();
     if (selected === '102' || selected === '103' || selected === '104') {
         $('#mobileFields').removeClass('hidden');
@@ -361,7 +359,6 @@ $(document).ready(function () {
         $('#bankFields').removeClass('hidden');
     }
 
-    // init sync: যদি DB-এ transaction_no থাকে, সেটি visible fields-এ বসান
     let existingTx = $('#transaction_no').val() || '';
     if (existingTx) {
         $('#mobile_transaction_no').val(existingTx);
@@ -369,7 +366,7 @@ $(document).ready(function () {
     }
 });
 
-// Dropdown change handler
+
 $('#pay_method_id').on('change', function () {
     let selected = $(this).val();
 
@@ -383,7 +380,6 @@ $('#pay_method_id').on('change', function () {
     }
 });
 
-// whenever user types in the visible transaction input -> copy to hidden common field
 $('#mobile_transaction_no').on('input', function () {
     $('#transaction_no').val($(this).val());
 });

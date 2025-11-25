@@ -20,6 +20,7 @@ use App\Http\Controllers\TransferController;
 use App\Http\Controllers\MyTransactionController;
 use App\Http\Controllers\MemberReceiptController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\DashboardController;
 use App\Models\MoneyReceipt;
 
@@ -74,6 +75,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('projectexpense', ProjectExpenseController::class);
         Route::resource('employee', EmployeeController::class);
         Route::resource('account', AccountController::class);
+        Route::resource('salary', SalaryController::class);
     });
 
 /* About */

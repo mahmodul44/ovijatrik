@@ -713,7 +713,7 @@
         <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M12 12a4 4 0 100-8 4 4 0 000 8z"/>
         </svg>
-        <span x-show="!sidebarCollapsed" x-transition>Employee</span>
+        <span x-show="!sidebarCollapsed" x-transition>Employee Info</span>
         </span>
 
         <!-- Arrow Icon -->
@@ -739,6 +739,56 @@
             <a href="{{ route('employee.index') }}" 
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{ in_array($currentRoute, ['employee.index','employee.edit']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M4 6h12M4 10h12M4 14h12M4 18h12" />
+                </svg>
+                <span>List</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Salary Menu -->
+    @php $empActive = in_array($currentRoute, ['salary.index', 'salary.create','salary.edit']); @endphp
+    <div x-data="{ open: @json($empActive) }">
+        <button @click="open = !open" 
+        :class="open 
+        ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' 
+        : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
+        class="flex w-full items-center justify-between p-2 rounded-lg transition-colors">
+
+        <span class="flex items-center space-x-2">
+        <!-- Member Icon -->
+        <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M12 12a4 4 0 100-8 4 4 0 000 8z"/>
+        </svg>
+        <span x-show="!sidebarCollapsed" x-transition>Salary Info</span>
+        </span>
+
+        <!-- Arrow Icon -->
+        <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
+            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+        </button>
+
+        <!-- Submenu -->
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            
+            <a href="{{ route('salary.create') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'salary.create' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+                stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" 
+                    d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <span>Add New</span>
+            </a>
+            <a href="{{ route('salary.index') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ in_array($currentRoute, ['salary.index','salary.edit']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round"

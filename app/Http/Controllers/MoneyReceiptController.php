@@ -235,7 +235,7 @@ function invoiceDownload($id){
 }
 
 function moneyreceiptpendingList (){
-  $data['receipts'] = MoneyReceipt::select(
+  $data['receipts'] = MoneyReceipt::with('paymentmethod')->select(
             'money_receipts.*',
             'users.name as member_name',
             'users.phone_no as member_phone','projects.project_title'

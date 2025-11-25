@@ -178,45 +178,77 @@
                 <option value="{{ $item->pay_method_id }}">{{ $item->pay_method_name }}</option>
             @endforeach
         </select>
+           <input type="hidden" id="transaction_no" name="transaction_no">
     </div>
 </div>
-  <!-- Extra Fields -->
+  
 <div id="mobileFields" class="hidden mt-3">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Account No -->
-        <div class="md:col-span-1">
-            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Account No <span class="text-red-600"> *</span></label>
+
+        <!-- Mobile Account No -->
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Account No <span class="text-red-600">*</span>
+            </label>
             <input type="text" id="mobile_account_no" name="mobile_account_no"
-                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
-                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
                 focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
+
+        <!-- Mobile Transaction No -->
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Transaction No
+            </label>
+            <input type="text" id="mobile_transaction_no"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+                focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
     </div>
 </div>
 
 <div id="bankFields" class="hidden mt-3">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
         <!-- Bank Account No -->
-        <div class="md:col-span-1">
-            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Bank Account No <span class="text-red-600"> *</span></label>
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Bank Account No <span class="text-red-600">*</span>
+            </label>
             <input type="text" id="bank_account_no" name="bank_account_no"
-                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
-                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
                 focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
 
         <!-- Bank Name -->
-        <div class="md:col-span-1">
-            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Bank Name <span class="text-red-600"> *</span></label>
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Bank Name <span class="text-red-600">*</span>
+            </label>
             <input type="text" id="bank_name" name="bank_name"
-                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
-                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
                 focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
+
+        <!-- Bank Transaction No -->
         <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Transaction No
+            </label>
+            <input type="text" id="bank_transaction_no"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+                focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
+
     </div>
 </div>
+
 <!-- Remarks -->
 <div>
     <label for="expense_remarks" class="block text-gray-700 dark:text-gray-300 font-medium mb-1">
@@ -258,26 +290,40 @@ flatpickr("#expense_date", {
 });
 
 $('#pay_method_id').on('change', function () {
+
     let selected = $(this).val();
 
-    let mobileFields = $('#mobileFields');
-    let bankFields = $('#bankFields');
+    $('#mobileFields').addClass('hidden');
+    $('#bankFields').addClass('hidden');
 
-    mobileFields.addClass('hidden');
-    bankFields.addClass('hidden');
-
+    // Clear fields
     $('#mobile_account_no').val('');
     $('#bank_account_no').val('');
     $('#bank_name').val('');
+    $('#mobile_transaction_no').val('');
+    $('#bank_transaction_no').val('');
+    $('#transaction_no').val('');
 
+    // Mobile banking methods
     if (selected === '102' || selected === '103' || selected === '104') {
-        mobileFields.removeClass('hidden');
+        $('#mobileFields').removeClass('hidden');
     }
-    
+
+    // Bank
     if (selected === '105') {
-        bankFields.removeClass('hidden');
+        $('#bankFields').removeClass('hidden');
     }
 });
+
+// Sync to hidden field (common)
+$('#mobile_transaction_no').on('input', function () {
+    $('#transaction_no').val($(this).val());
+});
+
+$('#bank_transaction_no').on('input', function () {
+    $('#transaction_no').val($(this).val());
+});
+
 
 
 $('#account_id').on('change', function () {
