@@ -149,6 +149,17 @@
                 </tr>
             @endforeach
         </tbody>
+        <tfoot>
+    <tr class="bg-gray-200 dark:bg-gray-700 font-semibold text-gray-900 dark:text-gray-100">
+        <td colspan="4" class="py-3 px-4 text-right border dark:border-gray-600">
+            Total Salary:
+        </td>
+        <td class="py-3 px-4 border dark:border-gray-600">
+            <span id="total_salary">0</span>
+        </td>
+    </tr>
+</tfoot>
+
     </table>
 </div>
 
@@ -175,6 +186,27 @@ document.addEventListener("DOMContentLoaded", function () {
     flatpickr("#salary_date", {
         dateFormat: "d/m/Y",
         allowInput: true
+    });
+});
+
+function calculateTotalSalary() {
+    let total = 0;
+
+    $('input[name*="[salary]"]').each(function () {
+        let val = parseFloat($(this).val()) || 0;
+        total += val;
+    });
+
+    $('#total_salary').text(total.toFixed(2));
+}
+
+// Auto calculate on page load
+$(document).ready(function () {
+    calculateTotalSalary();
+
+    // Auto calculate whenever salary changes
+    $(document).on("input", 'input[name*="[salary]"]', function () {
+        calculateTotalSalary();
     });
 });
 

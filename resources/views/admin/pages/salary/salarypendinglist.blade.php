@@ -1,38 +1,68 @@
 @extends('layouts.main')
 @section('content')
 
-<section class="pt-4">
-    <div class="max-w-7xl mx-auto px-4">
+<div class="max-w-7xl mx-auto p-6">
 
-        <!-- Header -->
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 mb-6 border border-gray-200 dark:border-gray-700">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Salary List</h2>
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">
+            Pending Salary List (Month-wise)
+        </h2>
+    </div>
 
-                <a href="{{ route('salary.create') }}"
-                    class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
-                    Add New
-                </a>
-            </div>
-        </div>
+    <!-- Filter: Year + Month -->
+    {{-- <form method="GET" class="flex flex-col md:flex-row gap-4 mb-6">
 
-        <!-- Alerts -->
-        <div class="space-y-4 mb-4">
-            <div class="alert-danger hidden p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg">
-                <strong>Error!</strong>
-                <p class="alert-message">Something went wrong. Please try again...</p>
-            </div>
+        @php
+            $currentYear = date('Y');
+            $years = [
+                $currentYear - 1,
+                $currentYear,
+                $currentYear + 1
+            ];
+        @endphp
 
-            <div class="alert-success hidden p-4 bg-green-100 border border-green-300 text-green-700 rounded-lg">
-                <strong>Success!</strong>
-                <p class="alert-message"><i class="fa fa-spinner fa-spin"></i> Redirecting...</p>
-            </div>
-        </div>
+        <!-- Year Dropdown -->
+        <select name="year"
+            class="px-4 py-2 rounded-lg border bg-gray-50 dark:bg-gray-700 dark:border-gray-600
+                   text-gray-900 dark:text-gray-200 w-full md:w-auto">
 
-        <!-- Table -->
-        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
+            <option value="">All Year</option>
+
+            @foreach($years as $year)
+                <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
+                    {{ $year }}
+                </option>
+            @endforeach
+        </select>
+
+        <!-- Month Dropdown -->
+        <select name="salary_month" id="salary_month"
+            class="px-4 py-2 rounded-lg border bg-gray-50 dark:bg-gray-700 dark:border-gray-600
+                   text-gray-900 dark:text-gray-200 w-full md:w-auto">
+
+            <option value="">All Months</option>
+
+            @for($m=1; $m<=12; $m++)
+                <option value="{{ $m }}" {{ request('salary_month') == $m ? 'selected' : '' }}>
+                    {{ date("F", mktime(0, 0, 0, $m, 1)) }}
+                </option>
+            @endfor
+        </select>
+
+        <!-- Filter Button -->
+        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition w-full md:w-auto">
+            Filter
+        </button>
+
+    </form> --}}
+
+
+    <!-- Table -->
+    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+        <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+
+            <table class="min-w-full text-sm">
                     <thead>
                         <tr class="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                             <th class="py-3 px-4 text-center w-12 border">#</th>
@@ -64,7 +94,7 @@
                             ];
                         @endphp
 
-                        @foreach ($salary as $key => $value)
+                        @foreach ($pendingList as $key => $value)
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                                 <td class="py-3 px-4 text-center text-gray-800 dark:text-gray-100">{{ $key + 1 }}</td>
 
@@ -87,13 +117,13 @@
                                 </td>
 
                                 <td class="py-3 px-4 text-center">
-                                    @if ($value->posting_type == 0)
+                                    @if ($value->status == 0)
                                         <span class="px-3 py-1 bg-red-500 text-white text-xs rounded-full">
-                                            Draft
+                                            Pending
                                         </span>
                                     @else
                                         <span class="px-3 py-1 bg-green-600 text-white text-xs rounded-full">
-                                            Final
+                                            Approved
                                         </span>
                                     @endif
                                 </td>
@@ -145,58 +175,9 @@
 
                     </tbody>
                 </table>
-            </div>
+
         </div>
-
     </div>
-</section>
 
-@push('scripts')
-
-<script>
-$(document).on('submit', '.deleteSalaryForm', function(e) {
-    e.preventDefault();
-    let deleteUrl = $(this).find('.deleteUrl').val();
-    let thisForm = $(".alert-success, .alert-danger");
-
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "This action cannot be undone!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#2563EB',
-        cancelButtonColor: '#DC2626',
-        confirmButtonText: 'Yes, delete it'
-    }).then((result) => {
-
-        if (result.value) {
-
-            $.ajax({
-                type: "POST",
-                url: deleteUrl,
-                data: $(this).serialize(),
-
-                beforeSend: function() {
-                    $('.alert-success, .alert-danger').addClass('hidden');
-                },
-
-                success: function(response) {
-                    $('.alert-success').removeClass('hidden');
-                    toastr.success(response.message);
-
-                    setTimeout(() => location.reload(), 1500);
-                },
-
-                error: function(xhr) {
-                    $('.alert-danger').removeClass('hidden');
-                    toastr.error("Unable to delete.");
-                }
-            });
-
-        }
-
-    });
-});
-</script>
-@endpush
+</div>
 @endsection

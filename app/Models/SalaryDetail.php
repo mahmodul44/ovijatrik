@@ -18,7 +18,7 @@ public function salary()
 }
 
 public function employee() {
-    return $this->belongsTo(Employee::class, 'id');
+    return $this->belongsTo(Employee::class, 'employee_id');
 }
 
 }

@@ -23,7 +23,7 @@ class SalaryController extends Controller
     public function create(){
         $data['employees'] = Employee::where('status',1)->get();
         $data['accounts'] = Account::where('status', 1)->get();
-        return view('admin.pages.salary.salaryAdd', $data);
+        return view('admin.pages.salary.create', $data);
     }
 
     public function store(Request $request)
@@ -120,20 +120,6 @@ class SalaryController extends Controller
         return view('admin.pages.salary.edit', $data);
    }
 
-   function salaryApprove(){
-      // Save money receipt
-        $mrsalary = new MoneyReceipt();
-        $mrsalary->mr_no = $salaryNo;
-        $mrsalary->fiscal_year = $fiscalYear;
-        $mrsalary->receipt_type = '-4';
-        $mrsalary->reference_id = $salaryId;
-        $mrsalary->pay_method_id = '101';
-        $mrsalary->payment_date = $salaryDate;
-        $mrsalary->payment_amount = $grandTotal;
-        $mrsalary->transaction_added_by = Auth::id();
-        $mrsalary->operation_ip = $request->ip();
-        $mrsalary->save();
-   }
 
    public function update(Request $request, $id)
 {
@@ -197,5 +183,72 @@ class SalaryController extends Controller
         return response()->json(['message' => 'Failed to update salary.', 'error' => $e->getMessage()], 500);
     }
 }
+
+    function salarypendingList (){
+       $data['pendingList'] = Salary::where('status', '0')->get();
+       return view('admin.pages.salary.salarypendinglist',$data);
+    }
+
+   public function show($id)
+{
+    $data['employees'] = Employee::where('status', 1)->get();
+    $data['accounts'] = Account::where('status', 1)->get();
+
+    $data['salary'] = Salary::with('salaryDetails', 'salaryDetails.employee')->findOrFail($id);
+
+    // Bengali Month Names
+    $data['months'] = [
+        1 => 'January',
+        2 => 'February',
+        3 => 'MArch',
+        4 => 'April',
+        5 => 'মে',
+        6 => 'জুন',
+        7 => 'জুলাই',
+        8 => 'আগস্ট',
+        9 => 'সেপ্টেম্বর',
+        10 => 'অক্টোবর',
+        11 => 'নভেম্বর',
+        12 => 'ডিসেম্বর',
+    ];
+
+    return view('admin.pages.salary.show', $data);
+}
+
+
+   function salaryApprove($id){
+          $salary = Salary::findOrFail($id);
+    $salary->status = 'approved';
+    $salary->approved_by = auth()->id();
+    $salary->save();
+
+        $mrsalary = new MoneyReceipt();
+        $mrsalary->mr_no = $salaryNo;
+        $mrsalary->fiscal_year = $fiscalYear;
+        $mrsalary->receipt_type = '-4';
+        $mrsalary->reference_id = $salaryId;
+        $mrsalary->pay_method_id = '101';
+        $mrsalary->payment_date = $salaryDate;
+        $mrsalary->payment_amount = $grandTotal;
+        $mrsalary->transaction_added_by = Auth::id();
+        $mrsalary->operation_ip = $request->ip();
+        $mrsalary->save();
+   }
+
+   public function decline(Request $request, $id)
+{
+    $request->validate([
+        'remark' => 'required|string'
+    ]);
+
+    $salary = Salary::findOrFail($id);
+    $salary->status = 'declined';
+    $salary->decline_remark = $request->remark;
+    $salary->declined_by = auth()->id();
+    $salary->save();
+
+    return redirect()->route('salary.index')->with('error','Salary Declined!');
+}
+
 
 }

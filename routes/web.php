@@ -142,6 +142,12 @@ Route::post('/admin/transfer-approve', [TransferController::class, 'transferappr
 Route::post('/admin/transfer-decline', [TransferController::class, 'transferDecline'])
      ->name('transfer.transferdecline');
 
+/* salary */
+Route::get('/admin/salarypendinglist', [SalaryController::class, 'salarypendingList'])->name('salary.salarypendinglist');
+Route::get('/admin/approve', [SalaryController::class, 'salaryApprove'])->name('salary.salaryapprove');
+Route::get('/admin/salarydecline', [SalaryController::class, 'salaryDecline'])->name('salary.salarydecline');
+
+
 /* report */
 Route::get('/admin/project-wise',[ReportController::class,'projectWise'])->name('report.project-wise');
 Route::get('/admin/project-wise-search',[ReportController::class,'projectWiseSearch'])->name('report.project-wise-search');
