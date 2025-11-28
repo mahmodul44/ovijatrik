@@ -98,7 +98,7 @@
     <div class="project-info">
         <div><span class="bold">Project:</span> {{ $projectInfo->project_code }} - {{ $projectInfo->project_title }}</div>
         <div><span class="bold">Duration:</span> {{ $projectInfo->project_start_date ?? '---' }} - {{ $projectInfo->project_end_date ?? '---' }}</div>
-        <div><span class="bold">Description:</span> {{ $projectInfo->project_details ?? '---' }}</div>
+        <div><span class="bold">Target Amount:</span> {{ $projectInfo->target_amount ?? '---' }} <span class="bold">Collection:</span> {{ $projectInfo->collection_amount ?? '---' }} <span class="bold">Expense:</span>  {{ $projectInfo->total_expense ?? '---' }} </div>
     </div>
     @endif
 

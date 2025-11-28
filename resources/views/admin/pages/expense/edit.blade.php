@@ -141,7 +141,7 @@
         <label for="account_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
             Payment Account <span class="text-red-600">*</span>
         </label>
-         <input type="hidden" value="10000001" id="project_id" name="project_id">
+         <input type="hidden" value="{{ $expense->project_id }}" id="project_id" name="project_id">
         <select required id="account_id" name="account_id"
             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 
                    rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 text-sm 

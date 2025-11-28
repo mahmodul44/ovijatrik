@@ -35,7 +35,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 font-semibold text-gray-900 dark:text-gray-200">
-                            {{ number_format($value->ledger_amount, 2) }}
+                            {{ number_format($value->total_amount, 2) }}
                         </td>
                     </tr>
                 @empty
@@ -54,7 +54,7 @@
                         Current Balance:
                     </td>
                     <td class="px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500 dark:from-blue-400 dark:to-indigo-300">
-                        {{ number_format($ledgers->sum('ledger_amount'), 2) }}
+                        {{ number_format($ledgers->sum('total_amount'), 2) }}
                     </td>
                 </tr>
             </tfoot>

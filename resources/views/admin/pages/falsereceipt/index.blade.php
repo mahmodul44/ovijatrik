@@ -91,7 +91,7 @@
                             </td>
                             <td style="text-align: center" class="px-6 py-4 border border-r flex gap-3 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-center text-sm">
                                 <!-- Preview -->
-                                <button onclick="openPreviewWindow('{{ route('falsereceipt.invoice-preview', $value->fls_receipt_id) }}')" 
+                                <button onclick="openPreviewWindow('{{ route('falsereceipt.show', $value->fls_receipt_id) }}')" 
                                     title="Preview"
                                     class="inline-flex items-center justify-center w-7 h-7 text-blue-600 bg-blue-50 rounded hover:bg-blue-100 mr-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" 
@@ -107,6 +107,28 @@
                                             4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                 </svg>
                             </button>
+
+                                <!-- Edit -->
+                                <a href="{{ route('falsereceipt.edit', $value->fls_receipt_id) }}"
+                                    title="Edit"
+                                    class="inline-flex items-center justify-center w-7 h-7 rounded 
+                                            bg-indigo-50 hover:bg-indigo-100 text-indigo-600 
+                                            dark:bg-indigo-900 dark:hover:bg-indigo-800 
+                                            dark:text-indigo-400 dark:hover:text-indigo-300 mr-1">
+                                        
+                                        <svg xmlns="http://www.w3.org/2000/svg" 
+                                            class="w-4 h-4" 
+                                            fill="none" 
+                                            viewBox="0 0 24 24" 
+                                            stroke="currentColor" 
+                                            stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" 
+                                                d="M16.862 3.487a2.25 2.25 0 113.182 3.182l-10.95 10.95a4.5 4.5 0 01-1.897 1.13l-3.39.97a.75.75 0 01-.927-.927l.97-3.39a4.5 4.5 0 011.13-1.897l10.95-10.95z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" 
+                                                d="M19.5 7.5l-3-3" />
+                                        </svg>
+                                    </a>
+                                    
                                 <!-- Delete -->
                                 <form action="{{ route('falsereceipt.destroy', $value->fls_receipt_id) }}" 
                                     method="POST" 

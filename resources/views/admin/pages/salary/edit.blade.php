@@ -56,6 +56,7 @@
             <div class="flex flex-col md:flex-row gap-4 md:items-end">    
     <div class="w-full md:w-1/3">
     <label for="account_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Account <span class="text-red-600">*</span></label>
+    <input type="hidden" value="{{  $salaries->project_id }}" id="project_id" name="project_id">
     <select required id="account_id" name="account_id"
             class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
         <option value="">-- Select --</option>
@@ -74,7 +75,106 @@
             <option value="1" {{ $salaries->posting_type == '1' ? 'selected' : '' }}>Final</option>
        </select>
      </div>
+
+     <!-- Payment Method -->
+    <div class="w-full md:w-1/3">
+        <label for="pay_method_id" class="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+            Payment Method <span class="text-red-600">*</span>
+        </label>
+        <select required id="pay_method_id" name="pay_method_id"
+            class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm 
+                focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm 
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
+            <option value="">-- Select --</option>
+            @foreach ($paymentmethod as $item)
+                <option value="{{ $item->pay_method_id }}" 
+                    {{ $salaries->pay_method_id == $item->pay_method_id ? 'selected' : '' }}>
+                    {{ $item->pay_method_name }}
+                </option>
+            @endforeach
+        </select>
     </div>
+
+    </div>
+
+<div class="w-full md:w-1/4" id="ledgerInfo" style="display:none;">
+    <span id="ledger_balance"
+       class="block text-sm font-semibold text-gray-700 dark:text-gray-200">
+    </span>
+</div>
+     <!-- Hidden common field (backend will read transaction_no) -->
+<input type="hidden" id="transaction_no" name="transaction_no" value="{{ $salaries->transaction_no ?? '' }}">
+
+<!-- Mobile Banking Fields -->
+<div id="mobileFields" class="hidden mt-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Account No <span class="text-red-600">*</span>
+            </label>
+            <input type="text" id="mobile_account_no" name="mobile_account_no"
+                   value="{{ old('mobile_account_no', $salaries->mobile_account_no ?? '') }}"
+                   class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
+                          bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
+                          focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Transaction No
+            </label>
+            <!-- visible mobile transaction field -->
+            <input type="text" id="mobile_transaction_no"
+                   value="{{ old('transaction_no', $salaries->transaction_no ?? '') }}"
+                   class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
+                          bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
+                          focus:ring-2 focus:ring-blue-500">
+        </div>
+
+    </div>
+</div>
+
+<!-- Bank Payment Fields -->
+<div id="bankFields" class="hidden mt-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Bank Account No <span class="text-red-600">*</span>
+            </label>
+            <input type="text" id="bank_account_no" name="bank_account_no"
+                   value="{{ old('bank_account_no', $salaries->bank_account_no ?? '') }}"
+                   class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
+                          bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
+                          focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Bank Name <span class="text-red-600">*</span>
+            </label>
+            <input type="text" id="bank_name" name="bank_name"
+                   value="{{ old('bank_name', $salaries->bank_name ?? '') }}"
+                   class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
+                          bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
+                          focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Transaction No
+            </label>
+            <!-- visible bank transaction field -->
+            <input type="text" id="bank_transaction_no"
+                   value="{{ old('transaction_no', $salaries->transaction_no ?? '') }}"
+                   class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
+                          bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
+                          focus:ring-2 focus:ring-blue-500">
+        </div>
+
+    </div>
+</div>
             <!-- Employees Table -->
             <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 mt-4">
                 <table class="w-full text-sm text-left">
@@ -88,20 +188,42 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach($employees as $key => $emp)
-                        <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                            <td class="py-3 px-4 text-center text-gray-800 dark:text-gray-200">{{ $key+1 }}</td>
-                            <td class="py-3 px-4 font-medium text-gray-900 dark:text-gray-100">{{ $emp->name }}</td>
-                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">{{ $emp->designation }}</td>
-                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">{{ $emp->phone_no }}</td>
-                            <td class="py-3 px-4">
-                                <input type="hidden" name="employees[{{ $emp->id }}][id]" value="{{ $emp->id }}">
-                                <input type="number" name="employees[{{ $emp->id }}][salary]" value="{{ $emp->salary ?? 0 }}" required
-                                    class="w-full px-3 py-2 rounded-lg border bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
+    @foreach($employees as $key => $emp)
+    <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+        <td class="py-3 px-4 text-center text-gray-800 dark:text-gray-200">{{ $key+1 }}</td>
+        <td class="py-3 px-4 font-medium text-gray-900 dark:text-gray-100">{{ $emp->name }}</td>
+        <td class="py-3 px-4 text-gray-700 dark:text-gray-300">{{ $emp->designation }}</td>
+        <td class="py-3 px-4 text-gray-700 dark:text-gray-300">{{ $emp->phone_no }}</td>
+
+        <td class="py-3 px-4">
+
+            @php
+                $detail = $salaries->salaryDetails->firstWhere('employee_id', $emp->id);
+                $salary_amount = $detail->salary_amount ?? 0;
+            @endphp
+
+            <input type="hidden" name="employees[{{ $emp->id }}][id]" value="{{ $emp->id }}">
+
+            <input type="number"
+                name="employees[{{ $emp->id }}][salary]"
+                value="{{ $salary_amount }}"
+                required
+                class="w-full px-3 py-2 rounded-lg border bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+        </td>
+    </tr>
+    @endforeach
+</tbody>
+   <tfoot>
+    <tr class="bg-gray-200 dark:bg-gray-700 font-semibold text-gray-900 dark:text-gray-100">
+        <td colspan="4" class="py-3 px-4 text-right border dark:border-gray-600">
+            Total Salary:
+        </td>
+        <td class="py-3 px-4 border dark:border-gray-600">
+            <span id="total_salary">0</span>
+        </td>
+    </tr>
+</tfoot>
+
                 </table>
             </div>
 
@@ -123,6 +245,141 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     flatpickr("#salary_date", { dateFormat: "d/m/Y", allowInput: true });
+});
+
+
+$(document).ready(function () {
+    $('#mobileFields').addClass('hidden');
+    $('#bankFields').addClass('hidden');
+
+    let selected = $('#pay_method_id').val();
+    if (selected === '102' || selected === '103' || selected === '104') {
+        $('#mobileFields').removeClass('hidden');
+    } else if (selected === '105') {
+        $('#bankFields').removeClass('hidden');
+    }
+
+    let existingTx = $('#transaction_no').val() || '';
+    if (existingTx) {
+        $('#mobile_transaction_no').val(existingTx);
+        $('#bank_transaction_no').val(existingTx);
+    }
+});
+
+
+$('#pay_method_id').on('change', function () {
+    let selected = $(this).val();
+
+    $('#mobileFields').addClass('hidden');
+    $('#bankFields').addClass('hidden');
+
+    if (selected === '102' || selected === '103' || selected === '104') {
+        $('#mobileFields').removeClass('hidden');
+    } else if (selected === '105') {
+        $('#bankFields').removeClass('hidden');
+    }
+});
+
+$('#mobile_transaction_no').on('input', function () {
+    $('#transaction_no').val($(this).val());
+});
+
+$('#bank_transaction_no').on('input', function () {
+    $('#transaction_no').val($(this).val());
+});
+
+
+$('#account_id').on('change', function () {
+    let accountId = $(this).val();
+    let projectId = $('#project_id').val();
+
+    if (!projectId) {
+        toastr.error("Please select Project first!");
+        $('#account_id').val('');    
+        return;
+    }
+
+    $.ajax({
+        url: '/get-project-ledger',
+        type: 'POST',
+        data: {
+            account_id: accountId,
+            project_id: projectId,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (res) {
+            if (res.status === 'no_project') {
+                toastr.error(res.message);
+                $('#ledgerInfo').hide();
+            } else {
+                $('#ledger_balance').text("Ledger Balance : " + res.balance + " BDT");
+                $('#ledgerInfo').show();
+            }
+        }
+    });
+});
+
+function loadLedger() {
+    let accountId = $('#account_id').val();
+    let projectId = $('#project_id').val();
+
+    if (!accountId || !projectId) {
+        $('#ledgerInfo').hide();
+        return;
+    }
+
+    $.ajax({
+        url: '/get-project-ledger',
+        type: 'POST',
+        data: {
+            account_id: accountId,
+            project_id: projectId,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (res) {
+            if (res.status === 'no_project') {
+                toastr.error(res.message);
+                $('#ledgerInfo').hide();
+            } else {
+                $('#ledger_balance').text("Ledger Balance : " + res.balance + " BDT");
+                $('#ledgerInfo').removeClass('hidden').show();
+            }
+        }
+    });
+}
+
+$(document).ready(function () {
+    loadLedger();
+});
+
+$('#account_id').on('change', function () {
+    loadLedger();
+});
+
+$('#project_id').on('change', function () {
+    $('#account_id').val("");   
+    $('#ledgerInfo').hide();
+});
+
+function calculateTotalSalary() {
+    let total = 0;
+
+    $('input[name*="[salary]"]').each(function () {
+        let val = parseFloat($(this).val()) || 0;
+        total += val;
+    });
+
+    $('#total_salary').text(total.toFixed(2));
+}
+
+// Auto calculate on page load
+$(document).ready(function () {
+    calculateTotalSalary();
+
+    // Auto calculate whenever salary changes
+    $(document).on("input", 'input[name*="[salary]"]', function () {
+        calculateTotalSalary();
+    });
 });
 
 $('#salaryUpdateForm').on('submit', function(e) {

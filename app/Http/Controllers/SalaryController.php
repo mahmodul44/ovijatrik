@@ -10,19 +10,24 @@ use App\Models\Employee;
 use App\Models\Salary;
 use App\Models\SalaryDetail;
 use App\Models\MoneyReceipt;
+use App\Models\PaymentMethod;
 use App\Models\Account;
 use DB;
+
 class SalaryController extends Controller
 {
 
     public function index(){
-        $data['salary'] = Salary::where('status',1)->orderby('salary_id','desc')->get();
+       $data['salary'] = Salary::whereIn('status', [0, -1])
+        ->orderBy('salary_id', 'desc')
+        ->get();
         return view('admin.pages.salary.index', $data);
     }
 
     public function create(){
         $data['employees'] = Employee::where('status',1)->get();
         $data['accounts'] = Account::where('status', 1)->get();
+        $data['paymentmethod'] = PaymentMethod::where('status', 1)->get();
         return view('admin.pages.salary.create', $data);
     }
 
@@ -34,6 +39,13 @@ class SalaryController extends Controller
         'salary_date'  => 'required|date_format:d/m/Y',
         'employees'    => 'required|array',
         'employees.*.salary' => 'required|numeric|min:0',
+        'account_id'        => 'required',
+        'pay_method_id'     => 'required',
+        'bank_name'         => 'nullable|Max:100',
+        'bank_account_no'   => 'nullable|Max:50',
+        'mobile_account_no' => 'nullable|Max:15',
+        'transaction_no'    => 'nullable|Max:100',
+        'posting_type'      => 'required'
     ]);
 
     if ($validate->fails()) {
@@ -57,17 +69,45 @@ class SalaryController extends Controller
     }
     DB::beginTransaction();
     try {
-       
-        $salaryNo = "SALARY" . '-' . rand(1000, 9999);
+       $salary = new Salary();
+            $prefix = 'OVJSL';
+            $yearMonth = date('ym'); 
+
+            $lastExpense = Salary::where('salary_no', 'LIKE', "$prefix-$yearMonth%")
+                        ->orderBy('salary_id', 'desc')
+                        ->first();
+
+            if ($lastExpense) {
+                $lastNumber = intval(substr($lastExpense->salary_no, -3));
+                $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            } else {
+                $newNumber = '001';
+            }
+
+            $salaryNo = "$prefix-$yearMonth$newNumber";
+
+            while (Salary::where('salary_no', $salaryNo)->exists()) {
+                $newNumber = str_pad(intval($newNumber) + 1, 3, '0', STR_PAD_LEFT);
+                $salaryNo = "$prefix-$yearMonth$newNumber";
+            }
+
+        $salaryNo = "OVJSL" . '-' . rand(1000, 9999);
 
         $salary = new Salary();
         $salary->salary_no    = $salaryNo;
+        $salary->fiscal_year  = $fiscalYear;
         $salary->salary_year  = $request->salary_year;
         $salary->salary_month = $request->salary_month;
         $salary->salary_date  = $salaryDate;
+        $salary->project_id   = $request->project_id;
         $salary->account_id   = $request->account_id;
+        $salary->pay_method_id     = $request->pay_method_id;
+        $salary->bank_account_no   = $request->bank_account_no;
+        $salary->mobile_account_no = $request->mobile_account_no;
+        $salary->bank_name         = $request->bank_name;
+        $salary->transaction_no    = $request->transaction_no;
         $salary->posting_type = $request->posting_type;
-        $salary->status       = '1';
+        $salary->status       = '0';
         $salary->created_by   = Auth::id();
         $salary->operation_ip = $request->ip();
         $salary->save();
@@ -113,12 +153,18 @@ class SalaryController extends Controller
     }
    }
 
-   function edit($id){
-        $data['employees'] = Employee::where('status',1)->get();
-        $data['accounts'] = Account::where('status', 1)->get();
-         $data['salaries'] = Salary::findOrFail($id);
-        return view('admin.pages.salary.edit', $data);
-   }
+  public function edit($id)
+{
+    $data['employees'] = Employee::where('status', 1)->get();
+    $data['accounts'] = Account::where('status', 1)->get();
+    $data['paymentmethod'] = PaymentMethod::where('status', 1)->get();
+    
+    $data['salaries'] = Salary::with('salaryDetails', 'salaryDetails.employee')
+                            ->findOrFail($id);
+
+    return view('admin.pages.salary.edit', $data);
+}
+
 
 
    public function update(Request $request, $id)
@@ -129,6 +175,13 @@ class SalaryController extends Controller
         'salary_date'  => 'required|date_format:d/m/Y',
         'employees'    => 'required|array',
         'employees.*.salary' => 'required|numeric|min:0',
+        'account_id'        => 'required',
+        'pay_method_id'     => 'required',
+        'bank_name'         => 'nullable|Max:100',
+        'bank_account_no'   => 'nullable|Max:50',
+        'mobile_account_no' => 'nullable|Max:15',
+        'transaction_no'    => 'nullable|Max:100',
+        'posting_type'      => 'required'
     ]);
 
     if ($validate->fails()) {
@@ -139,16 +192,28 @@ class SalaryController extends Controller
         ], 400);
     }
 
-    $salaryDate = Carbon::createFromFormat('d/m/Y', $request->salary_date)->format('Y-m-d');
-
+   
+     $salaryDate = Carbon::createFromFormat('d/m/Y', $request->salary_date)->format('Y-m-d');
+     $fiscalYear = getFiscalYearFromDate($salaryDate);
     DB::beginTransaction();
     try {
         $salary = Salary::findOrFail($id);
         $salary->salary_year  = $request->salary_year;
+        $salary->fiscal_year  = $fiscalYear;
         $salary->salary_month = $request->salary_month;
         $salary->salary_date  = $salaryDate;
+        $salary->project_id   = $request->project_id;
         $salary->account_id   = $request->account_id;
+        $salary->pay_method_id     = $request->pay_method_id;
+        $salary->bank_account_no   = $request->bank_account_no;
+        $salary->mobile_account_no = $request->mobile_account_no;
+        $salary->bank_name         = $request->bank_name;
+        $salary->transaction_no    = $request->transaction_no;
         $salary->posting_type = $request->posting_type;
+        $salary->status       = '0';
+        $salary->updated_by   = Auth::id();
+        $salary->updated_at   = now();
+        $salary->operation_ip = $request->ip();
         $salary->save();
 
         $grandTotal = 0;
@@ -185,7 +250,7 @@ class SalaryController extends Controller
 }
 
     function salarypendingList (){
-       $data['pendingList'] = Salary::where('status', '0')->get();
+       $data['pendingList'] = Salary::where('status', '0')->where('posting_type',1)->get();
        return view('admin.pages.salary.salarypendinglist',$data);
     }
 
@@ -193,8 +258,7 @@ class SalaryController extends Controller
 {
     $data['employees'] = Employee::where('status', 1)->get();
     $data['accounts'] = Account::where('status', 1)->get();
-
-    $data['salary'] = Salary::with('salaryDetails', 'salaryDetails.employee')->findOrFail($id);
+    $data['salary'] = Salary::with('account','salaryDetails', 'salaryDetails.employee')->findOrFail($id);
 
     // Bengali Month Names
     $data['months'] = [
@@ -202,53 +266,140 @@ class SalaryController extends Controller
         2 => 'February',
         3 => 'MArch',
         4 => 'April',
-        5 => 'মে',
-        6 => 'জুন',
-        7 => 'জুলাই',
-        8 => 'আগস্ট',
-        9 => 'সেপ্টেম্বর',
-        10 => 'অক্টোবর',
-        11 => 'নভেম্বর',
-        12 => 'ডিসেম্বর',
+        5 => 'May',
+        6 => 'June',
+        7 => 'July',
+        8 => 'Augest',
+        9 => 'September',
+        10 => 'October',
+        11 => 'November',
+        12 => 'December',
     ];
 
     return view('admin.pages.salary.show', $data);
 }
 
 
-   function salaryApprove($id){
-          $salary = Salary::findOrFail($id);
-    $salary->status = 'approved';
-    $salary->approved_by = auth()->id();
-    $salary->save();
+   function salaryApprove(Request $request){
+         DB::beginTransaction();
 
-        $mrsalary = new MoneyReceipt();
-        $mrsalary->mr_no = $salaryNo;
-        $mrsalary->fiscal_year = $fiscalYear;
-        $mrsalary->receipt_type = '-4';
-        $mrsalary->reference_id = $salaryId;
-        $mrsalary->pay_method_id = '101';
-        $mrsalary->payment_date = $salaryDate;
-        $mrsalary->payment_amount = $grandTotal;
-        $mrsalary->transaction_added_by = Auth::id();
-        $mrsalary->operation_ip = $request->ip();
-        $mrsalary->save();
+    try {
+        $salary = Salary::findOrFail($request->id);
+        $projectId = $salary->project_id;
+        $totalAmount = $salary->total_salary;
+        $accountID = $salary->account_id;
+
+        if ($projectId) {
+            $ledger = DB::table('debit_credit_ledger')
+                ->where('project_id', $projectId)
+                ->where('account_id', $accountID)
+                ->first();
+
+            if (!$ledger) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Ledger not found for this project account!'
+                ], 200); 
+            }
+
+            if ($ledger->ledger_amount < $totalAmount) {
+                 return response()->json([
+                    'status' => 'error',
+                    'message' => 'Insufficient balance for this salary account!',
+                    'balance' => number_format($ledger->ledger_amount, 2)
+                ], 200);
+            }
+        }
+        
+        DB::table('transactions')->insert([
+            'transaction_date'     => $salary->salary_date,
+            'fiscal_year'          => $salary->fiscal_year,
+            'project_id'           => $salary->project_id,
+            'account_id'           => $salary->account_id,
+            'transaction_type'     => -1, 
+            'transaction_amount'   => $salary->total_salary,
+            'reference_type'       => 'salary-expenses',
+            'reference_id'         => $salary->salary_id, 
+            'pay_method_id'        => $salary->pay_method_id,
+            'transaction_added_by' => Auth::id(),
+            'transaction_added_on' => now(),
+        ]);
+
+        if ($salary->project_id) {
+            DB::table('projects')
+                ->where('project_id', $salary->project_id)
+                ->increment('total_expense', $salary->total_salary);
+        }
+
+        $salary->update([
+            'status' => 1
+        ]);
+
+        DB::commit();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Approved Successfully!'
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Something went wrong!',
+            'error_detail' => $e->getMessage()
+        ], 500);
+      }
    }
 
-   public function decline(Request $request, $id)
+   public function salaryDecline(Request $request, $id)
 {
     $request->validate([
         'remark' => 'required|string'
     ]);
 
     $salary = Salary::findOrFail($id);
-    $salary->status = 'declined';
+
+    $salary->status = '-1';
     $salary->decline_remark = $request->remark;
+    $salary->posting_type = '0';
     $salary->declined_by = auth()->id();
+    $salary->declined_at = now();  
+
     $salary->save();
 
-    return redirect()->route('salary.index')->with('error','Salary Declined!');
+    return redirect()->route('salary.index')->with('error', 'Salary Declined!');
 }
 
+public function destroy($id)
+{
+    DB::beginTransaction();
+
+    try {
+    
+        $salary = Salary::with('salaryDetails')->findOrFail($id);
+
+        SalaryDetail::where('salary_id', $salary->salary_id)->delete();
+
+        $salary->delete();
+
+        DB::commit();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Salary and related details deleted successfully'
+        ]);
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Error deleting salary: ' . $e->getMessage()
+        ], 500);
+    }
+}
 
 }

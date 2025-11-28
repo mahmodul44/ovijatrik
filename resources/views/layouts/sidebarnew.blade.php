@@ -10,7 +10,30 @@
     <img src="{{ asset('logo_bgtransparent-sm.png') }}" alt="Ovijatrik" class="w-20 h-11 mx-auto" x-show="!darkMode">
     <!-- Dark mode logo -->
     <img src="{{ asset('logo.png') }}" alt="Ovijatrik" class="w-20 h-11 mx-auto" x-show="darkMode">
-</div>
+</div> 
+
+{{-- <div class="p-3 text-center font-bold border-b dark:border-gray-700" x-show="!sidebarCollapsed">
+    <div x-show="!darkMode" class="space-y-1">
+        <!-- Light Mode -->
+        <div class="text-2xl font-extrabold tracking-wide text-gray-900">
+            <span class="text-red-600">অ</span>ভিযাত্রিক
+        </div>
+        <div class="text-sm tracking-wider text-gray-600">
+            হাসিমুখের খোঁজে অভিযাত্রা
+        </div>
+    </div>
+
+    <div x-show="darkMode" class="space-y-1">
+        <!-- Dark Mode -->
+        <div class="text-2xl font-extrabold tracking-wide text-white">
+            <span class="text-red-500">অ</span>ভিযাত্রিক
+        </div>
+        <div class="text-sm tracking-wider text-gray-300">
+            হাসিমুখের খোঁজে অভিযাত্রা
+        </div>
+    </div>
+</div> --}}
+
 
 <nav class="p-4 space-y-2 flex-1 overflow-y-auto sidebar font-sans">
 
@@ -73,7 +96,7 @@
     @if(Auth::check() && Auth::user()->role == 1)
 
     <!-- Setting Dropdown -->
-    @php $aboutActive = in_array($currentRoute, ['about.index','about.create','about.missionvission']); @endphp
+    @php $aboutActive = in_array($currentRoute, ['about.index','about.create','about.missionvission','about.basicsetting']); @endphp
     <div x-data="{ open: @json($aboutActive) }">
         <button @click="open = !open" 
                 :class="open ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
@@ -95,6 +118,11 @@
 
         <!-- Submenu -->
         <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('about.basicsetting') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ in_array($currentRoute, ['about.basicsetting']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Basic Setting</span>
+            </a>
             <a href="{{ route('about.create') }}" 
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{ in_array($currentRoute, ['about.create']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
@@ -155,10 +183,12 @@
                 :class="open ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
                 class="flex w-full items-center justify-between p-2 rounded-lg transition-colors">
             <span class="flex items-center space-x-2">
-            <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.364-7.364l-1.414 1.414M6.05 17.95l-1.414 1.414M17.95 17.95l-1.414-1.414M6.05 6.05L4.636 4.636M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+            <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" stroke-width="1.8"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3 10h18M4 10l8-6 8 6M5 10v10m14-10v10M8 21h8" />
             </svg>
+
                 <span x-show="!sidebarCollapsed" x-transition>Account Info</span>
             </span>
             <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
@@ -405,7 +435,7 @@
 
 
     <!-- False Money Receipt Menu -->
-    @php $mrActive = in_array($currentRoute, ['falsereceipt.index','falsereceipt.create']); @endphp
+    @php $mrActive = in_array($currentRoute, ['falsereceipt.index','falsereceipt.create','falsereceipt.edit']); @endphp
     <div x-data="{ open: @json($mrActive) }">
         <button @click="open = !open" 
             :class="open 
@@ -750,7 +780,7 @@
     </div>
 
     <!-- Salary Menu -->
-    @php $empActive = in_array($currentRoute, ['salary.index', 'salary.create','salary.edit','salary.pendinglist']); @endphp
+    @php $empActive = in_array($currentRoute, ['salary.index', 'salary.create','salary.edit','salary.salarypendinglist']); @endphp
     <div x-data="{ open: @json($empActive) }">
         <button @click="open = !open" 
         :class="open 
@@ -873,7 +903,7 @@
     </div>
 
     <!-- Report Menu -->
-    @php $reportActive = in_array($currentRoute, ['report.index','report.project-wise','report.member-wise']); @endphp
+    @php $reportActive = in_array($currentRoute, ['report.index','report.project-wise','report.member-wise','report.account-wise']); @endphp
     <div x-data="{ open: @json($reportActive) }">
         <button @click="open = !open" 
             :class="open 
@@ -903,6 +933,13 @@
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{ $currentRoute == 'report.index' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
                <span>- Ledger</span>
+            </a>
+        </div>
+         <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('report.account-wise') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'report.account-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Account Ledger</span>
             </a>
         </div>
         <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>

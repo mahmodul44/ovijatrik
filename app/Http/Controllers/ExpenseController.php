@@ -63,7 +63,7 @@ class ExpenseController extends Controller
             $fiscalYear = getFiscalYearFromDate($expenseDate);
            
             $expense = new Expense();
-            $prefix = 'OVGEXP';
+            $prefix = 'OVJEXP';
             $yearMonth = date('ym'); 
 
             $lastExpense = Expense::where('expense_no', 'LIKE', "$prefix-$yearMonth%")

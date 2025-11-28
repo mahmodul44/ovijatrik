@@ -1,156 +1,90 @@
- 
- <style>
-     /* --- CSS VARIABLES (Change colors here) --- */
-        :root {
-            --primary-color: #2E8B57; /* SeaGreen - Good for Charity */
-            --secondary-color: #f4f9f6;
-            --text-dark: #333333;
-            --text-light: #666666;
-            --border-color: #dddddd;
-        }
+<style>
+    :root {
+        --primary-color: #2E8B57;
+        --secondary-color: #E9F5EE;
+        --dark-text: #2E2E2E;
+        --light-text: #666;
+    }
 
-        /* --- GLOBAL RESET --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    .banner-main { max-width: 210mm; margin: auto; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #e9e9e9; /* Grey background for screen only */
-            padding: 40px 20px;
-            color: var(--text-dark);
-        }
+    .smart-banner {
+        display: grid;
+        grid-template-columns: 120px auto 220px;
+        align-items: center;
+        background: linear-gradient(to right, #fff, var(--secondary-color));
+        padding: 20px 25px;
+        border-radius: 10px;
+        border-left: 6px solid var(--primary-color);
+        box-shadow: 0 3px 7px rgba(0,0,0,0.08);
+    }
 
-        /* --- THE PAGE CONTAINER (A4 Style) --- */
-        .banner-main {
-            background: white;
-            width: 100%;
-            max-width: 210mm; /* A4 Width */
-            min-height: 20mm; /* A4 Height */
-            margin: 0 auto;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); /* Paper shadow effect */
-            position: relative;
-        }
+    /* Logo Left */
+    .banner-logo img {
+        width: 85px;
+        height: 85px;
+        object-fit: contain;
+    }
 
-        /* --- SMART BANNER DESIGN --- */
-        .smart-banner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
+    /* Centered brand */
+    .brand-text-center {
+        text-align: center;
+    }
 
-        /* Logo Section */
-        .banner-logo {
-            display: flex;
-            align-items: center;
+    .brand-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--primary-color);
+        letter-spacing: 1px;
+    }
+
+    .brand-tagline {
+        font-size: 13px;
+        color: var(--light-text);
+    }
+
+    /* Right Information */
+    .banner-info {
+        text-align: right;
+        font-size: 13px;
+        color: var(--light-text);
+        line-height: 1.5;
+    }
+
+    .banner-info strong { color: var(--dark-text); }
+
+    @media (max-width: 700px) {
+        .smart-banner { 
+            grid-template-columns: 1fr;
+            text-align: center;
             gap: 15px;
         }
+        .banner-info { text-align: center; }
+    }
+</style>
 
-        .logo-placeholder {
-            width: 60px;
-            height: 60px;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 24px;
-            border-radius: 8px;
-        }
+<div class="banner-main">
+    <header class="smart-banner">
 
-        .company-name {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            line-height: 1.2;
-        }
+        <!-- Left Logo -->
+        <div class="banner-logo">
+            <img src="{{ asset('logo.png') }}" alt="Logo">
+        </div>
 
-        .company-tagline {
-            font-size: 12px;
-            color: var(--text-light);
-            font-weight: 400;
-            text-transform: none;
-            letter-spacing: 0;
-        }
+        <!-- Center Title -->
+        <div class="brand-text-center">
+            <div class="brand-title">Ovijatrik</div>
+            <div class="brand-tagline">A Journey in Search of Smiling Faces</div>
+        </div>
 
-        /* Address Section */
-        .banner-details {
-            text-align: right;
-            font-size: 13px;
-            color: var(--text-light);
-            line-height: 1.6;
-        }
+        <!-- Right Office Info -->
+        <div class="banner-info">
+            <strong>Ovijatrik Office</strong><br>
+            Islambagh, Dinajpur, Bangladesh<br>
+            www.ovijatrik.org<br>
+            01717-017645<br>
+            ovijatrik.dinajpur@gmail.com
+        </div>
 
-        .banner-details strong {
-            color: var(--text-dark);
-        }
-
-        /* --- UI BUTTONS (Hidden when printing) --- */
-        .actions {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .btn {
-            background-color: var(--text-dark);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .btn:hover { background-color: black; }
-
-           /* Mobile Adjustment */
-        @media (max-width: 600px) {
-            .smart-banner {
-                flex-direction: column;
-                text-align: center;
-                gap: 15px;
-            }
-            .banner-details {
-                text-align: center;
-            }
-        }
- </style>
- 
- <!-- Control Buttons -->
-    {{-- <div class="actions">
-        <button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
-    </div> --}}
-
-    <!-- The Report Sheet -->
-    <div class="banner-main">
-        
-        <!-- 1. SMART BANNER START -->
-        <header class="smart-banner">
-            <div class="banner-logo">
-                <!-- Replace this div with <img src="logo.png"> -->
-                <div class="logo-placeholder">
-                    ♥
-                </div>
-                <div>
-                    <div class="company-name">Hope Foundation</div>
-                    <div class="company-tagline">Empowering Lives, Together.</div>
-                </div>
-            </div>
-
-            <div class="banner-details">
-                <strong>Hope Foundation Office</strong><br>
-                123 Charity Lane, Green District<br>
-                New York, NY 10012<br>
-                <span style="color: var(--primary-color)">www.hopefoundation.org</span><br>
-                +1 (555) 123-4567
-            </div>
-        </header>
-        <!-- SMART BANNER END -->
-    </div>
+    </header>
+</div>

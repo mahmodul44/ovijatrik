@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Account;
 use App\Models\Ledger;
 use App\Models\Expense;
 use App\Models\Project;
@@ -14,8 +15,14 @@ class ReportController extends Controller
 {
     function index()
     {
-    $data['ledgers'] = Ledger::with('account')->get();
-
+   
+        $data['ledgers'] = Ledger::select(
+        'account_id',
+          DB::raw('SUM(ledger_amount) as total_amount')
+         )
+        ->with('account')  // load account details
+        ->groupBy('account_id')
+        ->get();
     // $totalDebit = $ledgers->where('ledger_type', 1)->sum('ledger_amount');
     // $totalCredit = $ledgers->where('ledger_type', -1)->sum('ledger_amount');
     // $balance = $totalDebit - $totalCredit;
@@ -52,7 +59,8 @@ function projectWiseSearch(Request $request)
         'accounts.*',
         'users.name as member_name','users.member_id as memberID',
         'expenses.*','money_receipts.mr_no','expense_categories.expense_cat_name',
-        'projects.project_title','projects.project_code'
+        'projects.project_title','projects.project_code','projects.target_amount',
+        'projects.collection_amount','projects.total_expense'
     );
 
     if ($projectId) {
@@ -73,10 +81,10 @@ function projectWiseSearch(Request $request)
     if ($projectId) {
         $projectInfo = DB::table('projects')
             ->where('project_id', $projectId)
-            ->select('project_title', 'project_code', 'project_details', 'project_start_date', 'project_end_date')
+            ->select('project_id','project_title', 'project_code', 'project_details', 'project_start_date', 'project_end_date','collection_amount','target_amount','total_expense')
             ->first();
     }
-   //dd($reportData);
+
     return view('admin.pages.report.project-wise-view', [
         'reportData' => $reportData,
         'from' => $from,
@@ -137,6 +145,58 @@ function memberWiseSearch(Request $request)
         'memberName' => $memberName
     ]);
 }
+
+ function accountWise(){
+     $data['projects'] = Project::where('status',1)->get();
+     $data['accounts'] = Account::where('status', 1)->get();
+     return view('admin.pages.report.account-wise', $data);
+}
+
+function accountWiseSearch(Request $request)
+{
+    $projectId = $request->project_id;
+    $accountId = $request->account_id;
+
+    if (!$projectId && !$accountId) {
+        return back()->with('error', 'Please select at least Project or Account');
+    }
+
+    $query = Ledger::with('project', 'account');
+
+    if ($projectId && $accountId) {
+        // Both project & account selected → show that specific account in that project
+        $query->where('project_id', $projectId)
+              ->where('account_id', $accountId);
+    }
+    elseif ($projectId && !$accountId) {
+        // Only project selected → show all accounts under this project
+        $query->where('project_id', $projectId);
+    }
+    elseif (!$projectId && $accountId) {
+        // Only account selected → show this account across all active projects
+        $query->where('account_id', $accountId)
+              ->whereHas('project', function($q) {
+                  $q->where('status', 1); // assuming status=1 means active
+              });
+    }
+
+    $reportData = $query->orderBy('project_id', 'asc')
+                        ->orderBy('account_id', 'asc')
+                        ->get();
+
+    $projectInfo = $projectId ? Project::find($projectId) : null;
+    $accountInfo = $accountId ? Account::find($accountId) : null;
+
+    return view('admin.pages.report.account-wise-view', [
+        'reportData'  => $reportData,
+        'projectInfo' => $projectInfo,
+        'accountInfo' => $accountInfo,
+        'projectId'   => $projectId,
+        'accountId'   => $accountId
+    ]);
+}
+
+
 
 
 }

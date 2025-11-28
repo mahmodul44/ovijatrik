@@ -78,6 +78,7 @@
 <div class="flex flex-col md:flex-row gap-4 md:items-end">    
     <div class="w-full md:w-1/3">
     <label for="account_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Account <span class="text-red-600">*</span></label>
+    <input type="hidden" value="10000001" id="project_id" name="project_id">
     <select required id="account_id" name="account_id"
             class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
         <option value="">-- Select --</option>
@@ -96,7 +97,97 @@
             <option value="1">Final</option>
        </select>
      </div>
+
+     <!-- Payment Method -->
+    <div class="w-full md:w-1/3">
+        <label for="pay_method_id" class="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+            Payment Method <span class="text-red-600">*</span>
+        </label>
+        <select required id="pay_method_id" name="pay_method_id"
+            class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm
+                   focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm
+                   bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
+            @foreach ($paymentmethod as $item)
+                <option value="{{ $item->pay_method_id }}">{{ $item->pay_method_name }}</option>
+            @endforeach
+        </select>
+           <input type="hidden" id="transaction_no" name="transaction_no">
     </div>
+    </div>
+
+ <div class="w-full md:w-1/4" id="ledgerInfo" style="display:none;">
+    <span id="ledger_balance"
+        class="block text-sm font-semibold text-gray-700 dark:text-gray-200">
+    </span>
+</div>
+
+
+<div id="mobileFields" class="hidden mt-3">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <!-- Mobile Account No -->
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Account No <span class="text-red-600">*</span>
+            </label>
+            <input type="text" id="mobile_account_no" name="mobile_account_no"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+                focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Mobile Transaction No -->
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Transaction No
+            </label>
+            <input type="text" id="mobile_transaction_no"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+                focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+    </div>
+</div>
+
+<div id="bankFields" class="hidden mt-3">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <!-- Bank Account No -->
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Bank Account No <span class="text-red-600">*</span>
+            </label>
+            <input type="text" id="bank_account_no" name="bank_account_no"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+                focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Bank Name -->
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Bank Name <span class="text-red-600">*</span>
+            </label>
+            <input type="text" id="bank_name" name="bank_name"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+                focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <!-- Bank Transaction No -->
+        <div>
+            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                Transaction No
+            </label>
+            <input type="text" id="bank_transaction_no"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+                focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+    </div>
+</div>
 
 <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 mt-4">
     <table class="w-full text-sm text-left">
@@ -189,6 +280,76 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+
+$('#pay_method_id').on('change', function () {
+
+    let selected = $(this).val();
+
+    $('#mobileFields').addClass('hidden');
+    $('#bankFields').addClass('hidden');
+
+    // Clear fields
+    $('#mobile_account_no').val('');
+    $('#bank_account_no').val('');
+    $('#bank_name').val('');
+    $('#mobile_transaction_no').val('');
+    $('#bank_transaction_no').val('');
+    $('#transaction_no').val('');
+
+    // Mobile banking methods
+    if (selected === '102' || selected === '103' || selected === '104') {
+        $('#mobileFields').removeClass('hidden');
+    }
+
+    // Bank
+    if (selected === '105') {
+        $('#bankFields').removeClass('hidden');
+    }
+});
+
+// Sync to hidden field (common)
+$('#mobile_transaction_no').on('input', function () {
+    $('#transaction_no').val($(this).val());
+});
+
+$('#bank_transaction_no').on('input', function () {
+    $('#transaction_no').val($(this).val());
+});
+
+
+
+$('#account_id').on('change', function () {
+    let accountId = $(this).val();
+    let projectId = $('#project_id').val();
+
+    if (!projectId) {
+        toastr.error("Please select Project first!");
+        $('#account_id').val('');  
+        return;
+    }
+
+    $.ajax({
+        url: '/get-project-ledger',
+        type: 'POST',
+        data: {
+            account_id: accountId,
+            project_id: projectId,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (res) {
+            if (res.status === 'no_project') {
+                alert(res.message);
+                $('#ledgerInfo').hide();
+            } else {
+                $('#ledger_balance').text("Ledger Balance : " + res.balance + " BDT");
+                $('#ledgerInfo').show();
+            }
+        }
+    });
+});
+
+
+
 function calculateTotalSalary() {
     let total = 0;
 
@@ -200,11 +361,9 @@ function calculateTotalSalary() {
     $('#total_salary').text(total.toFixed(2));
 }
 
-// Auto calculate on page load
 $(document).ready(function () {
     calculateTotalSalary();
 
-    // Auto calculate whenever salary changes
     $(document).on("input", 'input[name*="[salary]"]', function () {
         calculateTotalSalary();
     });

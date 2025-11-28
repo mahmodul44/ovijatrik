@@ -13,7 +13,7 @@
     </div>
 
     <!-- Info Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
 
         <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
             <p class="text-gray-600 dark:text-gray-300 text-sm">Salary Year</p>
@@ -33,6 +33,13 @@
             <p class="text-gray-600 dark:text-gray-300 text-sm">Date</p>
             <p class="text-lg font-bold text-gray-900 dark:text-white">
                 {{ \Carbon\Carbon::parse($salary->salary_date)->format('d/m/Y') }}
+            </p>
+        </div>
+
+         <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+            <p class="text-gray-600 dark:text-gray-300 text-sm">Salary Account</p>
+            <p class="text-lg font-bold text-gray-900 dark:text-white">
+                {{ $salary->account->account_name }}
             </p>
         </div>
 
@@ -63,7 +70,7 @@
                             $total += $detail->salary_amount;
                         @endphp
 
-                        <tr class="text-center border-b dark:border-gray-700">
+                        <tr class="text-center border-b dark:border-gray-700 dark:text-gray-200">
                             <td class="py-2 px-3">{{ $i }}</td>
                             <td class="py-2 px-3">{{ $detail->employee->name }}</td>
                             <td class="py-2 px-3">{{ $detail->employee->phone_no }}</td>
@@ -77,7 +84,7 @@
             </tbody>
 
             <tfoot>
-                <tr class="bg-gray-100 dark:bg-gray-700 font-bold">
+                <tr class="bg-gray-100 dark:bg-gray-700 font-bold dark:text-gray-200">
                     <td colspan="3" class="py-2 px-3 text-right">Total</td>
                     <td class="py-2 px-3 text-right pr-5">{{ number_format($total,2) }}</td>
                 </tr>
@@ -86,50 +93,117 @@
         </table>
     </div>
 
-    <!-- Approve & Decline Section -->
-    <div class="mt-6 flex gap-4">
-
-        <!-- Approve -->
-        <form action="{{ route('salary.salaryapprove', $salary->salary_id) }}" method="POST">
-            @csrf
-            <button type="submit"
-                class="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700">
-                Approve
-            </button>
-        </form>
-
-        <!-- Decline Button -->
-        <button onclick="document.getElementById('declineBox').classList.remove('hidden')"
-            class="px-6 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
-            Decline
+@if ($salary->posting_type == 1)
+<div class="mt-6 flex gap-4">
+    
+    <!-- Approve -->
+        <button onclick="approveSalary({{ $salary->salary_id }}, this)" 
+            class="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-red-700"
+            title="Approve">
+           Approve
         </button>
 
-    </div>
-
-    <!-- Decline Remark Box -->
-    <div id="declineBox" class="hidden mt-6 bg-white dark:bg-gray-800 p-5 rounded-lg shadow-lg">
-
-        <form action="{{ route('salary.salarydecline', $salary->salary_id) }}" method="POST">
-            @csrf
-
-            <label class="block text-gray-700 dark:text-gray-300 mb-2 font-medium">
-                Remark (Reason of Decline)
-            </label>
-
-            <textarea name="remark" required class="w-full p-3 rounded-lg border dark:border-gray-600 
-                     bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white" rows="4"
-                      placeholder="Enter decline reason..."></textarea>
-
-            <div class="mt-4">
-                <button class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg">
-                    Submit Decline
-                </button>
-            </div>
-
-        </form>
-
-    </div>
+    <!-- Decline Button (SweetAlert) -->
+    <button onclick="openDeclineModal()"
+        class="px-6 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">
+        Decline
+    </button>
 
 </div>
+@endif
 
+
+</div>
+@push('scripts')
+<script>
+function openDeclineModal() {
+
+    Swal.fire({
+        title: "Decline Salary",
+        html: `
+            <textarea id="declineRemark" class="swal2-textarea" placeholder="Enter decline reason"></textarea>
+        `,
+        showCancelButton: true,
+        confirmButtonText: "Submit Decline",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#d33",
+        preConfirm: () => {
+            const remark = document.getElementById('declineRemark').value;
+            if (!remark) {
+                Swal.showValidationMessage("Remark is required!");
+                return false;
+            }
+            return remark;
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            let remark = result.value;
+
+            // Submit using POST
+            let form = document.createElement('form');
+            form.method = 'POST';
+            form.action = "{{ route('salary.salarydecline', $salary->salary_id) }}";
+
+            let token = document.createElement('input');
+            token.type = 'hidden';
+            token.name = '_token';
+            token.value = "{{ csrf_token() }}";
+
+            let remarkInput = document.createElement('input');
+            remarkInput.type = 'hidden';
+            remarkInput.name = 'remark';
+            remarkInput.value = remark;
+
+            form.appendChild(token);
+            form.appendChild(remarkInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
+
+function approveSalary(salaryId, btn) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you want to approve this user?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, approve',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch("{{ route('salary.salaryapprove') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ id: salaryId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    toastr.success(data.message);
+                     setTimeout(() => {
+                        window.location.href = "{{ route('salary.index') }}";
+                    }, 800);
+                } else if (data.status === 'error') {
+                    if (data.balance) {
+                        toastr.error(`${data.message} (Balance: ${data.balance})`);
+                    } else {
+                        toastr.error(data.message);
+                    }
+                } else {
+                    toastr.error("Something went wrong");
+                }
+            })
+            .catch(() => {
+                toastr.error("Error approving user.");
+            });
+        }
+    });
+}
+</script>
+@endpush
 @endsection

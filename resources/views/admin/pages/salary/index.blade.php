@@ -41,7 +41,7 @@
                             <th class="py-3 px-4 text-center border">Month</th>
                             <th class="py-3 px-4 text-center border">Date</th>
                             <th class="py-3 px-4 text-right border">Total Salary</th>
-                            <th class="py-3 px-4 text-center border">Status</th>
+                            <th class="py-3 px-4 text-center border">Posting Type</th>
                             <th class="py-3 px-4 text-center border w-40">Actions</th>
                         </tr>
                     </thead>

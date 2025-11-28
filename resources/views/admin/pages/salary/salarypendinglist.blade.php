@@ -168,8 +168,17 @@
                                         </button>
                                     </form>
                                 @endif
-                            </td>
-
+                                 @if ($value->posting_type == 0)
+                                <button onclick="approveSalary({{ $salary->salary_id }}, this)" 
+                                    class="p-2 bg-green-500 hover:bg-green-600 text-white rounded-full shadow transition"
+                                    title="Approve">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" 
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg> 
+                                </button>
+                                @endif
+                                </td>
                             </tr>
                         @endforeach
 
@@ -180,4 +189,94 @@
     </div>
 
 </div>
+
+@push('scripts')
+
+<script>
+$(document).on('submit', '.deleteSalaryForm', function(e) {
+    e.preventDefault();
+    let deleteUrl = $(this).find('.deleteUrl').val();
+    let thisForm = $(".alert-success, .alert-danger");
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This action cannot be undone!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#2563EB',
+        cancelButtonColor: '#DC2626',
+        confirmButtonText: 'Yes, delete it'
+    }).then((result) => {
+
+        if (result.value) {
+
+            $.ajax({
+                type: "POST",
+                url: deleteUrl,
+                data: $(this).serialize(),
+
+                beforeSend: function() {
+                    $('.alert-success, .alert-danger').addClass('hidden');
+                },
+
+                success: function(response) {
+                    $('.alert-success').removeClass('hidden');
+                    toastr.success(response.message);
+
+                    setTimeout(() => location.reload(), 1500);
+                },
+
+                error: function(xhr) {
+                    $('.alert-danger').removeClass('hidden');
+                    toastr.error("Unable to delete.");
+                }
+            });
+
+        }
+
+    });
+});
+function approveSalary(salaryId, btn) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you want to approve this user?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, approve',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch("{{ route('salary.salaryapprove') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ id: salaryId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    toastr.success(data.message);
+                    if (btn && btn.closest('tr')) {
+                        btn.closest('tr').remove();
+                    }
+                } else if (data.status === 'error') {
+                    if (data.balance) {
+                        toastr.error(`${data.message} (Balance: ${data.balance})`);
+                    } else {
+                        toastr.error(data.message);
+                    }
+                } else {
+                    toastr.error("Something went wrong");
+                }
+            })
+            .catch(() => {
+                toastr.error("Error approving user.");
+            });
+        }
+    });
+}
+</script>
+@endpush
 @endsection

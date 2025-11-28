@@ -22,6 +22,7 @@ use App\Http\Controllers\MemberReceiptController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FalseReceiptController;
 use App\Models\MoneyReceipt;
 
 /*
@@ -76,14 +77,21 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('employee', EmployeeController::class);
         Route::resource('account', AccountController::class);
         Route::resource('salary', SalaryController::class);
+        Route::resource('falsereceipt', FalseReceiptController::class);
     });
 
 /* About */
 Route::get('/about/missionvission',[AboutController::class,'missionVission'])->name('about.missionvission');   
 Route::put('/about/missionvissionstore/{id}',[AboutController::class,'missionVissionStore'])->name('about.missionvissionstore'); 
-Route::post('/employee/toggle-status', [EmployeeController::class, 'toggleStatus'])->name('employee.toggleStatus');
+Route::get('/about/basicsetting',[AboutController::class,'basicSetting'])->name('about.basicsetting');   
+Route::put('/about/basicsetting/basicsettingupdate/{id}', 
+    [AboutController::class,'basicSettingUpdate'])
+    ->name('about.basicsettingupdate');
 
-    // web.php
+
+// web.php
+
+Route::post('/employee/toggle-status', [EmployeeController::class, 'toggleStatus'])->name('employee.toggleStatus');    
 Route::get('/get-subcategories/{category_id}', [CategoryController::class, 'getSubcategories']);
 Route::get('/member-search', [MoneyReceiptController::class, 'memberSearch'])->name('member.search');
 Route::get('/invoice-download/{mr_id}', [MoneyReceiptController::class, 'invoiceDownload'])->name('moneyreceipt.invoicedownload');
@@ -93,13 +101,16 @@ Route::post('/admin/moneyreceipt-decline', [MoneyReceiptController::class, 'mone
      ->name('moneyreceipt.moneyreceiptdecline');
 Route::get('/admin/moneyreceipt/show/{id}', [MoneyReceiptController::class, 'show'])->name('moneyreceipt.show');
 
-/* False Receipt Start */     
+/* False Receipt Start  
+Route::get('/admin/falsereceipt/invoice-preview/{id}', [MoneyReceiptController::class, 'flaseInvoice'])->name('falsereceipt.invoice-preview');  
 Route::get('/admin/falsereceipt/index', [MoneyReceiptController::class, 'falsereceiptIndex'])->name('falsereceipt.index');     
 Route::get('/admin/falsereceipt/create', [MoneyReceiptController::class, 'falsereceiptCreate'])->name('falsereceipt.create');     
 Route::post('/admin/falsereceipt/store', [MoneyReceiptController::class, 'falseReceiptstore'])->name('falsereceipt.store');     
 Route::delete('/admin/falsereceipt/destroy/{id}', [MoneyReceiptController::class, 'falsereceiptDelete'])->name('falsereceipt.destroy');     
-Route::get('/admin/falsereceipt/invoice-preview/{id}', [MoneyReceiptController::class, 'flaseInvoice'])->name('falsereceipt.invoice-preview');
-/* False Receipt END */
+
+Route::get('/admin/falsereceipt/edit/{id}', [MoneyReceiptController::class, 'flasereceiptEdit'])->name('falsereceipt.falsereceiptedit');
+ False Receipt END */
+
 Route::get('/admin/memberreceiptpending', [MemberReceiptController::class, 'memberreceiptpendingList'])->name('memberreceipt.memberreceiptpending');
 Route::post('/admin/memberreceipt-approve', [MemberReceiptController::class, 'memberreceiptApprove'])->name('memberreceipt.memberreceiptapprove');
 Route::post('/admin/memberreceipt-decline', [MemberReceiptController::class, 'memberreceiptDecline'])
@@ -144,8 +155,9 @@ Route::post('/admin/transfer-decline', [TransferController::class, 'transferDecl
 
 /* salary */
 Route::get('/admin/salarypendinglist', [SalaryController::class, 'salarypendingList'])->name('salary.salarypendinglist');
-Route::get('/admin/approve', [SalaryController::class, 'salaryApprove'])->name('salary.salaryapprove');
-Route::get('/admin/salarydecline', [SalaryController::class, 'salaryDecline'])->name('salary.salarydecline');
+Route::post('/admin/salaryapprove', [SalaryController::class, 'salaryApprove'])->name('salary.salaryapprove');
+Route::post('/admin/salarydecline/{id}', [SalaryController::class, 'salaryDecline'])
+    ->name('salary.salarydecline');
 
 
 /* report */
@@ -153,6 +165,8 @@ Route::get('/admin/project-wise',[ReportController::class,'projectWise'])->name(
 Route::get('/admin/project-wise-search',[ReportController::class,'projectWiseSearch'])->name('report.project-wise-search');
 Route::get('/admin/member-wise',[ReportController::class,'memberWise'])->name('report.member-wise');
 Route::get('/admin/member-wise-search',[ReportController::class,'memberWiseSearch'])->name('report.member-wise-search');
+Route::get('/admin/account-wise',[ReportController::class,'accountWise'])->name('report.account-wise');
+Route::get('/admin/account-wise-search',[ReportController::class,'accountWiseSearch'])->name('report.account-wise-search');
 
 
 Route::put('/project/{id}/complete', [ProjectController::class, 'complete'])->name('project.complete');
