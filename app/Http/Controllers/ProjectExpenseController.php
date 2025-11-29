@@ -19,7 +19,12 @@ class ProjectExpenseController extends Controller
 {
     public function index()
     {
-        $data['expenses'] = Expense::with(['expcategory', 'project'])->where('expense_type',1)->orderBy('expense_id', 'desc')->get();
+        $query = Expense::with(['expcategory', 'project'])
+        ->where('expense_type',1);
+        if (auth()->user()->role != 1) {
+           $query->where('expenses.expense_added_by', auth()->id());
+        }
+        $data['expenses'] = $query->orderBy('expenses.expense_id', 'desc')->get();
         return view('admin.pages.projectexpense.index',  $data);
     }
 

@@ -7,29 +7,66 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-
+use Carbon\Carbon;
 class DashboardController extends Controller
 {
 
 public function index()
 {
     $user = auth()->user();
-
+    $chartData = null;
     // Admin
     if($user->role == 1){
         $totalDonations = MoneyReceipt::where('status',1)->sum('payment_amount');
         $totalDonors    = \App\Models\User::where('role',3)->count();
         $lastDonation   = MoneyReceipt::where('status',1)->latest('payment_date')->first();
+        $donationThisMonth = MoneyReceipt::whereMonth('payment_date', Carbon::now()->month)
+                                     ->whereYear('payment_date', Carbon::now()->year)
+                                     ->where('status',1)
+                                     ->sum('payment_amount');
+        $topDonors = MoneyReceipt::select('member_id', DB::raw('SUM(payment_amount) as total'))
+                             ->with('member:id,name,member_id')
+                             ->groupBy('member_id')
+                             ->where('member_id','!=',null)
+                             ->where('status',1)
+                             ->orderByDesc('total')
+                             ->take(5)
+                             ->get();
+        $latestDonations = MoneyReceipt::with('member:id,name','project:project_id,project_title','paymentmethod:pay_method_id,pay_method_name')
+                                   ->orderBy('payment_date', 'desc')
+                                   ->where('status',1)
+                                   ->take(10)
+                                   ->get();
 
-        return view('admin.newdashboard', compact('user','totalDonations','totalDonors','lastDonation'));
+         $chartData = $this->getDonationChartData();
+        // dd($latestDonations);
+        return view('admin.newdashboard', compact('user','totalDonations','totalDonors','lastDonation','donationThisMonth','topDonors','latestDonations','chartData'));
     }
 
     // Employee
     if($user->role == 2){
         $totalHandledDonations = MoneyReceipt::where('created_by',$user->id)->where('status',1)->sum('payment_amount');
         $lastDonation = MoneyReceipt::where('created_by',$user->id)->where('status',1)->latest('payment_date')->first();
+        $donationThisMonth = MoneyReceipt::whereMonth('payment_date', Carbon::now()->month)
+                                     ->whereYear('payment_date', Carbon::now()->year)
+                                     ->where('status',1)
+                                     ->sum('payment_amount');
+        $topDonors = MoneyReceipt::select('member_id', DB::raw('SUM(payment_amount) as total'))
+                             ->with('member:id,name,member_id')
+                             ->groupBy('member_id')
+                             ->where('member_id','!=',null)
+                             ->where('status',1)
+                             ->orderByDesc('total')
+                             ->take(5)
+                             ->get();
+        $latestDonations = MoneyReceipt::with('member:id,name','project:project_id,project_title','paymentmethod:pay_method_id,pay_method_name')
+                                   ->orderBy('payment_date', 'desc')
+                                   ->where('status',1)
+                                   ->take(10)
+                                   ->get();
 
-        return view('admin.newdashboard', compact('user','totalHandledDonations','lastDonation'));
+         $chartData = $this->getDonationChartData();
+        return view('admin.newdashboard', compact('user','totalHandledDonations','lastDonation','donationThisMonth','topDonors','latestDonations','chartData'));
     }
 
     // Donor
@@ -75,12 +112,34 @@ public function index()
                 'last_date' => $group->sortByDesc('payment_date')->first()->payment_date ?? null,
             ];
         })->values();
-
-        return view('admin.newdashboard', compact('user','totalThisYear','totalAllTime','lastDonation','frequency','fiscalSummary','lastDonateAmount'));
+         $chartData = [
+            'months' => [],
+            'amounts' => []
+        ];
+        return view('admin.newdashboard', compact('user','totalThisYear','totalAllTime','lastDonation','frequency','fiscalSummary','lastDonateAmount','chartData'));
     }
 
     abort(403);
 }
 
+ private function getDonationChartData()
+    {
+        $months = [];
+        $amounts = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $month = Carbon::now()->subMonths($i);
+            $months[] = $month->format('M Y');
+
+            $amounts[] = MoneyReceipt::whereYear('payment_date', $month->year)
+                                 ->whereMonth('payment_date', $month->month)
+                                 ->sum('payment_amount');
+        }
+
+        return [
+            'months' => $months,
+            'amounts' => $amounts,
+        ];
+    }
 
 }

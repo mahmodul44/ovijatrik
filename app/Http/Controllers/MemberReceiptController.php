@@ -20,17 +20,19 @@ class MemberReceiptController extends Controller
 {
     public function index()
     {
-    $data['moneyreceipts'] = MoneyReceipt::select(
+      $query = MoneyReceipt::select(
             'money_receipts.*',
             'users.name as member_name',
             'users.phone_no as member_phone','users.member_id as memberID','projects.project_title'
         )
         ->leftjoin('users', 'users.id', '=', 'money_receipts.member_id')
         ->leftjoin('projects', 'projects.project_id', '=', 'money_receipts.project_id')
-        ->where('money_receipts.receipt_type',1)
-        ->orderBy('money_receipts.mr_id', 'desc')
-        ->get();
+        ->where('money_receipts.receipt_type',1);
+        if (auth()->user()->role != 1) {
+           $query->where('money_receipts.created_by', auth()->id());
+        }
 
+        $data['moneyreceipts'] = $query->orderBy('money_receipts.mr_id', 'desc')->get();
         return view('admin.pages.memberreceipt.index', $data);
     }
 
