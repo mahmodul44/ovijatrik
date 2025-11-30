@@ -83,7 +83,6 @@ import { ref, onMounted, computed, inject } from 'vue'
 export default {
   name: 'Gallery',
   setup() {
-    // 🔹 Global i18n থেকে current language inject করা হচ্ছে
     const i18n = inject('i18n')
     const isBangla = computed(() => i18n.currentLang === 'bn')
 

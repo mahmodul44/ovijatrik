@@ -13,56 +13,89 @@
 
     <!-- Header -->
     <header class="bg-white shadow sticky top-0 z-40">
-      <div class="flex justify-between items-center p-4 md:p-3 border-b border-gray-200">
-        <div class="flex items-center space-x-3">
-            <div class="relative">
-              <img src="./logo.png" alt="Logo" class="h-12 w-auto" />
-          </div>
-          <div class="flex flex-col">
-        <h1 class="text-xl md:text-2xl font-bold text-green-700">{{ i18n.currentLang === 'bn' ? 'অভিযাত্রিক' : 'Ovijatrik' }}</h1>
-        <p class="text-xs md:text-sm text-gray-500">{{ i18n.currentLang === 'bn' ? 'হাসিমুখের খুঁজে অভিযাত্রা' : 'A journey in search of a smile' }}</p>
-      </div>
-        </div>
+      <div class="flex justify-between items-center p-4 md:p-5 bg-white border-b border-gray-200 shadow-sm">
 
-        <div class="flex items-center space-x-4">
-          <div class="hidden sm:flex space-x-3">
-            <a href="#" class="text-blue-600 hover:text-blue-800 transition-colors"><i class="fab fa-facebook"></i></a>
-            <a href="#" class="text-red-500 hover:text-red-700 transition-colors"><i class="fab fa-youtube"></i></a>
-            <a href="#" class="text-green-600 hover:text-green-800 transition-colors"><i class="fas fa-phone-alt"></i></a>
-          </div>
+  <!-- Left: Logo + Title -->
+  <div class="flex items-center space-x-4">
+    <img src="./logo.png" alt="Logo" class="h-11 w-auto object-contain" />
 
-          <!-- Language Buttons -->
-          <div class="flex items-center">
-            <button
-              @click="changeLanguage('bn')"
-              :class="{
-                'bg-indigo-600 text-white shadow-md': i18n.currentLang === 'bn',
-                'bg-white text-indigo-600 border border-indigo-300 hover:bg-indigo-50': i18n.currentLang !== 'bn'
-              }"
-              class="px-4 py-1.5 text-sm font-semibold rounded-l-lg transition duration-300 border-r-0"
-            >
-              বাংলা
-            </button>
-            <button
-              @click="changeLanguage('en')"
-              :class="{
-                'bg-indigo-600 text-white shadow-md': i18n.currentLang === 'en',
-                'bg-white text-indigo-600 border border-indigo-300 hover:bg-indigo-50': i18n.currentLang !== 'en'
-              }"
-              class="px-4 py-1.5 text-sm font-semibold rounded-r-lg transition duration-300 border-l-0"
-            >
-              EN
-            </button>
-          </div>
+    <div>
+      <h1 class="text-2xl font-bold text-green-700 leading-tight">
+        {{ i18n.currentLang === 'bn' ? 'অভিযাত্রিক' : 'Ovijatrik' }}
+      </h1>
+      <p class="text-sm text-gray-500">
+        {{ i18n.currentLang === 'bn' ? 'হাসিমুখের খুঁজে অভিযাত্রা' : 'A journey in search of a smile' }}
+      </p>
+    </div>
+  </div>
 
-          <button @click="toggleMenu" class="md:hidden">
-            <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-        </div>
-      </div>
+  <!-- Right: Social + Language + Mobile Menu -->
+  <div class="flex items-center space-x-5">
+
+    <!-- Social Icons (SVG) -->
+    <div class="hidden sm:flex items-center space-x-3">
+
+      <!-- Facebook -->
+      <a href="#"
+        class="w-9 h-9 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-3h2.5V9.5A3.5 3.5 0 0 1 14.4 6h2.6v3h-2.6c-.5 0-1 .5-1 1V12H17l-.5 3h-2.7v7A10 10 0 0 0 22 12z" />
+        </svg>
+      </a>
+
+      <!-- YouTube -->
+      <a href="#"
+        class="w-9 h-9 flex items-center justify-center rounded-full bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all duration-300 shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M19.6 7.2c-.2-1-1-1.8-2-2C15.8 5 12 5 12 5s-3.8 0-5.6.2c-1 .2-1.8 1-2 2C4 9 4 12 4 12s0 3 .4 4.8c.2 1 1 1.8 2 2 1.8.2 5.6.2 5.6.2s3.8 0 5.6-.2c1-.2 1.8-1 2-2C20 15 20 12 20 12s0-3-.4-4.8zM10 15.5V8.5l6 3.5-6 3.5z" />
+        </svg>
+      </a>
+
+      <!-- Phone -->
+      <a href="#"
+        class="w-9 h-9 flex items-center justify-center rounded-full bg-green-50 text-green-600 hover:bg-green-600 hover:text-white transition-all duration-300 shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M6.6 2A2.6 2.6 0 0 0 4 4.6C4 14.4 9.6 20 19.4 20a2.6 2.6 0 0 0 2.6-2.6v-1.8a1 1 0 0 0-.9-1l-4.4-.5a1 1 0 0 0-1 .5l-1.4 2.2a12 12 0 0 1-5.5-5.6l2.2-1.4a1 1 0 0 0 .5-1L10.4 4a1 1 0 0 0-1-.9H6.6z" />
+        </svg>
+      </a>
+
+    </div>
+
+    <!-- Language Switch -->
+    <div class="flex border border-indigo-300 rounded-lg overflow-hidden">
+      <button
+        @click="changeLanguage('bn')"
+        :class="i18n.currentLang === 'bn'
+          ? 'bg-indigo-600 text-white'
+          : 'bg-white text-indigo-600 hover:bg-indigo-50'"
+        class="px-4 py-1.5 text-sm font-semibold transition">
+        বাংলা
+      </button>
+
+      <button
+        @click="changeLanguage('en')"
+        :class="i18n.currentLang === 'en'
+          ? 'bg-indigo-600 text-white'
+          : 'bg-white text-indigo-600 hover:bg-indigo-50'"
+        class="px-4 py-1.5 text-sm font-semibold transition">
+        EN
+      </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <button @click="toggleMenu" class="md:hidden p-2 rounded-lg border border-green-700">
+      <svg class="w-6 h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+  </div>
+</div>
+
 
       <!-- Navbar -->
       <nav class="bg-green-700 text-white text-sm md:text-base">

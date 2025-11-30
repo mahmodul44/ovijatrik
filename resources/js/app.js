@@ -11,8 +11,6 @@ window.Alpine = Alpine;
 Alpine.plugin(persist);
 Alpine.start();
 
-// Vue
-// reactive ইমপোর্ট করা হলো
 import { createApp, reactive } from 'vue'; 
 import router from './router';
 import App from './App.vue';
