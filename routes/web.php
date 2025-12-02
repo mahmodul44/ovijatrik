@@ -124,6 +124,8 @@ Route::post('/get-project-ledger', [ProjectExpenseController::class, 'getProject
 Route::get('/project-search', [ProjectController::class, 'projectSearch'])->name('project.search');
 Route::post('/admin/project/{project}/images/ajax-store', [ProjectController::class, 'imageStore'])->name('projectimages.store');
 Route::delete('/admin/project/images/{image}', [ProjectController::class, 'ajaxDelete'])->name('project.images.ajaxDelete');
+// project wise ledger total
+Route::get('/project-wise-total/{project_id}', [ProjectController::class, 'projectWiseTotal']);
 
 Route::get('/expense-search', [ExpenseController::class, 'expenseSearch'])->name('expense.search');
 Route::get('/admin/member-pending', [MemberController::class, 'memberPending'])->name('member.pendinglist');

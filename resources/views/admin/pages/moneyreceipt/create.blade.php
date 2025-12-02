@@ -65,11 +65,19 @@
                     </select>
                     </div>
             </div>
-            <div class="w-full md:w-1/4" id="ledgerInfo" style="display:none;">
-            <span id="ledger_balance"
+            <div class="flex flex-col md:flex-row gap-4 md:items-end">
+            <div class="w-full md:w-1/2" id="projectledgerInfo" style="display:none;">
+                <span id="project_ledger_balance"
                 class="block text-sm font-semibold text-gray-700 dark:text-gray-200">
-            </span>
+                </span>
             </div>
+            <div class="w-full md:w-1/2" id="ledgerInfo" style="display:none;">
+              <span id="ledger_balance"
+                class="block text-sm font-semibold text-gray-700 dark:text-gray-200">
+              </span>
+            </div>
+            </div>
+
             <!-- Member / Others Section -->
             <div class="flex flex-col md:flex-row gap-4 md:items-end">
                 <div class="w-full md:w-2/4">
@@ -104,7 +112,7 @@
         <!-- Mobile Account No -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Account No <span class="text-red-600">*</span>
+                Account No <span class="text-red-600"></span>
             </label>
             <input type="text" id="mobile_account_no" name="mobile_account_no"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
@@ -128,24 +136,22 @@
 
 <div id="bankFields" class="hidden mt-3">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-        <!-- Bank Account No -->
+         <!-- Bank Name -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Bank Account No <span class="text-red-600">*</span>
+                Donar Bank <span class="text-red-600"></span>
             </label>
-            <input type="text" id="bank_account_no" name="bank_account_no"
+            <input type="text" id="bank_name" name="bank_name"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
                 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
                 focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
-
-        <!-- Bank Name -->
+        <!-- Bank Account No -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Bank Name <span class="text-red-600">*</span>
+                Account No <span class="text-red-600"></span>
             </label>
-            <input type="text" id="bank_name" name="bank_name"
+            <input type="text" id="bank_account_no" name="bank_account_no"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
                 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
                 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -262,6 +268,28 @@ $('#bank_transaction_no').on('input', function () {
 });
 
 $(document).ready(function () {
+    $('#project_id').on('change', function () {
+        let projectId = $(this).val();
+
+        if (projectId) {
+            $.ajax({
+                url: '/project-wise-total/' + projectId,
+                type: 'GET',
+                success: function (response) {
+                    $('#projectledgerInfo').show();
+
+                    $('#project_ledger_balance').text(
+                        "Project Total Ledger: " + response.total + " BDT"
+                    );
+                }
+            });
+        }
+    });
+
+});
+
+
+$(document).ready(function () {
     $('.project-select').select2({
         placeholder: "Search by Name Or Code",
         minimumInputLength: 2,
@@ -314,7 +342,7 @@ $('#account_id').on('change', function () {
                 toastr.error(res.message);
                 $('#ledgerInfo').hide();
             } else {
-                $('#ledger_balance').text("Ledger Balance : " + res.balance + " BDT");
+                $('#ledger_balance').text("Account Wise Ledger : " + res.balance + " BDT");
                 $('#ledgerInfo').show();
             }
         }

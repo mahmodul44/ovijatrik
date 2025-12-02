@@ -122,18 +122,41 @@
         </thead>
 
         <tbody>
-            @php 
-            $balance = 0;
+
+        {{-- =======================
+            PREVIOUS BALANCE ROW
+        ======================== --}}
+        @php 
+            $balance = $previousBalance; 
             $totalDeposit = 0;
             $totalWithdraw = 0;
         @endphp
+
+        @if($previousBalance != 0)
+            <tr style="background:#fff6e6; font-weight:bold;">
+                <td>
+                    {{ $from ? \Carbon\Carbon::parse($from)->subDay()->format('d/m/Y') : '' }}
+                </td>
+                <td>Previous Balance</td>
+                <td></td>
+                <td></td>
+                <td>{{ number_format($previousBalance,2) }}</td>
+            </tr>
+        @endif
+
+
+        {{-- =======================
+            MAIN RESULT ROWS
+        ======================== --}}
         @foreach($reportData as $row)
 
             @php
-            $deposit = $row->transaction_type == 1 ? $row->transaction_amount : 0;
-            $withdraw = $row->transaction_type == -1 ? $row->transaction_amount : 0;
+                $deposit = $row->transaction_type == 1 ? $row->transaction_amount : 0;
+                $withdraw = $row->transaction_type == -1 ? $row->transaction_amount : 0;
+
                 $totalDeposit  += $deposit;
                 $totalWithdraw += $withdraw;
+
                 $balance += ($deposit - $withdraw);
             @endphp
 
@@ -144,18 +167,18 @@
                     @if(!$projectId)
                         <b>{{ $row->project_code }} - {{ $row->project_title }}</b><br>
                     @endif
-                     @if($row->transaction_type == '1')
-                        Receipt No: {{ $row->mr_no }}
-                        Name: {{ $row->member_name }}
+
+                    @if($row->transaction_type == '1')
+                        Receipt No: {{ $row->mr_no }}<br>
+                        Name: {{ $row->member_name }}<br>
                         Account: {{ $row->account_no }}
                     @else
-                     @if(!empty($row->expense_cat_name))
-                        <b>{{ $row->expense_cat_name }}</b><br>
-                    @endif
-                        Voucher No: {{ $row->expense_no }}
+                        @if(!empty($row->expense_cat_name))
+                            <b>{{ $row->expense_cat_name }}</b><br>
+                        @endif
+                        Voucher No: {{ $row->expense_no }}<br>
                         Account: {{ $row->account_no }}
-                    @endif  
-
+                    @endif
                 </td>
 
                 <td class="text-green">
@@ -166,31 +189,35 @@
                     {{ $withdraw > 0 ? number_format($withdraw,2) : '' }}
                 </td>
 
-                <td class="balance">{{ number_format($balance,2) }}</td>
+                <td>{{ number_format($balance,2) }}</td>
             </tr>
 
         @endforeach
 
-        </tbody>
-        <tfoot>
-    <tr style="background:#f1f1f1; font-weight:bold;">
-        <td colspan="2" style="text-align:right;">Total Summary:</td>
+    </tbody>
 
-        <td style="color:green;">
-            {{ number_format($totalDeposit, 2) }}
-        </td>
+    {{-- =======================
+        FOOTER SUMMARY ROW
+    ======================== --}}
+    <tfoot>
+        <tr style="background:#f1f1f1; font-weight:bold;">
+            <td colspan="2" style="text-align:right;">Total Summary:</td>
 
-        <td style="color:crimson;">
-            {{ number_format($totalWithdraw, 2) }}
-        </td>
+            <td style="color:green;">
+                {{ number_format($totalDeposit, 2) }}
+            </td>
 
-        <td>
-            {{ number_format($balance, 2) }}
-        </td>
-    </tr>
-</tfoot>
+            <td style="color:crimson;">
+                {{ number_format($totalWithdraw, 2) }}
+            </td>
 
-    </table>
+            <td>
+                {{ number_format($balance, 2) }}
+            </td>
+        </tr>
+    </tfoot>
+
+</table>
 
     <div class="footer-btns">
         <button class="btn" onclick="window.print()">Print</button>

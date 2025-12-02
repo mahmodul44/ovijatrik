@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\About;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\FiscalYear;
@@ -192,6 +193,7 @@ class FalseReceiptController extends Controller
     }
 
     function show($id){
+        $data['abouts'] = About::first();
         $data['invoiceInfo'] = FalseReceipt::with(['paymentmethod','project'])->findOrFail($id);
         return view('admin.pages.falsereceipt.falseinvoice', $data);
     }

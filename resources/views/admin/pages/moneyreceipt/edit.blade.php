@@ -88,7 +88,7 @@
     <!-- Payment Account -->
     <div>
         <label for="account_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-            Account <span class="text-red-600">*</span>
+           Receiving Account <span class="text-red-600">*</span>
         </label>
         <select required id="account_id" name="account_id"
             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 
@@ -127,7 +127,7 @@
                 class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200">
     </div>
     <div class="w-full md:w-1/4">
-        <label for="pay_method_id" class="block text-gray-700 dark:text-gray-300 font-medium mb-1">Payment Method <span class="text-red-600">*</span></label>
+        <label for="pay_method_id" class="block text-gray-700 dark:text-gray-300 font-medium mb-1">Receiving Method <span class="text-red-600">*</span></label>
         <select id="pay_method_id" name="pay_method_id"
             class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 text-sm bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200">
             <option value="">-- Select --</option>
@@ -150,7 +150,7 @@
 
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Account No <span class="text-red-600">*</span>
+                Account No <span class="text-red-600"></span>
             </label>
             <input type="text" id="mobile_account_no" name="mobile_account_no"
                    value="{{ old('mobile_account_no', $invoiceInfo->mobile_account_no ?? '') }}"
@@ -177,24 +177,22 @@
 <!-- Bank Payment Fields -->
 <div id="bankFields" class="hidden mt-4">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-        <div>
+          <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Bank Account No <span class="text-red-600">*</span>
+               Donar Bank  <span class="text-red-600"></span>
             </label>
-            <input type="text" id="bank_account_no" name="bank_account_no"
-                   value="{{ old('bank_account_no', $invoiceInfo->bank_account_no ?? '') }}"
+            <input type="text" id="bank_name" name="bank_name"
+                   value="{{ old('bank_name', $invoiceInfo->bank_name ?? '') }}"
                    class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
                           bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
                           focus:ring-2 focus:ring-blue-500">
         </div>
-
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Bank Name <span class="text-red-600">*</span>
+                 Account No <span class="text-red-600"></span>
             </label>
-            <input type="text" id="bank_name" name="bank_name"
-                   value="{{ old('bank_name', $invoiceInfo->bank_name ?? '') }}"
+            <input type="text" id="bank_account_no" name="bank_account_no"
+                   value="{{ old('bank_account_no', $invoiceInfo->bank_account_no ?? '') }}"
                    class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 
                           bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 
                           focus:ring-2 focus:ring-blue-500">
@@ -384,7 +382,7 @@ $('#account_id').on('change', function () {
 
 // ✔ When project changes (reload ledger)
 $('#project_id').on('change', function () {
-    $('#account_id').val("");   // reset account until selected again
+    $('#account_id').val("");   
     $('#ledgerInfo').hide();
 });
 

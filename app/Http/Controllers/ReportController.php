@@ -41,6 +41,24 @@ function projectWiseSearch(Request $request)
     $from = $request->from_date ? Carbon::createFromFormat('d/m/Y', $request->from_date)->format('Y-m-d') : null;
     $to   = $request->to_date   ? Carbon::createFromFormat('d/m/Y', $request->to_date)->format('Y-m-d') : null;
 
+    $previousBalance = 0;
+
+    if ($from && $projectId) {
+        $previousTransactions = DB::table('transactions')
+            ->where('project_id', $projectId)
+            ->where('transaction_date', '<', $from)
+            ->get();
+
+        foreach ($previousTransactions as $p) {
+            if ($p->transaction_type == 1) {
+                $previousBalance += $p->transaction_amount;
+            } elseif ($p->transaction_type == -1) {
+                $previousBalance -= $p->transaction_amount;
+            }
+        }
+    }
+
+
     $query = DB::table('transactions')
         ->leftJoin('accounts', 'accounts.account_id', '=', 'transactions.account_id')
         ->leftJoin('users','users.id','=','transactions.member_id')
@@ -90,7 +108,8 @@ function projectWiseSearch(Request $request)
         'from' => $from,
         'to' => $to,
         'projectId' => $projectId,
-        'projectInfo' => $projectInfo
+        'projectInfo' => $projectInfo,
+        'previousBalance' => $previousBalance
     ]);
 }
 

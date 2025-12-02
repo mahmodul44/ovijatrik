@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Project;
+use App\Models\Ledger;
 use App\Models\ProjectImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -316,5 +317,15 @@ public function saveLink(Request $request, $id)
         'message' => 'Project link saved successfully!'
     ]);
 }
+
+public function projectWiseTotal($project_id)
+{
+    $total = Ledger::where('project_id', $project_id)->sum('ledger_amount'); 
+
+    return response()->json([
+        'total' => $total
+    ]);
+}
+
 
 }
