@@ -212,6 +212,41 @@
         </div>
     </div>
 
+    <!-- Loan Account info Menu Dropdown -->
+    @php $accountActive = in_array($currentRoute, ['loanaccount.index', 'loanaccount.create', 'loanaccount.edit']); @endphp
+    <div x-data="{ open: @json($accountActive) }">
+        <button @click="open = !open" 
+                :class="open ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
+                class="flex w-full items-center justify-between p-2 rounded-lg transition-colors">
+            <span class="flex items-center space-x-2">
+            <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" stroke-width="1.8"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3 10h18M4 10l8-6 8 6M5 10v10m14-10v10M8 21h8" />
+            </svg>
+
+                <span x-show="!sidebarCollapsed" x-transition>Loan Account</span>
+            </span>
+            <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
+                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+
+        <!-- Submenu -->
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('loanaccount.create') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ in_array($currentRoute, ['loanaccount.create']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Add New</span>
+            </a>
+            <a href="{{ route('loanaccount.index') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{  in_array($currentRoute, ['loanaccount.index']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- List</span>
+            </a>
+        </div>
+    </div>
     <!-- Project Dropdown -->
     @php $projectActive = in_array($currentRoute, ['project.index', 'project.create', 'project.edit', 'project.show','project.completeprojectlist']); @endphp
     <div x-data="{ open: @json($projectActive) }">
@@ -602,6 +637,42 @@
                 <span> Pending List</span>
             </a>
             @endif
+        </div>
+    </div>
+
+    <!-- Loan Account info Menu Dropdown -->
+    @php $accountActive = in_array($currentRoute, ['loan.loanapply', 'loan.loancreate']); @endphp
+    <div x-data="{ open: @json($accountActive) }">
+        <button @click="open = !open" 
+                :class="open ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
+                class="flex w-full items-center justify-between p-2 rounded-lg transition-colors">
+            <span class="flex items-center space-x-2">
+            <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" stroke-width="1.8"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3 10h18M4 10l8-6 8 6M5 10v10m14-10v10M8 21h8" />
+            </svg>
+
+                <span x-show="!sidebarCollapsed" x-transition>Loan Apply</span>
+            </span>
+            <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
+                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+
+        <!-- Submenu -->
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('loan.loancreate') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ in_array($currentRoute, ['loan.loancreate']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Add New</span>
+            </a>
+            <a href="{{ route('loan.loanapply') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{  in_array($currentRoute, ['loan.loanapply']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- List</span>
+            </a>
         </div>
     </div>
 

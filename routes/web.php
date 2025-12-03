@@ -1,29 +1,30 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Models\MoneyReceipt;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ExpenseCategoryController;
-use App\Http\Controllers\SubCategoryController;
-use App\Http\Controllers\MoneyReceiptController;
-use App\Http\Controllers\ExpenseController;
-use App\Http\Controllers\ProjectExpenseController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\MemberController;
-use App\Http\Controllers\TransferController;
-use App\Http\Controllers\MyTransactionController;
-use App\Http\Controllers\MemberReceiptController;
 use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\SalaryController;
+use App\Http\Controllers\TransferController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LoanAccountController;
+use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\FalseReceiptController;
-use App\Models\MoneyReceipt;
+use App\Http\Controllers\MoneyReceiptController;
+use App\Http\Controllers\MemberReceiptController;
+use App\Http\Controllers\MyTransactionController;
+use App\Http\Controllers\ProjectExpenseController;
+use App\Http\Controllers\ExpenseCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,6 +77,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('projectexpense', ProjectExpenseController::class);
         Route::resource('employee', EmployeeController::class);
         Route::resource('account', AccountController::class);
+        Route::resource('loanaccount', LoanAccountController::class);
         Route::resource('salary', SalaryController::class);
         Route::resource('falsereceipt', FalseReceiptController::class);
     });
@@ -120,7 +122,6 @@ Route::get('/member/fiscal-info/{id}', [MemberReceiptController::class, 'getFisc
 
 Route::post('/get-project-ledger', [ProjectExpenseController::class, 'getProjectLedger']);
 
-
 Route::get('/project-search', [ProjectController::class, 'projectSearch'])->name('project.search');
 Route::post('/admin/project/{project}/images/ajax-store', [ProjectController::class, 'imageStore'])->name('projectimages.store');
 Route::delete('/admin/project/images/{image}', [ProjectController::class, 'ajaxDelete'])->name('project.images.ajaxDelete');
@@ -161,6 +162,12 @@ Route::post('/admin/salaryapprove', [SalaryController::class, 'salaryApprove'])-
 Route::post('/admin/salarydecline/{id}', [SalaryController::class, 'salaryDecline'])
     ->name('salary.salarydecline');
 
+/* Loan Apply and Loan Payment */
+Route::get('/admin/loanapply', [LoanAccountController::class, 'loanApply'])->name('loan.loanapply');  
+Route::get('/admin/loan/loancreate', [LoanAccountController::class, 'loanCreate'])->name('loan.loancreate');     
+Route::post('/admin/loan/loanstore', [LoanAccountController::class, 'falseReceiptstore'])->name('falsereceipt.store');     
+Route::post('/get-loanaccount-ledger',[LoanAccountController::class,'getloanaccountLedger']);
+Route::get('/project-total/{project_id}', [LoanAccountController::class, 'projectTotal']);
 
 /* report */
 Route::get('/admin/project-wise',[ReportController::class,'projectWise'])->name('report.project-wise');
