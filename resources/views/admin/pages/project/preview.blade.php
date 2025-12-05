@@ -97,6 +97,13 @@
                 </p>
             </div>
 
+             <div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Loan Amount</p>
+                <p class="text-sm font-semibold text-gray-800 dark:text-gray-100">
+                    {{ number_format($projectPreview->loan_amount,2) }} BDT
+                </p>
+            </div>
+
             <div>
                 <p class="text-sm text-gray-500 dark:text-gray-400">Image</p>
                 <img src="{{ asset($projectPreview->image) }}" 

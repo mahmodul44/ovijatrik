@@ -641,7 +641,7 @@
     </div>
 
     <!-- Loan Account info Menu Dropdown -->
-    @php $accountActive = in_array($currentRoute, ['loan.loanapply', 'loan.loancreate']); @endphp
+    @php $accountActive = in_array($currentRoute, ['loan.loanapply', 'loan.loancreate','loan.loanedit','loan.loanpending']); @endphp
     <div x-data="{ open: @json($accountActive) }">
         <button @click="open = !open" 
                 :class="open ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
@@ -666,13 +666,30 @@
             <a href="{{ route('loan.loancreate') }}" 
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{ in_array($currentRoute, ['loan.loancreate']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Add New</span>
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+                stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" 
+                    d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <span>Add New</span>
             </a>
             <a href="{{ route('loan.loanapply') }}" 
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{  in_array($currentRoute, ['loan.loanapply']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
                <span>- List</span>
             </a>
+            @if(Auth::check() && Auth::user()->role == 1)
+            <a href="{{ route('loan.loanpending') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'loan.loanpending' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+                stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" 
+                    d="M12 6v6l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span> Pending List</span>
+            </a>
+            @endif
         </div>
     </div>
 

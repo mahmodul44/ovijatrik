@@ -24,7 +24,7 @@
             </li>
             </ol>
         </nav>
-        <a href="{{ route('transfer.create') }}"
+        <a href="{{ route('loan.loancreate') }}"
         class="inline-flex items-center gap-1 bg-blue-600 dark:bg-blue-500 
                 text-white text-sm px-3 py-1.5 rounded-full shadow-sm 
                 hover:bg-blue-700 dark:hover:bg-blue-600 
@@ -53,30 +53,30 @@
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600">#</th>
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Date</th>
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Invoice No</th>
-                    <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">From Project</th>
-                    <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">To Project</th>
+                    <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Project</th>
+                    <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Loan Account</th>
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Amount</th>
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Status</th>
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Action</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                @if ($transferlist)
-                @foreach ($transferlist as $index => $value)
+                @if ($loantransaction)
+                @foreach ($loantransaction as $index => $value)
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition">
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center">{{ $index + 1 }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center">{{ $value->transfer_date }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center text-gray-600 dark:text-gray-300">{{ $value->transfer_no }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-left text-gray-700 dark:text-gray-200">{{ $value->fromProject->project_title }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-left text-gray-700 dark:text-gray-200">{{ $value->toProject->project_title }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-right font-medium text-gray-900 dark:text-gray-100">৳ {{ number_format($value->transfer_amount, 2) }}</td>
+                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center">{{ $value->loan_date }}</td>
+                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center text-gray-600 dark:text-gray-300">{{ $value->loan_transaction_no }}</td>
+                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-left text-gray-700 dark:text-gray-200">{{ $value->loanProject->project_title }}</td>
+                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-left text-gray-700 dark:text-gray-200">{{ $value->loanAccount->account_name }} {{ $value->loanAccount->account_no }}</td>
+                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-right font-medium text-gray-900 dark:text-gray-100">৳ {{ number_format($value->loan_amount, 2) }}</td>
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center">
-                            <span class="px-3 py-1 text-xs font-medium rounded-full {{ getStatusLabel($value->status)['class'] }}">
-                                {{ getStatusLabel($value->transfer_status)['label'] }}
+                            <span class="px-3 py-1 text-xs font-medium rounded-full {{ getStatusLabel($value->loan_status)['class'] }}">
+                                {{ getStatusLabel($value->loan_status)['label'] }}
                             </span>
                         </td>
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 flex justify-center items-center gap-2">
-                            <button onclick="openPreviewWindow('{{ route('transfer.transferPreview', $value->transfer_id) }}')" 
+                            {{-- <button onclick="openPreviewWindow('{{ route('transfer.transferPreview', $value->loan_transactions_id) }}')" 
                                 title="Preview"
                                 class="inline-flex items-center justify-center w-7 h-7 text-blue-600 bg-blue-50 rounded hover:bg-blue-100 mr-1">
                             <svg xmlns="http://www.w3.org/2000/svg" 
@@ -91,10 +91,10 @@
                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 
                                         4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
-                        </button>
-                            @if($value->transfer_status == -1)
+                        </button> --}}
+                            @if($value->loan_status == -1)
                                 <!-- Edit -->
-                                <a href="{{ route('transfer.edit', $value->transfer_id) }}"
+                                <a href="{{ route('loan.loanedit', $value->loan_transactions_id) }}"
                                     title="Edit"
                                     class="inline-flex items-center justify-center w-7 h-7 rounded 
                                             bg-indigo-50 hover:bg-indigo-100 text-indigo-600 
@@ -114,7 +114,7 @@
                                 </a>
 
                                 <!-- Delete -->
-                                <form action="{{ route('transfer.destroy', $value->transfer_id) }}" 
+                                <form action="{{ route('transfer.destroy', $value->loan_transactions_id) }}" 
                                       method="POST" class="deleteTransfer inline-block">
                                     @csrf
                                     @method('DELETE')

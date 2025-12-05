@@ -165,10 +165,17 @@ Route::post('/admin/salarydecline/{id}', [SalaryController::class, 'salaryDeclin
 /* Loan Apply and Loan Payment */
 Route::get('/admin/loanapply', [LoanAccountController::class, 'loanApply'])->name('loan.loanapply');  
 Route::get('/admin/loan/loancreate', [LoanAccountController::class, 'loanCreate'])->name('loan.loancreate');     
-Route::post('/admin/loan/loanstore', [LoanAccountController::class, 'falseReceiptstore'])->name('falsereceipt.store');     
+Route::post('/admin/loan/loanstore', [LoanAccountController::class, 'loanStore'])->name('loan.loanstore');     
 Route::post('/get-loanaccount-ledger',[LoanAccountController::class,'getloanaccountLedger']);
 Route::get('/project-total/{project_id}', [LoanAccountController::class, 'projectTotal']);
-
+Route::get('/admin/loan/loanpending', [LoanAccountController::class, 'loanPending'])->name('loan.loanpending');     
+Route::get('/admin/loan-preview/{id}', [LoanAccountController::class, 'loanPreview'])->name('loan.preview');
+Route::post('/admin/loan-approve/{id}', [LoanAccountController::class, 'approve'])->name('loan.approve');
+Route::post('/admin/loan-decline/{id}', [LoanAccountController::class, 'declineLoan'])->name('loan.decline');
+Route::get('/admin/loan/loanedit/{id}', [LoanAccountController::class, 'loanEdit'])->name('loan.loanedit');
+Route::put('/admin/loan/loanupdate/{id}', 
+    [LoanAccountController::class,'loanUpdate'])
+    ->name('loan.loanupdate');
 /* report */
 Route::get('/admin/project-wise',[ReportController::class,'projectWise'])->name('report.project-wise');
 Route::get('/admin/project-wise-search',[ReportController::class,'projectWiseSearch'])->name('report.project-wise-search');
