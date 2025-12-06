@@ -73,9 +73,6 @@ class MemberReceiptController extends Controller
         $paymentDate = Carbon::createFromFormat('d/m/Y', $request->payment_date)->format('Y-m-d');
         $fiscalYear  = getFiscalYearFromDate($paymentDate);
 
-        // =======================
-        // ✅ MR NO GENERATE
-        // =======================
         $prefix     = 'OVJMD';
         $yearMonth  = date('ym'); 
 
@@ -98,14 +95,12 @@ class MemberReceiptController extends Controller
             $mrNo = "$prefix-$yearMonth$newNumber";
         }
 
-        // =======================
-        // ✅ SAVE MONEY RECEIPT
-        // =======================
+ 
         $moneyreceipt = new MoneyReceipt();
 
         $moneyreceipt->mr_no               = $mrNo;
         $moneyreceipt->project_id          = '10000001';
-        $moneyreceipt->receipt_type        = 1;
+        $moneyreceipt->receipt_type        = '1';
         $moneyreceipt->fiscal_year         = $fiscalYear;
         $moneyreceipt->payment_date        = $paymentDate;
         $moneyreceipt->selected_months     = json_encode($request->months);
@@ -119,37 +114,34 @@ class MemberReceiptController extends Controller
         $moneyreceipt->transaction_no      = $request->transaction_no;
         $moneyreceipt->payment_remarks     = $request->payment_remarks;
         $moneyreceipt->created_by          = Auth::id();
-        $moneyreceipt->status              = 1; // ✅ Direct Approved
+        $moneyreceipt->status              = '1'; // ✅ Direct Approved
 
         $moneyreceipt->save();
 
-        // =======================
-        // ✅ INSERT TRANSACTION
-        // =======================
+        $realMrId = DB::table('money_receipts')
+        ->where('mr_no', $mrNo)
+        ->value('mr_id');
+      
         DB::table('transactions')->insert([
+            'reference_type'       => 'member_receipt',
             'transaction_date'     => $paymentDate,
             'fiscal_year'          => $fiscalYear,
             'member_id'            => $request->member_id,
             'project_id'           => '10000001',
             'account_id'           => $request->account_id,
-            'transaction_type'     => 1, // IN
+            'transaction_type'     => '1', // IN
             'transaction_amount'   => $request->payment_amount,
-            'reference_id'         => $moneyreceipt->mr_id,
+            'reference_id'         => $realMrId,
             'transaction_added_by' => Auth::id(),
             'transaction_added_on' => now(),
             'operation_ip'         => $request->ip()
         ]);
 
-        // =======================
-        // ✅ PROJECT COLLECTION UPDATE
-        // =======================
+  
         DB::table('projects')
             ->where('project_id', '10000001')
             ->increment('collection_amount', $request->payment_amount);
 
-        // =======================
-        // ✅ ACCOUNT BALANCE UPDATE (MAIN POINT)
-        // =======================
         DB::table('accounts')
             ->where('account_id', $request->account_id)
             ->increment('current_balance', $request->payment_amount);
@@ -158,7 +150,7 @@ class MemberReceiptController extends Controller
 
         return response()->json([
             'status'  => true,
-            'message' => 'Money Receipt Created & Balance Updated Successfully',
+            'message' => 'Money Receipt Created Successfully',
             'moneyreceipt' => $moneyreceipt
         ], 200);
 

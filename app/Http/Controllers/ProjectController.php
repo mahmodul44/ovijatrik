@@ -323,7 +323,7 @@ public function projectWiseTotal($project_id)
     $total = Ledger::where('project_id', $project_id)->sum('ledger_amount'); 
 
     return response()->json([
-        'total' => $total
+        'total' => number_format($total, 2)
     ]);
 }
 

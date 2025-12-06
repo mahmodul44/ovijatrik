@@ -35,4 +35,14 @@ class FalseReceipt extends Model
     {
         return $this->belongsTo(Project::class, 'project_id', 'project_id');
     }
+
+    public function createdUser()
+    {
+     return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class, 'account_id');
+    }
 }

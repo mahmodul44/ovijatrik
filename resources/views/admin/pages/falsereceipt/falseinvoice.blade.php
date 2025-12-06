@@ -41,9 +41,9 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 40px;
+            margin-bottom: 10px;
             border-bottom: 1px solid #eee;
-            padding-bottom: 20px;
+            padding-bottom: 10px;
         }
 
         .company-details img {
@@ -115,14 +115,14 @@
         .invoice-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .invoice-table th {
             background-color: var(--theme-color);
             color: white;
             text-align: left;
-            padding: 12px 15px;
+            padding: 12px 5px;
             font-size: 13px;
             text-transform: uppercase;
         }
@@ -185,7 +185,7 @@
         .footer {
             margin-top: 60px;
             padding-top: 20px;
-            border-top: 1px solid #eee;
+            /* border-top: 1px solid #eee; */
         }
 
         .signature-area {
@@ -288,9 +288,9 @@
                 <div class="box-title">Received From (Donor)</div>
                 <div class="info-content">
                     <p><strong>Name:</strong> {{ $invoiceInfo->member ? $invoiceInfo->member->name : $invoiceInfo->donar_name }}</p>
-                    <p><strong>Member ID:</strong> MEM-0092</p>
-                    <p><strong>Phone:</strong> +880 1712-345678</p>
-                    <p><strong>Email:</strong> karim.donor@email.com</p>
+                    <p><strong>Phone:</strong> </p>
+                    {{-- <p><strong>Member ID:</strong> MEM-0092</p>
+                    <p><strong>Email:</strong> karim.donor@email.com</p> --}}
                 </div>
             </div>
 
@@ -298,9 +298,9 @@
                 <div class="box-title">Receipt Details</div>
                 <div class="info-content">
                     <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($invoiceInfo->fls_receipt_date)->format('d M, Y') }}</p>
-                    <p><strong>Time:</strong> 10:30 AM</p>
-                    <p><strong>Collected By:</strong> Admin Desk</p>
-                    <p><strong>Status:</strong> <span style="color:green; font-weight:bold;">Successful</span></p>
+                    {{-- <p><strong>Time:</strong> {{ \Carbon\Carbon::parse($invoiceInfo->created_at)->format('h:i A') }}</p> --}}
+                    <p><strong>Received By:</strong>  {{ $invoiceInfo->createdUser->name ?? 'N/A' }}</p>
+                    <p><strong>Received Account:</strong> {{ $invoiceInfo->account->account_name }} - {{ $invoiceInfo->account->account_no }}</p>
                 </div>
             </div>
         </section>
@@ -331,14 +331,13 @@
                 <span><strong>Method:</strong> {{ $invoiceInfo->pay_method_id ? $invoiceInfo->paymentmethod->pay_method_name : $invoiceInfo->pay_method_id }}</span>
                 <span><strong>Sender No:</strong> {{ $invoiceInfo->mobile_account_no ? $invoiceInfo->mobile_account_no : '' }}</span>
                 <span><strong>TrxID:</strong> {{ $invoiceInfo->transaction_no ? $invoiceInfo->transaction_no : '' }}</span>
-                <span><strong>Ref:</strong> </span>
             </div>
 
             <div class="total-box">
                 <div class="total-label">Grand Total Amount</div>
                 <div class="total-amount">৳ {{ number_format($invoiceInfo->fls_receipt_amount, 2) }}</div>
-                <div style="font-size: 12px; color: #666; margin-top: 5px;">
-                    (Seven Thousand Taka Only)
+                <div style="font-size: 12px; color: #1f1e1e; margin-top: 5px;">
+                    <strong> ({{ amountInWords($invoiceInfo->fls_receipt_amount) }}) </strong>
                 </div>
             </div>
         </section>

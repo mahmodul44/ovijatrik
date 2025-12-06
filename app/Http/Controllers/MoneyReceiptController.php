@@ -43,7 +43,7 @@ class MoneyReceiptController extends Controller
         $data['fiscalyears'] = FiscalYear::where('status',1)->get();
         $data['memberlist'] = User::where(['status' => 1,'role' => '3'])->get();
         $data['paymentmethod'] = PaymentMethod::where('status', 1)->get();
-        $data['accounts'] = Account::where('status', 1)->get();
+        $data['accounts'] = Account::where('status', 1)->where('account_type',2)->get();
         return view('admin.pages.moneyreceipt.create', $data);
     }
 
@@ -93,9 +93,6 @@ class MoneyReceiptController extends Controller
                 $newNumber = str_pad(intval($newNumber) + 1, 3, '0', STR_PAD_LEFT);
                 $mrNo = "$prefix-$yearMonth$newNumber";
             }
-            // do {
-            // $mrNo = 'OVIJ' . rand(1111, 9999) . date('Ymd');
-            // } while (MoneyReceipt::where('mr_no', $mrNo)->exists());
 
             $moneyreceipt->mr_no             = $mrNo;
             $moneyreceipt->project_id        = $request->project_id;
@@ -112,25 +109,56 @@ class MoneyReceiptController extends Controller
             $moneyreceipt->transaction_no    = $request->transaction_no;
             $moneyreceipt->payment_remarks   = $request->payment_remarks;
             $moneyreceipt->created_by        = Auth::id();
-            $moneyreceipt->status            = $request->status ? $request->status : 0;
+            $moneyreceipt->status            = 1;
+            $moneyreceipt->save();
 
-            if ($moneyreceipt->save()) {
-                $data['status'] = true;
-                $data['message'] = "Saved successfully.";
-                $data['moneyreceipt'] = $moneyreceipt;
-                return response(json_encode($data, JSON_PRETTY_PRINT), 200)->header('Content-Type', 'application/json');
-            } else {
-                $data['status'] = false;
-                $data['message'] = "Save failed! Please try again...";
-                $data['moneyreceipt'] = $moneyreceipt;
-                return response(json_encode($data, JSON_PRETTY_PRINT), 500)->header('Content-Type', 'application/json');
-            }
-        } catch (\Throwable $th) {
-            $data['status'] = false;
-            $data['message'] = "Something went wrong! Please try again...";
-            $data['errors'] = $th;
-            return response(json_encode($data, JSON_PRETTY_PRINT), 500)->header('Content-Type', 'application/json');
-        }
+             $realMrId = DB::table('money_receipts')
+                    ->where('receipt_type', 2)
+                    ->where('mr_no', $mrNo)
+                    ->value('mr_id');
+
+
+        DB::table('transactions')->insert([
+            'transaction_date'     => $paymentDate,
+            'fiscal_year'          => $fiscalYear,
+            'project_id'           => $request->project_id,
+            'account_id'           => $request->account_id,
+            'transaction_type'     => 1, 
+            'transaction_amount'   => $request->payment_amount,
+            'reference_type'       => 'money_receipt',
+            'reference_id'         => $realMrId, 
+            'pay_method_id'        => $request->pay_method_id,
+            'transaction_added_by' => Auth::id(),
+            'transaction_added_on' => now(),
+        ]);
+
+  
+        DB::table('projects')
+            ->where('project_id', $request->project_id)
+            ->increment('collection_amount', $request->payment_amount);
+
+        DB::table('accounts')
+            ->where('account_id', $request->account_id)
+            ->increment('current_balance', $request->payment_amount);
+
+        DB::commit();
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Money Receipt Created Successfully',
+            'moneyreceipt' => $moneyreceipt
+        ], 200);
+
+    } catch (\Throwable $th) {
+
+        DB::rollBack();
+
+        return response()->json([
+            'status'  => false,
+            'message' => "Something went wrong!",
+            'errors'  => $th->getMessage()
+        ], 500);
+      }
     }
 
     public function edit($id)

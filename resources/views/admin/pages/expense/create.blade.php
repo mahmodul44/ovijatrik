@@ -273,7 +273,7 @@
                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
         </svg>
-        Save Expense
+        Save 
     </button>
 </div>
 
@@ -355,47 +355,93 @@ $('#account_id').on('change', function () {
         }
     });
 });
-
 $("#expenseInsertForm").on('submit', function(e){
     e.preventDefault();
     let thisForm = $(this);
 
-    $.ajax({
-        type: "POST",
-        url: "{{route('expense.store')}}",
-        data: new FormData(this),
-        dataType: "json",
-        contentType: false,
-        cache: false,
-        processData: false,
-        beforeSend: function() {
-            thisForm.find('button[type="submit"]')
-                .prop("disabled", true)
-                .addClass('opacity-50 cursor-not-allowed')
-                .text('Submitting...');
-        },
-        success: function (response) {
-            toastr.success(response.message);
-            setTimeout(function() {
-                location.href = "{{route('expense.index')}}";
-            }, 2000)
-        },
-         error: function(xhr) {
-            let responseText = jQuery.parseJSON(xhr.responseText);
-            toastr.error(responseText.message);
-            $.each(responseText.errors, function(key, val) {
-                thisForm.find("." + key + "-error").text(val[0]);
-            });
-        },
+    // SweetAlert2 confirmation before submission
+    Swal.fire({
+        title: 'Confirm Submission',
+        text: "Are you sure you want to add this expense? This will auto-approve and deduct the account balance.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Submit',
+        cancelButtonText: 'Cancel',
+    }).then((result) => {
+        if(result.isConfirmed){
 
-         complete: function() {
-            thisForm.find('button[type="submit"]')
-                .prop("disabled", false)
-                .removeClass('opacity-50 cursor-not-allowed')
-                .text('Save');
+            $.ajax({
+                type: "POST",
+                url: "{{route('expense.store')}}",
+                data: new FormData(thisForm[0]),
+                dataType: "json",
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    thisForm.find('button[type="submit"]')
+                        .prop("disabled", true)
+                        .addClass('opacity-50 cursor-not-allowed')
+                        .text('Submitting...');
+                },
+                success: function (response) {
+                    if(response.status){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        setTimeout(function() {
+                            location.href = "{{route('expense.index')}}";
+                        }, 2000);
+                    } else {
+                        // Backend returned insufficient balance or other error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            html: response.message +
+                                  (response.balance ? "<br><strong>Current Balance:</strong> "+response.balance : "")
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    let responseText = jQuery.parseJSON(xhr.responseText);
+                    let errorHtml = responseText.message || "Something went wrong!";
+                    if(responseText.errors){
+                        $.each(responseText.errors, function(key, val){
+                            errorHtml += "<br>" + val[0];
+                        });
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: errorHtml
+                    });
+                },
+                complete: function() {
+                    thisForm.find('button[type="submit"]')
+                        .prop("disabled", false)
+                        .removeClass('opacity-50 cursor-not-allowed')
+                        .text('Save');
+                }
+            });
+
+        } else {
+            // User cancelled submission
+            Swal.fire({
+                icon: 'info',
+                title: 'Cancelled',
+                text: 'Expense submission cancelled.',
+                timer: 1500,
+                showConfirmButton: false
+            });
         }
     });
+
 });
+
 
 </script>
 @endpush

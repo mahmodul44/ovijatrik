@@ -28,7 +28,7 @@ class FalseReceiptController extends Controller
     {
         $data['categoris'] = Category::where('status',1)->get();
         $data['fiscalyears'] = FiscalYear::where('status',1)->get();
-        $data['accounts'] = Account::where('status', 1)->get();
+        $data['accounts'] = Account::where('status', 1)->where('account_type',2)->get();
         $data['memberlist'] = User::where(['status' => 1,'role' => '3'])->get();
         $data['paymentmethod'] = PaymentMethod::where('status', 1)->get();
         return view('admin.pages.falsereceipt.create', $data);
@@ -122,7 +122,7 @@ class FalseReceiptController extends Controller
     {
         $data['categoris'] = Category::where('status',1)->get();
         $data['fiscalyears'] = FiscalYear::where('status',1)->get();
-        $data['accounts'] = Account::where('status', 1)->get();
+        $data['accounts'] = Account::where('status', 1)->where('account_type',2)->get();
         $data['memberlist'] = User::where(['status' => 1,'role' => '3'])->get();
         $data['paymentmethod'] = PaymentMethod::where('status', 1)->get();
         $data['projects'] = Project::where('status', 1)->get();
@@ -194,7 +194,7 @@ class FalseReceiptController extends Controller
 
     function show($id){
         $data['abouts'] = About::first();
-        $data['invoiceInfo'] = FalseReceipt::with(['paymentmethod','project'])->findOrFail($id);
+        $data['invoiceInfo'] = FalseReceipt::with(['paymentmethod','project','createdUser','account'])->findOrFail($id);
         return view('admin.pages.falsereceipt.falseinvoice', $data);
     }
 

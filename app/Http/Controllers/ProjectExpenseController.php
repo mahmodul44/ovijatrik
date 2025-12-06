@@ -31,92 +31,179 @@ class ProjectExpenseController extends Controller
     public function create()
     {
         $data['paymentmethod'] = PaymentMethod::where('status', 1)->get();
-        $data['accounts'] = Account::where('status', 1)->get();
+        $data['accounts'] = Account::where('status', 1)->where('account_type',2)->get();
         return view('admin.pages.projectexpense.create', $data);
     }
 
     function store(Request $request)
-    {
-        try {
-            $validate = Validator::make($request->all(), [
-                'expense_date'      => 'required',
-                'expense_amount'    => 'required',
-                'account_id'        => 'required',
-                'pay_method_id'     => 'required',
-                'bank_name'         => 'nullable|Max:100',
-                'bank_account_no'   => 'nullable|Max:50',
-                'mobile_account_no' => 'nullable|Max:15',
-                'expense_remarks'   => 'nullable|Max:200',
-                'transaction_no'    => 'nullable|Max:100',
-            ]);
+{
+    DB::beginTransaction();
 
-            if ($validate->fails()) {
-                $data['status'] = false;
-                $data['message'] = "Validation failed! Please check your inputs...";
-                $data['errors'] = $validate->errors();
-                return response(json_encode($data, JSON_PRETTY_PRINT), 400)->header('Content-Type', 'application/json');
-            }
-            $expenseDate = Carbon::createFromFormat('d/m/Y', $request->expense_date)->format('Y-m-d');
-            $fiscalYear = getFiscalYearFromDate($expenseDate);
-           
-            $expense = new Expense();
-            $prefix = 'OVPEXP';
-            $yearMonth = date('ym'); 
+    try {
+        // =========================
+        // ✅ VALIDATION
+        // =========================
+        $validate = Validator::make($request->all(), [
+            'expense_date'      => 'required',
+            'expense_amount'    => 'required|numeric|min:1',
+            'account_id'        => 'required',
+            'project_id'        => 'required',
+            'pay_method_id'     => 'required',
+            'bank_name'         => 'nullable|Max:100',
+            'bank_account_no'   => 'nullable|Max:50',
+            'mobile_account_no' => 'nullable|Max:15',
+            'expense_remarks'   => 'nullable|Max:200',
+            'transaction_no'    => 'nullable|Max:100',
+        ]);
 
-            $lastExpense = Expense::where('expense_no', 'LIKE', "$prefix-$yearMonth%")
-                        ->where('expense_type',1)
-                        ->orderBy('expense_id', 'desc')
-                        ->first();
+        if ($validate->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => "Validation failed!",
+                'errors'  => $validate->errors(),
+            ], 400);
+        }
 
-            if ($lastExpense) {
-                $lastNumber = intval(substr($lastExpense->expense_no, -3));
-                $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-            } else {
-                $newNumber = '001';
-            }
+        $expenseDate = Carbon::createFromFormat('d/m/Y', $request->expense_date)->format('Y-m-d');
+        $fiscalYear  = getFiscalYearFromDate($expenseDate);
 
+        $expenseAmount = $request->expense_amount;
+        $projectId     = $request->project_id;
+        $accountID     = $request->account_id;
+
+        // =========================
+        // ✅ 1️⃣ CHECK PROJECT LEDGER BALANCE
+        // =========================
+        $projectLedger = DB::table('debit_credit_ledger')
+            ->where('project_id', $projectId)
+            ->lockForUpdate()
+            ->first();
+
+        if (!$projectLedger) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Project ledger not found!'
+            ], 200);
+        }
+
+        if ($projectLedger->ledger_amount < $expenseAmount) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Insufficient Project Ledger Balance!',
+                'balance' => number_format($projectLedger->ledger_amount, 2)
+            ], 200);
+        }
+
+  
+        $account = DB::table('accounts')
+            ->where('account_id', $accountID)
+            ->where('account_type', 2)
+            ->lockForUpdate()
+            ->first();
+
+        if (!$account) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Account not found!'
+            ], 200);
+        }
+
+        if ($account->current_balance < $expenseAmount) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Insufficient Account Balance!',
+                'balance' => number_format($account->current_balance, 2)
+            ], 200);
+        }
+
+        $prefix    = 'OVPEXP';
+        $yearMonth = date('ym');
+
+        $lastExpense = Expense::where('expense_no', 'LIKE', "$prefix-$yearMonth%")
+            ->where('expense_type', 1)
+            ->orderBy('expense_id', 'desc')
+            ->first();
+
+        if ($lastExpense) {
+            $lastNumber = intval(substr($lastExpense->expense_no, -3));
+            $newNumber  = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+        } else {
+            $newNumber = '001';
+        }
+
+        $expNo = "$prefix-$yearMonth$newNumber";
+
+        while (Expense::where('expense_no', $expNo)->exists()) {
+            $newNumber = str_pad(intval($newNumber) + 1, 3, '0', STR_PAD_LEFT);
             $expNo = "$prefix-$yearMonth$newNumber";
+        }
 
-            while (Expense::where('expense_no', $expNo)->exists()) {
-                $newNumber = str_pad(intval($newNumber) + 1, 3, '0', STR_PAD_LEFT);
-                $expNo = "$prefix-$yearMonth$newNumber";
-            }
-           
-            $expense->expense_no        = $expNo;
-            $expense->expense_type      = 1;
-            $expense->project_id        = $request->project_id;
-            $expense->fiscal_year       = $fiscalYear;
-            $expense->expense_date      = $expenseDate;
-            $expense->account_id        = $request->account_id;
-            $expense->expense_amount    = $request->expense_amount;
-            $expense->receiver_name     = $request->receiver_name;
-            $expense->pay_method_id     = $request->pay_method_id;
-            $expense->bank_account_no   = $request->bank_account_no;
-            $expense->mobile_account_no = $request->mobile_account_no;
-            $expense->bank_name         = $request->bank_name;
-            $expense->transaction_no    = $request->transaction_no;
-            $expense->expense_remarks   = $request->expense_remarks;
-            $expense->expense_added_by  = Auth::id();
-            $expense->status            = $request->status ? $request->status : 0;
+      
+        $expense = new Expense();
+        $expense->expense_no        = $expNo;
+        $expense->expense_type      = 1;
+        $expense->project_id        = $projectId;
+        $expense->fiscal_year       = $fiscalYear;
+        $expense->expense_date      = $expenseDate;
+        $expense->account_id        = $accountID;
+        $expense->expense_amount    = $expenseAmount;
+        $expense->receiver_name     = $request->receiver_name;
+        $expense->pay_method_id     = $request->pay_method_id;
+        $expense->bank_account_no   = $request->bank_account_no;
+        $expense->mobile_account_no = $request->mobile_account_no;
+        $expense->bank_name         = $request->bank_name;
+        $expense->transaction_no   = $request->transaction_no;
+        $expense->expense_remarks  = $request->expense_remarks;
+        $expense->expense_added_by = Auth::id();
+        $expense->status           = 1; 
+        $expense->save();
 
-            if ($expense->save()) {
-                $data['status'] = true;
-                $data['message'] = "Saved successful!";
-                $data['expense'] = $expense;
-                return response(json_encode($data, JSON_PRETTY_PRINT), 200)->header('Content-Type', 'application/json');
-            } else {
-                $data['status'] = false;
-                $data['message'] = "Save failed! Please try again...";
-                $data['expense'] = $expense;
-                return response(json_encode($data, JSON_PRETTY_PRINT), 500)->header('Content-Type', 'application/json');
-            }
-            } catch (\Throwable $th) {
-                $data['status'] = false;
-                $data['message'] = "Something went wrong! Please try again...";
-                $data['errors'] = $th;
-                return response(json_encode($data, JSON_PRETTY_PRINT), 500)->header('Content-Type', 'application/json');
-            }
+        $lastExpId = DB::table('expenses')
+                ->where('expense_type', 1)
+                ->where('expense_no', $expNo)
+                ->value('expense_id');
+
+        DB::table('transactions')->insert([
+            'transaction_date'     => $expenseDate,
+            'fiscal_year'          => $fiscalYear,
+            'project_id'           => $projectId,
+            'account_id'           => $accountID,
+            'transaction_type'     => -1,
+            'transaction_amount'   => $expenseAmount,
+            'reference_type'       => 'project-expenses',
+            'reference_id'         => $lastExpId,
+            'pay_method_id'        => $request->pay_method_id,
+            'transaction_added_by' => Auth::id(),
+            'transaction_added_on' => now(),
+        ]);
+
+        DB::table('projects')
+            ->where('project_id', $projectId)
+            ->increment('total_expense', $expenseAmount);
+
+        DB::table('accounts')
+            ->where('account_id', $accountID)
+            ->decrement('current_balance', $expenseAmount);
+
+        DB::commit();
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Expense Added Successfully!',
+            'expense' => $expense
+        ], 200);
+
+       } catch (\Throwable $th) {
+        DB::rollBack();
+
+        return response()->json([
+            'status'  => false,
+            'message' => 'Something went wrong!',
+            'error'   => $th->getMessage()
+        ], 500);
     }
+}
+
 
     function edit($id)
     {
@@ -206,7 +293,6 @@ class ProjectExpenseController extends Controller
         $expenseAmount = $expense->expense_amount;
         $accountID = $expense->account_id;
 
-        // If project_id exists, check ledger balance
         if ($projectId) {
             $ledger = DB::table('debit_credit_ledger')
                 ->where('project_id', $projectId)
@@ -229,7 +315,6 @@ class ProjectExpenseController extends Controller
             }
         }
         
-        // Insert into transactions table
         DB::table('transactions')->insert([
             'transaction_date'     => $expense->expense_date,
             'fiscal_year'          => $expense->fiscal_year,
@@ -250,7 +335,6 @@ class ProjectExpenseController extends Controller
                 ->increment('total_expense', $expense->expense_amount);
         }
 
-        // Update expenses status
         $expense->update([
             'status' => 1
         ]);
@@ -312,16 +396,15 @@ function expensePreview($id)
 
 public function getProjectLedger(Request $request)
 {
-    if (!$request->project_id) {
-        return response()->json([
-            'status' => 'no_project',
-            'message' => 'Select project first!'
-        ]);
-    }
+    // if (!$request->project_id) {
+    //     return response()->json([
+    //         'status' => 'no_project',
+    //         'message' => 'Select project first!'
+    //     ]);
+    // }
 
-    $balance = Ledger::where('project_id', $request->project_id)
-                ->where('account_id', $request->account_id)
-                ->sum('ledger_amount');  
+    $balance = Account::where('account_id', $request->account_id)
+                ->value('current_balance');  
 
     return response()->json([
         'status'  => 'ok',

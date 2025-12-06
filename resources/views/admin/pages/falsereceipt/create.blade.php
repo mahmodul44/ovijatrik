@@ -54,7 +54,7 @@
                            placeholder="dd/mm/yyyy" autocomplete="off">
                 </div>
                 <div class="w-full md:w-1/4">
-                <label for="account_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Account <span class="text-red-600">*</span></label>
+                <label for="account_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Receiving Account <span class="text-red-600">*</span></label>
                 <select required id="account_id" name="account_id"
                         class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
                     <option value="">-- Select --</option>
@@ -80,7 +80,7 @@
                            class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200" autocomplete="off">
                 </div>
                 <div class="w-full md:w-1/4">
-                  <label for="pay_method_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Payment Method <span class="text-red-600">*</span></label>
+                  <label for="pay_method_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Receiving Method <span class="text-red-600">*</span></label>
                   <select required id="pay_method_id" name="pay_method_id"
                         class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
                     <option value="">-- Select --</option>

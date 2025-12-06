@@ -68,11 +68,19 @@
             </select>
         </div>
     </div>
- <div class="w-full md:w-1/4" id="ledgerInfo" style="display:none;">
-    <span id="ledger_balance"
-        class="block text-sm font-semibold text-gray-700 dark:text-gray-200">
-    </span>
+  <div class="flex flex-col md:flex-row gap-4 md:items-end">
+    <div class="w-full md:w-1/2" id="projectledgerInfo" style="display:none;">
+        <span id="project_ledger_balance"
+            class="block text-sm font-semibold text-gray-700 dark:text-gray-200">
+        </span>
+    </div>
+    <div class="w-full md:w-1/2" id="ledgerInfo" style="display:none;">
+        <span id="ledger_balance"
+            class="block text-sm font-semibold text-gray-700 dark:text-gray-200">
+        </span>
+    </div>
 </div>
+
  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
@@ -111,7 +119,7 @@
         <label for="receiver_name" class="block text-gray-700 dark:text-gray-300 font-medium mb-1">
             Receiver Name <span class="text-red-600">*</span>
         </label>
-        <input name="receiver_name" id="receiver_name" rows="3"
+        <input required name="receiver_name" id="receiver_name" rows="3"
             class="w-full px-4 py-2 border rounded-lg shadow-sm 
                 bg-white dark:bg-gray-800 
                 text-gray-700 dark:text-gray-200 
@@ -127,7 +135,7 @@
         <!-- Mobile Account No -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Account No <span class="text-red-600">*</span>
+                Account No <span class="text-red-600"></span>
             </label>
             <input type="text" id="mobile_account_no" name="mobile_account_no"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
@@ -155,7 +163,7 @@
         <!-- Bank Account No -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Bank Account No <span class="text-red-600">*</span>
+                Bank Account No <span class="text-red-600"></span>
             </label>
             <input type="text" id="bank_account_no" name="bank_account_no"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
@@ -166,7 +174,7 @@
         <!-- Bank Name -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Bank Name <span class="text-red-600">*</span>
+                Bank Name <span class="text-red-600"></span>
             </label>
             <input type="text" id="bank_name" name="bank_name"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
@@ -212,7 +220,7 @@
                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
         </svg>
-        Save Expense
+        Save
     </button>
 </div>
 
@@ -258,6 +266,26 @@ $(document).ready(function () {
     });
 });
 
+$(document).ready(function () {
+    $('#project_id').on('change', function () {
+        let projectId = $(this).val();
+
+        if (projectId) {
+            $.ajax({
+                url: '/project-wise-total/' + projectId,
+                type: 'GET',
+                success: function (response) {
+                    $('#projectledgerInfo').show();
+
+                    $('#project_ledger_balance').text(
+                        "Project Total Ledger: " + response.total + " BDT"
+                    );
+                }
+            });
+        }
+    });
+
+});
 
 $('#pay_method_id').on('change', function () {
 
@@ -298,12 +326,6 @@ $('#account_id').on('change', function () {
     let accountId = $(this).val();
     let projectId = $('#project_id').val();
 
-    if (!projectId) {
-        toastr.error("Please select Project first!");
-        $('#account_id').val('');  
-        return;
-    }
-
     $.ajax({
         url: '/get-project-ledger',
         type: 'POST',
@@ -324,47 +346,94 @@ $('#account_id').on('change', function () {
     });
 });
 
-
 $("#expenseInsertForm").on('submit', function(e){
     e.preventDefault();
     let thisForm = $(this);
 
-    $.ajax({
-        type: "POST",
-        url: "{{route('projectexpense.store')}}",
-        data: new FormData(this),
-        dataType: "json",
-        contentType: false,
-        cache: false,
-        processData: false,
-        beforeSend: function() {
-            thisForm.find('button[type="submit"]')
-                .prop("disabled", true)
-                .addClass('opacity-50 cursor-not-allowed')
-                .text('Submitting...');
-        },
-        success: function (response) {
-            toastr.success(response.message);
-            setTimeout(function() {
-                location.href = "{{route('projectexpense.index')}}";
-            }, 2000)
-        },
-         error: function(xhr) {
-            let responseText = jQuery.parseJSON(xhr.responseText);
-            toastr.error(responseText.message);
-            $.each(responseText.errors, function(key, val) {
-                thisForm.find("." + key + "-error").text(val[0]);
-            });
-        },
+    // First, show SweetAlert confirmation
+    Swal.fire({
+        title: 'Confirm Submission',
+        text: "Are you sure you want to add this expense? This will auto-approve and update ledgers.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Submit',
+        cancelButtonText: 'Cancel',
+    }).then((result) => {
+        if (result.isConfirmed) {
 
-         complete: function() {
-            thisForm.find('button[type="submit"]')
-                .prop("disabled", false)
-                .removeClass('opacity-50 cursor-not-allowed')
-                .text('Save');
+            $.ajax({
+                type: "POST",
+                url: "{{route('projectexpense.store')}}",
+                data: new FormData(thisForm[0]),
+                dataType: "json",
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    thisForm.find('button[type="submit"]')
+                        .prop("disabled", true)
+                        .addClass('opacity-50 cursor-not-allowed')
+                        .text('Submitting...');
+                },
+                success: function (response) {
+                    if(response.status){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        setTimeout(function() {
+                            location.href = "{{route('projectexpense.index')}}";
+                        }, 2000);
+                    } else {
+                        // If backend returns insufficient balance or any error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            html: response.message +
+                                  (response.balance ? "<br><strong>Current Balance:</strong> "+response.balance : ""),
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    let responseText = jQuery.parseJSON(xhr.responseText);
+                    let errorMsg = responseText.message || "Something went wrong!";
+                    let errorHtml = errorMsg;
+                    if(responseText.errors){
+                        $.each(responseText.errors, function(key, val) {
+                            errorHtml += "<br>" + val[0];
+                        });
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: errorHtml,
+                    });
+                },
+                complete: function() {
+                    thisForm.find('button[type="submit"]')
+                        .prop("disabled", false)
+                        .removeClass('opacity-50 cursor-not-allowed')
+                        .text('Save');
+                }
+            });
+
+        } else {
+            // User canceled
+            Swal.fire({
+                icon: 'info',
+                title: 'Cancelled',
+                text: 'Expense submission cancelled.',
+                timer: 1500,
+                showConfirmButton: false
+            });
         }
     });
 });
+
 
 </script>
 @endpush
