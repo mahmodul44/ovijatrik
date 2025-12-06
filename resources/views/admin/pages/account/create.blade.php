@@ -64,10 +64,8 @@
                         focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm
                         bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
                         <option value=""></option>
-                        <option value="2">Bkash</option>
-                        <option value="3">Nagad</option>
-                        <option value="4">Bank</option>
-                        <option value="5">Rocket</option>
+                        <option value="1">Membership</option>
+                        <option value="2">Others</option>
                     </select>
                </div>
             </div>

@@ -54,6 +54,7 @@
                 <th class="px-6 py-3 !text-center font-semibold border dark:border-gray-700">#</th>
                 <th class="px-6 py-3 !text-center font-semibold border dark:border-gray-700">Account Name</th>
                 <th class="px-6 py-3 !text-center font-semibold border dark:border-gray-700">Account No</th>
+                <th class="px-6 py-3 !text-center font-semibold border dark:border-gray-700">Account Type</th>
                 <th class="px-6 py-3 !text-center font-semibold border dark:border-gray-700">Status</th>
             </tr>
         </thead>
@@ -69,6 +70,16 @@
                     </td>
                     <td class="px-6 py-4 text-gray-600 dark:text-gray-300 border dark:border-gray-700">
                         {{ $value->account_no }}
+                    </td>
+                    <td
+                        class="px-6 py-4 text-center font-medium border dark:border-gray-700">
+                        @if($value->account_type == '1')
+                            <span
+                                class="px-2 py-1 bg-green-100 dark:bg-green-700 text-green-700 dark:text-green-200 rounded text-xs">Membership</span>
+                        @else
+                            <span
+                                class="px-2 py-1 bg-red-100 dark:bg-red-700 text-red-700 dark:text-red-200 rounded text-xs">Others</span>
+                        @endif
                     </td>
                     <td
                         class="px-6 py-4 text-center font-medium border dark:border-gray-700">

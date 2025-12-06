@@ -372,42 +372,68 @@ $(document).on('change', '.month-checkbox', function () {
 
 $("#memberreceiptInsertForm").on('submit', function(e){
     e.preventDefault();
+
     let thisForm = $(this);
 
-    $.ajax({
-        type: "POST",
-        url: "{{route('memberreceipt.store')}}",
-        data: new FormData(this),
-        dataType: "json",
-        contentType: false,
-        cache: false,
-        processData: false,
-        beforeSend: function() {
-            thisForm.find('button[type="submit"]')
-                .prop("disabled", true)
-                .addClass('opacity-50 cursor-not-allowed')
-                .text('Submitting...');
-        },
-        success: function (response) {
-            toastr.success(response.message);
-            setTimeout(function() {
-                location.href = "{{route('memberreceipt.index')}}";
-            }, 2000)
-        },
-         error: function(xhr) {
-            let responseText = jQuery.parseJSON(xhr.responseText);
-            toastr.error(responseText.message);
-            $.each(responseText.errors, function(key, val) {
-                thisForm.find("." + key + "-error").text(val[0]);
-            });
-        },
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This receipt will be submitted & approved instantly!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#16a34a',
+        cancelButtonColor: '#dc2626',
+        confirmButtonText: 'Yes, Submit',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
 
-         complete: function() {
-            thisForm.find('button[type="submit"]')
-                .prop("disabled", false)
-                .removeClass('opacity-50 cursor-not-allowed')
-                .text('Save');
+        if (result.isConfirmed) {
+
+            $.ajax({
+                type: "POST",
+                url: "{{route('memberreceipt.store')}}",
+                data: new FormData(thisForm[0]),
+                dataType: "json",
+                contentType: false,
+                cache: false,
+                processData: false,
+
+                beforeSend: function() {
+                    thisForm.find('button[type="submit"]')
+                        .prop("disabled", true)
+                        .addClass('opacity-50 cursor-not-allowed')
+                        .text('Submitting...');
+                },
+
+                success: function (response) {
+                    toastr.success(response.message);
+
+                    setTimeout(function() {
+                        location.href = "{{route('memberreceipt.index')}}";
+                    }, 1500);
+                },
+
+                error: function(xhr) {
+                    let responseText = jQuery.parseJSON(xhr.responseText);
+
+                    toastr.error(responseText.message);
+
+                    if (responseText.errors) {
+                        $.each(responseText.errors, function(key, val) {
+                            thisForm.find("." + key + "-error").text(val[0]);
+                        });
+                    }
+                },
+
+                complete: function() {
+                    thisForm.find('button[type="submit"]')
+                        .prop("disabled", false)
+                        .removeClass('opacity-50 cursor-not-allowed')
+                        .text('Save');
+                }
+            });
+
         }
+
     });
 });
 
