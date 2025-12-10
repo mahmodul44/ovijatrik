@@ -210,6 +210,7 @@ class ProjectController extends Controller
 
         $results = Project::select('project_id', 'project_code', 'project_title')
             ->where('project_id', '!=', '10000001') 
+            ->where('status', '!=', '2') 
             ->where(function ($query) use ($search) {
                 $query->where('project_title', 'like', "%{$search}%")
                     ->orWhere('project_code', 'like', "%{$search}%");

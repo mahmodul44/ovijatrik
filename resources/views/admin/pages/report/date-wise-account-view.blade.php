@@ -84,6 +84,10 @@
             body { background: white; padding: 0; }
             .statement-container { box-shadow: none; }
         }
+
+        tbody tr:hover {
+            background: #fef3c7;
+        }
     </style>
 </head>
 
@@ -91,14 +95,18 @@
 
 <div class="statement-container">
 
-   @include('layouts.banner')
+    @include('layouts.banner')
 
     <!-- Project Info -->
     @if($projectInfo)
     <div class="project-info">
         <div><span class="bold">Project:</span> {{ $projectInfo->project_code }} - {{ $projectInfo->project_title }}</div>
         <div><span class="bold">Duration:</span> {{ $projectInfo->project_start_date ?? '---' }} - {{ $projectInfo->project_end_date ?? '---' }}</div>
-        <div><span class="bold">Target Amount:</span> {{ $projectInfo->target_amount ?? '---' }} <span class="bold">Collection:</span> {{ $projectInfo->collection_amount ?? '---' }} <span class="bold">Expense:</span>  {{ $projectInfo->total_expense ?? '---' }} </div>
+        <div>
+            <span class="bold">Target Amount:</span> {{ number_format($projectInfo->target_amount ?? 0,2) }} | 
+            <span class="bold">Collection:</span> {{ number_format($projectInfo->collection_amount ?? 0,2) }} | 
+            <span class="bold">Expense:</span>  {{ number_format($projectInfo->total_expense ?? 0,2) }}
+        </div>
     </div>
     @endif
 
@@ -108,116 +116,54 @@
         <span class="bold">To:</span> {{ $to ?? '---' }}
     </div>
 
-    @php $balance = 0; @endphp
+    @php
+        $balance = $previousBalance ?? 0;
+        $totalDeposit = 0;
+    @endphp
 
     <table>
         <thead>
             <tr>
-                <th width="12%">Date</th>
-                <th width="45%">Description</th>
-                <th width="12%">Deposit</th>
-                <th width="12%">Withdraw</th>
-                <th width="12%">Balance</th>
+                <th width="20%">Date</th>
+                <th width="50%">Description</th>
+                <th width="30%">Donation Amount</th>
             </tr>
         </thead>
 
         <tbody>
-
-        {{-- =======================
-            PREVIOUS BALANCE ROW
-        ======================== --}}
-        @php 
-            $balance = $previousBalance; 
-            $totalDeposit = 0;
-            $totalWithdraw = 0;
-        @endphp
-
-        @if($previousBalance != 0)
-            <tr style="background:#fff6e6; font-weight:bold;">
-                <td>
-                    {{ $from ? \Carbon\Carbon::parse($from)->subDay()->format('d/m/Y') : '' }}
-                </td>
-                <td>Previous Balance</td>
-                <td></td>
-                <td></td>
-                <td>{{ number_format($previousBalance,2) }}</td>
-            </tr>
-        @endif
-
-
-        {{-- =======================
-            MAIN RESULT ROWS
-        ======================== --}}
+        {{-- Main Transactions --}}
         @foreach($reportData as $row)
-
             @php
                 $deposit = $row->transaction_type == 1 ? $row->transaction_amount : 0;
-                $withdraw = $row->transaction_type == -1 ? $row->transaction_amount : 0;
-
                 $totalDeposit  += $deposit;
-                $totalWithdraw += $withdraw;
 
-                $balance += ($deposit - $withdraw);
+                $balance += $deposit;
             @endphp
 
             <tr>
-                <td>{{ \Carbon\Carbon::parse($row->transaction_date)->format('d/m/Y') }}</td>
-
+                <td style="text-align: center">{{ \Carbon\Carbon::parse($row->transaction_date)->format('d/m/Y') }}</td>
                 <td>
                     @if(!$projectId)
-                        <b>{{ $row->project_code }} - {{ $row->project_title }}</b><br>
+                        <b>{{ $row->project_code ?? '' }} - {{ $row->project_title ?? '' }}</b><br>
                     @endif
-
-                    @if($row->transaction_type == '1')
-                        <strong> Receipt No: </strong> {{ $row->mr_no }}<br>
-                        <strong>Name: </strong> {{ $row->member_name }}<br>
-                        <strong style="color: #007bff">Account: </strong> {{ $row->account_name.' '.$row->account_no }}
-                    @else
-                        @if(!empty($row->expense_cat_name))
-                            <b>{{ $row->expense_cat_name }}</b><br>
-                        @endif
-                         <strong> Voucher No: </strong> {{ $row->expense_no }}<br>
-                        <strong style="color: #007bff">Account:  </strong> {{ $row->account_name.' '.$row->account_no }}
-                    @endif
+                        <strong>Receipt No:</strong> {{ $row->mr_no ?? '---' }}<br>
+                        <strong>Name:</strong> {{ $row->member_id ? $row->member_name : '---' }} {{ $row->member_id == null ? $row->donar_name : '---' }}<br>
+                        <strong>Account:</strong> <span style="color: #007bff">{{ $row->account_name ?? '' }} {{ $row->account_no ?? '' }} </span>
                 </td>
-
-                <td class="text-green">
+                <td class="text-green" style="text-align: right">
                     {{ $deposit > 0 ? number_format($deposit,2) : '' }}
                 </td>
-
-                <td class="text-red">
-                    {{ $withdraw > 0 ? number_format($withdraw,2) : '' }}
-                </td>
-
-                <td>{{ number_format($balance,2) }}</td>
             </tr>
-
         @endforeach
+        </tbody>
 
-    </tbody>
-
-    {{-- =======================
-        FOOTER SUMMARY ROW
-    ======================== --}}
-    <tfoot>
-        <tr style="background:#f1f1f1; font-weight:bold;">
-            <td colspan="2" style="text-align:right;">Total Summary:</td>
-
-            <td style="color:green;">
-                {{ number_format($totalDeposit, 2) }}
-            </td>
-
-            <td style="color:crimson;">
-                {{ number_format($totalWithdraw, 2) }}
-            </td>
-
-            <td>
-                {{ number_format($balance, 2) }}
-            </td>
-        </tr>
-    </tfoot>
-
-</table>
+        <tfoot>
+            <tr style="background:#f1f1f1; font-weight:bold;">
+                <td colspan="2" style="text-align:right;">Total:</td>
+                <td style="color:green;text-align:right">{{ number_format($totalDeposit,2) }}</td>
+            </tr>
+        </tfoot>
+    </table>
 
     <div class="footer-btns">
         <button class="btn" onclick="window.print()">Print</button>

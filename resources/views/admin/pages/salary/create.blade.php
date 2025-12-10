@@ -32,6 +32,7 @@
                     <select name="salary_year" id="salary_year" required
                         class="w-full px-4 py-2 rounded-lg border bg-gray-50 dark:bg-gray-700 dark:border-gray-600 text-gray-800 dark:text-gray-200 focus:ring-blue-500 focus:border-blue-500">
                         <option value="">Select</option>
+                         <option value="{{ date('Y') - 1 }}">{{ date('Y') - 1 }}</option>
                         <option value="{{ date('Y') }}">{{ date('Y') }}</option>
                         <option value="{{ date('Y') + 1 }}">{{ date('Y') + 1 }}</option>
                     </select>
@@ -128,7 +129,7 @@
         <!-- Mobile Account No -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Account No <span class="text-red-600">*</span>
+                Account No <span class="text-red-600"></span>
             </label>
             <input type="text" id="mobile_account_no" name="mobile_account_no"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
@@ -156,7 +157,7 @@
         <!-- Bank Account No -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Bank Account No <span class="text-red-600">*</span>
+                Bank Account No <span class="text-red-600"></span>
             </label>
             <input type="text" id="bank_account_no" name="bank_account_no"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
@@ -167,7 +168,7 @@
         <!-- Bank Name -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Bank Name <span class="text-red-600">*</span>
+                Bank Name <span class="text-red-600"></span>
             </label>
             <input type="text" id="bank_name" name="bank_name"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2

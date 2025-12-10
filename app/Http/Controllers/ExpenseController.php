@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\About;
+use App\Models\Account;
+use App\Models\Expense;
+use App\Models\Project;
 use App\Models\Category;
 use App\Models\FiscalYear;
-use App\Models\Account;
-use App\Models\Project;
 use App\Models\MoneyReceipt;
-use App\Models\Expense;
-use App\Models\ExpenseCategory;
-use App\Models\User;
-use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
+use App\Models\PaymentMethod;
+use App\Models\ExpenseCategory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
 USE DB;
 
 class ExpenseController extends Controller
@@ -391,8 +392,9 @@ function show($id)
 
 public function expensePreview($id)
 {
-    $expense = Expense::with(['project','expcategory'])->findOrFail($id);
-    return view('admin.pages.expense.expensepreview', compact('expense'));
+    $data['abouts'] = About::first();
+    $data['expense'] = Expense::with(['project','expcategory'])->findOrFail($id);
+    return view('admin.pages.expense.expensepreview', $data);
 }
 
 public function destroy($id)

@@ -57,8 +57,9 @@
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Date</th>
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Inv No</th>
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Expense Head</th>
+                    <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Receiver</th>
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Amount</th>
-                    <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Status</th>
+                    {{-- <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Status</th> --}}
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Action</th>
                 </tr>
             </thead>
@@ -84,14 +85,17 @@
                                 -
                             @endif
                         </td>
+                        <td class="px-6 py-3 text-left text-gray-800 dark:text-gray-200 truncate max-w-xs border border-gray-200 dark:border-gray-600">
+                            {{ $value->receiver_name }}
+                        </td>
                         <td class="px-6 py-3 text-right font-medium text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-600">
                            ৳ {{ number_format($value->expense_amount,2) }}
                         </td>
-                        <td class="px-6 py-3 text-center space-x-3 border border-gray-200 dark:border-gray-600">
+                        {{-- <td class="px-6 py-3 text-center space-x-3 border border-gray-200 dark:border-gray-600">
                             <span class="px-3 py-1 text-xs font-medium rounded-full {{ getStatusLabel($value->status)['class'] }}">
                                 {{ getStatusLabel($value->status)['label'] }}
                             </span>
-                        </td>
+                        </td> --}}
                         <td class="px-6 py-3 text-center space-x-3 border border-gray-200 dark:border-gray-600">
                              <!-- Preview -->
                             <button onclick="openPreviewWindow('{{ route('projectexpense.preview', $value->expense_id) }}')" 
@@ -156,7 +160,7 @@
                 @endforeach
                 @else
                     <tr>
-                        <td colspan="7" class="text-center px-6 py-4 text-gray-500 dark:text-gray-400">No records found.</td>
+                        <td colspan="6" class="text-center px-6 py-4 text-gray-500 dark:text-gray-400">No records found.</td>
                     </tr>
                 @endif
             </tbody>
@@ -177,7 +181,7 @@ $(document).ready(function () {
             search: "",
         },
         columnDefs: [
-            { orderable: false, targets: [ 2, 3, 4, 5, 6] } 
+            { orderable: false, targets: [ 2, 3, 4, 5] } 
         ]
     });
 });

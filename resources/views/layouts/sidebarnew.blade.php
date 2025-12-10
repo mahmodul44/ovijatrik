@@ -213,7 +213,7 @@
     </div>
 
     <!-- Loan Account info Menu Dropdown -->
-    @php $accountActive = in_array($currentRoute, ['loanaccount.index', 'loanaccount.create', 'loanaccount.edit']); @endphp
+    {{-- @php $accountActive = in_array($currentRoute, ['loanaccount.index', 'loanaccount.create', 'loanaccount.edit']); @endphp
     <div x-data="{ open: @json($accountActive) }">
         <button @click="open = !open" 
                 :class="open ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
@@ -246,7 +246,7 @@
                <span>- List</span>
             </a>
         </div>
-    </div>
+    </div> --}}
     <!-- Project Dropdown -->
     @php $projectActive = in_array($currentRoute, ['project.index', 'project.create', 'project.edit', 'project.show','project.completeprojectlist']); @endphp
     <div x-data="{ open: @json($projectActive) }">
@@ -389,7 +389,7 @@
                 <span> List</span>
             </a>
             
-            @if(Auth::check() && Auth::user()->role == 1)
+            {{-- @if(Auth::check() && Auth::user()->role == 1)
             <a href="{{ route('memberreceipt.memberreceiptpending') }}" 
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{ $currentRoute == 'memberreceipt.memberreceiptpending' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
@@ -400,7 +400,7 @@
                 </svg>
                 <span> Pending List</span>
             </a>
-            @endif
+            @endif --}}
         </div>
     </div>
 
@@ -453,7 +453,7 @@
                 <span>List</span>
             </a>
            
-            @if(Auth::check() && Auth::user()->role == 1)
+            {{-- @if(Auth::check() && Auth::user()->role == 1)
             <a href="{{ route('moneyreceipt.moneyreceiptpending') }}" 
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{ $currentRoute == 'moneyreceipt.moneyreceiptpending' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
@@ -464,7 +464,7 @@
                 </svg>
                 <span> Pending List</span>
             </a>
-            @endif
+            @endif --}}
         </div>
     </div>
 
@@ -562,7 +562,7 @@
                 </svg>
                 <span> List</span>
             </a>
-            @if(Auth::check() && Auth::user()->role == 1)
+            {{-- @if(Auth::check() && Auth::user()->role == 1)
             <a href="{{ route('projectexpense.projectexpensepending') }}" 
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{ $currentRoute == 'projectexpense.projectexpensepending' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
@@ -573,7 +573,7 @@
                 </svg>
                 <span>Pending List</span>
             </a>
-            @endif
+            @endif --}}
         </div>
     </div>
 
@@ -625,7 +625,7 @@
                 <span> List</span>
             </a>
             
-            @if(Auth::check() && Auth::user()->role == 1)
+            {{-- @if(Auth::check() && Auth::user()->role == 1)
             <a href="{{ route('expense.expensepending') }}" 
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{ $currentRoute == 'expense.expensepending' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
@@ -636,12 +636,12 @@
                 </svg>
                 <span> Pending List</span>
             </a>
-            @endif
+            @endif --}}
         </div>
     </div>
 
     <!-- Loan Account info Menu Dropdown -->
-    @php $accountActive = in_array($currentRoute, ['loan.loanapply', 'loan.loancreate','loan.loanedit','loan.loanpending']); @endphp
+    {{-- @php $accountActive = in_array($currentRoute, ['loan.loanapply', 'loan.loancreate','loan.loanedit','loan.loanpending']); @endphp
     <div x-data="{ open: @json($accountActive) }">
         <button @click="open = !open" 
                 :class="open ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
@@ -691,10 +691,10 @@
             </a>
             @endif
         </div>
-    </div>
+    </div> --}}
 
     <!-- Transfer Menu -->
-    @php $mrActive = in_array($currentRoute, ['transfer.index', 'transfer.create','transfer.edit','transfer.transferpending']); @endphp
+    {{-- @php $mrActive = in_array($currentRoute, ['transfer.index', 'transfer.create','transfer.edit','transfer.transferpending']); @endphp
     <div x-data="{ open: @json($mrActive) }">
         <button @click="open = !open" 
             :class="open 
@@ -753,7 +753,7 @@
             </a>
             @endif
         </div>
-    </div>
+    </div> --}}
 
     <!-- Member Menu -->
     @php $userActive = in_array($currentRoute, ['member.index', 'member.create','member.edit','member.pendinglist']); @endphp
@@ -991,7 +991,7 @@
     </div>
 
     <!-- Report Menu -->
-    @php $reportActive = in_array($currentRoute, ['report.index','report.project-wise','report.member-wise','report.account-wise']); @endphp
+    @php $reportActive = in_array($currentRoute, ['report.index','report.project-wise','report.member-wise','report.account-wise','report.account-ledger','report.date-wise-account']); @endphp
     <div x-data="{ open: @json($reportActive) }">
         <button @click="open = !open" 
             :class="open 
@@ -1020,14 +1020,28 @@
             <a href="{{ route('report.index') }}" 
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{ $currentRoute == 'report.index' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Ledger</span>
+               <span>- Project Ledger</span>
             </a>
         </div>
-         <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('report.account-ledger') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'report.account-ledger' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Account Ledger</span>
+            </a>
+        </div>
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('report.date-wise-account') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'report.date-wise-account' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Date Wise Account</span>
+            </a>
+        </div>
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
             <a href="{{ route('report.account-wise') }}" 
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{ $currentRoute == 'report.account-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Account Ledger</span>
+               <span>- Account Project Ledger</span>
             </a>
         </div>
         <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>

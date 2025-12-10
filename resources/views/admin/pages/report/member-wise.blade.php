@@ -14,8 +14,8 @@
 
     <!-- Form Container -->
     <div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl shadow-2xl rounded-2xl p-8 ring-1 ring-gray-200 dark:ring-gray-700">
-        <form id="reportForm" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
+        <form id="reportForm">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Member -->
             <div>
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
@@ -29,7 +29,22 @@
                     @endforeach
                 </select>
             </div>
-
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">
+                    Account 
+                </label>
+                <select id="account_id" name="account_id"
+                    class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
+                    <option value="">-- Select --</option>
+                    @foreach ($accounts as $item)
+                        <option value="{{ $item->account_id }}">
+                            {{ $item->account_name }} - {{ $item->account_no }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- From Date -->
             <div>
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
@@ -47,7 +62,7 @@
                 <input type="text" name="to_date" id="to_date" autocomplete="off"
                        class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200" />
             </div>
-
+            </div>
             <!-- Search Button -->
             <div class="md:col-span-3 flex justify-end mt-4">
                 <button type="button" 
@@ -70,8 +85,9 @@ function openMemberWReportWindow(url) {
     let memberId = document.querySelector("[name='member_id']").value;
     let fromDate  = document.querySelector("[name='from_date']").value;
     let toDate    = document.querySelector("[name='to_date']").value;
+    let account_id = document.querySelector("[name='account_id']").value;
 
-    let query = `?member_id=${memberId}&from_date=${fromDate}&to_date=${toDate}`;
+    let query = `?member_id=${memberId}&account_id=${account_id}&from_date=${fromDate}&to_date=${toDate}`;
 
     let width = 900;
     let height = 650;

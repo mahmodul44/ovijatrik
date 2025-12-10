@@ -93,7 +93,7 @@
         </table>
     </div>
 
-@if ($salary->posting_type == 1)
+@if ($salary->posting_type == 1 && $salary->status != 1)
 <div class="mt-6 flex gap-4">
     
     <!-- Approve -->

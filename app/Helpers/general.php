@@ -25,7 +25,6 @@ if (!function_exists('getFiscalYearFromDate')) {
     }
 }
 
-
 if (! function_exists('getStatusLabel')) {
     function getStatusLabel($status)
     {

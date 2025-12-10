@@ -38,4 +38,19 @@ class Expense extends Model
         return $this->belongsTo(Project::class, 'project_id');
     }
 
+    public function paymentmethod()
+    {
+        return $this->belongsTo(PaymentMethod::class, 'pay_method_id', 'pay_method_id');
+    }
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class, 'account_id');
+    }
+
+    public function createdUser()
+    {
+        return $this->belongsTo(User::class, 'expense_added_by', 'id');
+    }
+
 }

@@ -17,15 +17,12 @@ class ReportController extends Controller
     {
    
         $data['ledgers'] = Ledger::select(
-        'account_id',
+        'project_id',
           DB::raw('SUM(ledger_amount) as total_amount')
          )
-        ->with('account')  // load account details
-        ->groupBy('account_id')
+        ->with('project')  
+        ->groupBy('project_id')
         ->get();
-    // $totalDebit = $ledgers->where('ledger_type', 1)->sum('ledger_amount');
-    // $totalCredit = $ledgers->where('ledger_type', -1)->sum('ledger_amount');
-    // $balance = $totalDebit - $totalCredit;
 
      return view('admin.pages.report.ledger', $data);
    }
@@ -57,7 +54,6 @@ function projectWiseSearch(Request $request)
             }
         }
     }
-
 
     $query = DB::table('transactions')
         ->leftJoin('accounts', 'accounts.account_id', '=', 'transactions.account_id')
@@ -115,30 +111,42 @@ function projectWiseSearch(Request $request)
 
 function memberWise(){
      $data['members'] = User::where(['status' =>1 , 'role' => 3])->get();
+     $data['accounts'] = Account::where('status', 1)->where('account_type', 2)->get();
      return view('admin.pages.report.member-wise', $data);
    }
 
 function memberWiseSearch(Request $request)
 {
     $memberId = $request->member_id;
+    $accountId = $request->account_id;
     $from = $request->from_date ? Carbon::createFromFormat('d/m/Y', $request->from_date)->format('Y-m-d') : null;
     $to   = $request->to_date   ? Carbon::createFromFormat('d/m/Y', $request->to_date)->format('Y-m-d') : null;
 
     $query = DB::table('transactions')
-        ->join('projects', 'projects.project_id', '=', 'transactions.project_id')
+        ->leftJoin('projects', 'projects.project_id', '=', 'transactions.project_id')
+        ->leftJoin('accounts','accounts.account_id','=','transactions.account_id')
+        ->leftJoin('users','users.id','=','transactions.member_id')
+         ->leftJoin('money_receipts','money_receipts.mr_id','=','transactions.reference_id')
+        ->where('transactions.transaction_type','>=',0)
         ->select(
             'transactions.transaction_date',
             'transactions.member_id',
+            'users.name as member_name',
             'projects.project_title',
-            DB::raw("SUM(CASE WHEN transaction_type = 1 THEN transaction_amount ELSE 0 END) as total_receipt"),
-            DB::raw("SUM(CASE WHEN transaction_type = -1 THEN transaction_amount ELSE 0 END) as total_expense")
+            'accounts.account_name',
+            'accounts.account_no',
+            'transactions.transaction_type',
+            'transactions.transaction_amount',
+            'transactions.reference_id', 'money_receipts.mr_no','money_receipts.donar_name',
         )
-        ->groupBy('transactions.transaction_date', 'transactions.member_id', 'projects.project_title')
-        ->whereNotNull('transactions.member_id')
         ->orderBy('transactions.transaction_date', 'asc');
 
     if ($memberId) {
         $query->where('transactions.member_id', $memberId);
+    }
+
+    if ($accountId) {
+        $query->where('transactions.account_id', $accountId);
     }
 
     if ($from && $to) {
@@ -151,23 +159,21 @@ function memberWiseSearch(Request $request)
 
     $reportData = $query->get();
 
-    // member name for header
-    $memberName = null;
-    if ($memberId) {
-        $memberName = DB::table('users')->where('id', $memberId)->value('name');
-    }
+    $memberName = $memberId ? DB::table('users')->where('id', $memberId)->first() : null;
 
     return view('admin.pages.report.member-wise-view', [
         'reportData' => $reportData,
         'from' => $from,
         'to' => $to,
+        'memberId' => $memberId,
         'memberName' => $memberName
     ]);
 }
 
+
  function accountWise(){
-     $data['projects'] = Project::where('status',1)->get();
-     $data['accounts'] = Account::where('status', 1)->get();
+     $data['projects'] = Project::where('status',1)->where('project_id','!=','10000001')->get();
+     $data['accounts'] = Account::where('status', 1)->where('account_type', 2)->get();
      return view('admin.pages.report.account-wise', $data);
 }
 
@@ -183,19 +189,16 @@ function accountWiseSearch(Request $request)
     $query = Ledger::with('project', 'account');
 
     if ($projectId && $accountId) {
-        // Both project & account selected → show that specific account in that project
         $query->where('project_id', $projectId)
               ->where('account_id', $accountId);
     }
     elseif ($projectId && !$accountId) {
-        // Only project selected → show all accounts under this project
         $query->where('project_id', $projectId);
     }
     elseif (!$projectId && $accountId) {
-        // Only account selected → show this account across all active projects
         $query->where('account_id', $accountId)
               ->whereHas('project', function($q) {
-                  $q->where('status', 1); // assuming status=1 means active
+                  $q->where('status', 1); 
               });
     }
 
@@ -215,7 +218,84 @@ function accountWiseSearch(Request $request)
     ]);
 }
 
+function dateWiseAccount(){
+     $data['projects'] = Project::where('status',1)->where('project_id','!=','10000001')->get();
+     $data['accounts'] = Account::where('status', 1)->where('account_type', 2)->get();
+     return view('admin.pages.report.date-wise-account', $data);
+}
 
+function dateWiseAccountDetails(Request $request)
+{
+    $projectId = $request->project_id;
+    $accountId = $request->account_id;
+
+    $from = $request->from_date ? Carbon::createFromFormat('d/m/Y', $request->from_date)->format('Y-m-d') : null;
+    $to   = $request->to_date   ? Carbon::createFromFormat('d/m/Y', $request->to_date)->format('Y-m-d') : null;
+
+    if (!$projectId && !$accountId && !$from && !$to) {
+        return view('admin.pages.report.date-wise-account-view', [
+            'reportData' => collect(),
+            'projectInfo' => null,
+            'previousBalance' => 0,
+            'from' => $from,
+            'to' => $to
+        ]);
+    }
+
+    $query = DB::table('transactions')
+        ->leftJoin('accounts', 'accounts.account_id', '=', 'transactions.account_id')
+        ->leftJoin('users', 'users.id', '=', 'transactions.member_id')
+        ->leftJoin('money_receipts', 'money_receipts.mr_id', '=', 'transactions.reference_id')
+        ->leftJoin('projects', 'projects.project_id', '=', 'transactions.project_id')
+        ->whereNotNull('transactions.project_id')
+        ->where('transactions.project_id', '!=', 1000001)
+        ->where('transactions.transaction_type', '>=',0)    
+        ->select(
+            'transactions.*',
+            'projects.project_title',
+            'projects.project_code',
+            'accounts.account_name',
+            'accounts.account_no',
+            'users.name as member_name',
+            'money_receipts.mr_no','money_receipts.donar_name'
+        )
+        ->orderBy('transactions.transaction_date', 'asc');
+
+    if ($projectId) {
+        $query->where('transactions.project_id', $projectId);
+    }
+
+    if ($accountId) {
+        $query->where('transactions.account_id', $accountId);
+    }
+
+    if ($from && $to) {
+        $query->whereBetween('transactions.transaction_date', [$from, $to]);
+    } elseif ($from) {
+        $query->where('transactions.transaction_date', '>=', $from);
+    } elseif ($to) {
+        $query->where('transactions.transaction_date', '<=', $to);
+    }
+
+    $reportData = $query->get();
+
+    $projectInfo = null;
+    if ($projectId) {
+        $projectInfo = DB::table('projects')
+            ->where('project_id', $projectId)
+            ->select('project_id','project_title','project_code','project_details','project_start_date','project_end_date','collection_amount','target_amount','total_expense')
+            ->first();
+    }
+
+    return view('admin.pages.report.date-wise-account-view', [
+        'reportData' => $reportData,
+        'from' => $from,
+        'to' => $to,
+        'projectId' => $projectId,
+        'projectInfo' => $projectInfo,
+        'previousBalance' => 0
+    ]);
+}
 
 
 }

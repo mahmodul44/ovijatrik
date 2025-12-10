@@ -1,18 +1,19 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Category;
-use App\Models\FiscalYear;
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\About;
+use App\Models\Ledger;
 use App\Models\Account;
 use App\Models\Expense;
-use App\Models\Ledger;
-use App\Models\ExpenseCategory;
-use App\Models\User;
-use App\Models\PaymentMethod;
+use App\Models\Category;
+use App\Models\FiscalYear;
 use Illuminate\Http\Request;
+use App\Models\PaymentMethod;
+use App\Models\ExpenseCategory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
 USE DB;
 
 class ProjectExpenseController extends Controller
@@ -390,8 +391,9 @@ function show($id)
 
 function expensePreview($id)
 {
-    $expense = Expense::with(['project','expcategory'])->findOrFail($id);
-    return view('admin.pages.projectexpense.expensepreview', compact('expense'));
+    $data['abouts'] = About::first();
+    $data['expense'] = Expense::with(['project','expcategory'])->findOrFail($id);
+    return view('admin.pages.projectexpense.expensepreview',$data);
 }
 
 public function getProjectLedger(Request $request)

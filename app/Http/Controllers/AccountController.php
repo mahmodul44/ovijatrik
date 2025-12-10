@@ -60,4 +60,27 @@ class AccountController extends Controller
             return response(json_encode($data, JSON_PRETTY_PRINT), 500)->header('Content-Type', 'application/json');
         }
     }
+
+    function accountLedger(){
+          $membershipAccounts = Account::where('account_type', 1)
+        ->orderBy('account_id', 'desc')
+        ->get();
+
+    $membershipTotal = $membershipAccounts->sum('current_balance');
+
+
+    // Other Accounts (account_type = 0)
+    $otherAccounts = Account::where('account_type', 2)
+        ->orderBy('account_id', 'desc')
+        ->get();
+
+    $otherTotal = $otherAccounts->sum('current_balance');
+
+    return view('admin.pages.account.account-ledger', compact(
+        'membershipAccounts',
+        'membershipTotal',
+        'otherAccounts',
+        'otherTotal'
+    ));
+    }
 }

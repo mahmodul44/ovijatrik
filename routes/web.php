@@ -183,6 +183,10 @@ Route::get('/admin/member-wise',[ReportController::class,'memberWise'])->name('r
 Route::get('/admin/member-wise-search',[ReportController::class,'memberWiseSearch'])->name('report.member-wise-search');
 Route::get('/admin/account-wise',[ReportController::class,'accountWise'])->name('report.account-wise');
 Route::get('/admin/account-wise-search',[ReportController::class,'accountWiseSearch'])->name('report.account-wise-search');
+Route::get('admin/account-ledger',[AccountController::class,'accountLedger'])->name('report.account-ledger');
+Route::get('/admin/date-wise-account',[ReportController::class,'dateWiseAccount'])->name('report.date-wise-account');
+Route::get('/admin/date-wise-account-details',[ReportController::class,'dateWiseAccountDetails'])->name('report.date-wise-account-details');
+
 
 
 Route::put('/project/{id}/complete', [ProjectController::class, 'complete'])->name('project.complete');

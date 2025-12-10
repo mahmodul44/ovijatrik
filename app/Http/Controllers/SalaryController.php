@@ -18,15 +18,14 @@ class SalaryController extends Controller
 {
 
     public function index(){
-       $data['salary'] = Salary::whereIn('status', [0, -1])
-        ->orderBy('salary_id', 'desc')
+       $data['salary'] = Salary::orderBy('salary_id', 'desc')
         ->get();
         return view('admin.pages.salary.index', $data);
     }
 
     public function create(){
         $data['employees'] = Employee::where('status',1)->get();
-        $data['accounts'] = Account::where('status', 1)->get();
+        $data['accounts'] = Account::where('status', 1)->where('account_type', 1)->get();
         $data['paymentmethod'] = PaymentMethod::where('status', 1)->get();
         return view('admin.pages.salary.create', $data);
     }
@@ -56,8 +55,8 @@ class SalaryController extends Controller
     }
 
     $salaryDate = Carbon::createFromFormat('d/m/Y', $request->salary_date)->format('Y-m-d');
-     $fiscalYear = getFiscalYearFromDate($salaryDate);
-     $existingSalary = Salary::where('salary_year', $request->salary_year)
+    $fiscalYear = $this->fiscalYearCal($request->salary_year, $request->salary_month);
+    $existingSalary = Salary::where('salary_year', $request->salary_year)
         ->where('salary_month', $request->salary_month)
         ->first();
 
@@ -156,7 +155,7 @@ class SalaryController extends Controller
   public function edit($id)
 {
     $data['employees'] = Employee::where('status', 1)->get();
-    $data['accounts'] = Account::where('status', 1)->get();
+    $data['accounts'] = Account::where('status', 1)->where('account_type', 1)->get();
     $data['paymentmethod'] = PaymentMethod::where('status', 1)->get();
     
     $data['salaries'] = Salary::with('salaryDetails', 'salaryDetails.employee')
@@ -164,7 +163,6 @@ class SalaryController extends Controller
 
     return view('admin.pages.salary.edit', $data);
 }
-
 
 
    public function update(Request $request, $id)
@@ -193,8 +191,8 @@ class SalaryController extends Controller
     }
 
    
-     $salaryDate = Carbon::createFromFormat('d/m/Y', $request->salary_date)->format('Y-m-d');
-     $fiscalYear = getFiscalYearFromDate($salaryDate);
+    $salaryDate = Carbon::createFromFormat('d/m/Y', $request->salary_date)->format('Y-m-d');
+    $fiscalYear = $this->fiscalYearCal($request->salary_year, $request->salary_month);
     DB::beginTransaction();
     try {
         $salary = Salary::findOrFail($id);
@@ -257,7 +255,7 @@ class SalaryController extends Controller
    public function show($id)
 {
     $data['employees'] = Employee::where('status', 1)->get();
-    $data['accounts'] = Account::where('status', 1)->get();
+    $data['accounts'] = Account::where('status', 1)->where('account_type', 1)->get();
     $data['salary'] = Salary::with('account','salaryDetails', 'salaryDetails.employee')->findOrFail($id);
 
     // Bengali Month Names
@@ -292,13 +290,12 @@ class SalaryController extends Controller
         if ($projectId) {
             $ledger = DB::table('debit_credit_ledger')
                 ->where('project_id', $projectId)
-                ->where('account_id', $accountID)
                 ->first();
 
             if (!$ledger) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Ledger not found for this project account!'
+                    'message' => 'Ledger not found for this project!'
                 ], 200); 
             }
 
@@ -309,6 +306,27 @@ class SalaryController extends Controller
                     'balance' => number_format($ledger->ledger_amount, 2)
                 ], 200);
             }
+        }
+
+        $account = DB::table('accounts')
+            ->where('account_id', $accountID)
+            ->where('account_type', 1)
+            ->lockForUpdate()
+            ->first();
+
+        if (!$account) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Account not found!'
+            ], 200);
+        }
+
+        if ($account->current_balance < $totalAmount) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Insufficient Account Balance!',
+                'balance' => number_format($account->current_balance, 2)
+            ], 200);
         }
         
         DB::table('transactions')->insert([
@@ -325,14 +343,18 @@ class SalaryController extends Controller
             'transaction_added_on' => now(),
         ]);
 
-        if ($salary->project_id) {
-            DB::table('projects')
-                ->where('project_id', $salary->project_id)
-                ->increment('total_expense', $salary->total_salary);
-        }
+         DB::table('projects')
+            ->where('project_id', $projectId)
+            ->increment('total_expense', $totalAmount);
+
+        DB::table('accounts')
+            ->where('account_id', $accountID)
+            ->decrement('current_balance', $totalAmount);
 
         $salary->update([
-            'status' => 1
+            'status' => 1,
+            'approval_by' => Auth::id(),
+            'approval_at' => now()
         ]);
 
         DB::commit();
@@ -401,5 +423,15 @@ public function destroy($id)
         ], 500);
     }
 }
+
+
+function fiscalYearCal($year, $month)
+{
+    if ($month < 7) {
+        return ($year - 1) . '-' . $year;
+    }
+    return $year . '-' . ($year + 1);
+}
+
 
 }

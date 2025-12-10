@@ -65,7 +65,6 @@
             <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 w-10%" style="text-align: center">Phone</th>
             <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 w-10%" style="text-align: center">Month</th>
             <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 w-10%" style="text-align: center">Amount</th>
-            <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 w-10%" style="text-align: center">Status</th>
             <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 w-10%" style="text-align: center">Action</th>
         </tr>
     </thead>
@@ -109,11 +108,7 @@
                             <td class="px-6 py-4 border border-r border-gray-200 dark:border-gray-700 font-medium text-gray-900 dark:text-gray-100 text-right">
                                 ৳ {{ number_format($value->payment_amount, 2) }}
                             </td>
-                            <td class="px-6 py-4 border border-r border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-center">
-                                <span class="px-3 py-1 text-xs font-medium rounded-full {{ getStatusLabel($value->status)['class'] }}">
-                                    {{ getStatusLabel($value->status)['label'] }}
-                                </span>
-                            </td>
+                           
                             <td style="text-align: center" class="px-6 py-4 border border-r border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-center">
                                 <!-- Preview -->
                                 <button onclick="openPreviewWindow('{{ route('memberreceipt.invoicedownload', $value->mr_id) }}')" 
@@ -183,7 +178,7 @@
                     @endforeach
                 @else
                     <tr>
-                        <td colspan="8" class="text-center px-6 py-4 text-gray-500 dark:text-gray-400">No records found.</td>
+                        <td colspan="7" class="text-center px-6 py-4 text-gray-500 dark:text-gray-400">No records found.</td>
                     </tr>
                 @endif
             </tbody>
@@ -205,7 +200,7 @@
                 search: "",
             },
             columnDefs: [
-            { orderable: false, targets: [ 2, 3, 4, 5, 6,7] } 
+            { orderable: false, targets: [ 2, 3, 4, 5, 6] } 
             ]
         });
     });

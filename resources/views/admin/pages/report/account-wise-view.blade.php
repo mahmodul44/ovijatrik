@@ -168,9 +168,8 @@
                     <th>Account</th>
                     <th class="text-right">Balance</th>
                 </tr>
-            </thead>
-
-         <tbody>
+    </thead>
+    <tbody>
     @php $totalamount = 0; $i = 0; @endphp
 
     @foreach($reportData as $row)
@@ -189,18 +188,16 @@
     </tr>
     @endforeach
 </tbody>
+<tfoot>
+    <tr>
+        <td></td>
+        <td class="text-right">Total:</td>
+        <td class="text-right">{{ number_format($totalamount,2) }}</td>
+    </tr>
+</tfoot>
 
-
-            <tfoot>
-                <tr>
-                    <td></td>
-                    <td class="text-right">Total:</td>
-                    <td class="text-right">{{ number_format($totalamount,2) }}</td>
-                </tr>
-            </tfoot>
-
-        </table>
-    </div>
+</table>
+</div>
 
 </div>
 

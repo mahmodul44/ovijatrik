@@ -276,7 +276,7 @@ $(document).ready(function () {
                     $('#projectledgerInfo').show();
 
                     $('#project_ledger_balance').text(
-                        "Project Total Ledger: " + response.total + " BDT"
+                        "Project Total Balance: " + response.total + " BDT"
                     );
                 }
             });
@@ -333,7 +333,7 @@ $('#account_id').on('change', function () {
                 toastr.error(res.message);
                 $('#ledgerInfo').hide();
             } else {
-                $('#ledger_balance').text("Account Wise Ledger : " + res.balance + " BDT");
+                $('#ledger_balance').text("Current Account Balance : " + res.balance + " BDT");
                 $('#ledgerInfo').show();
             }
         }

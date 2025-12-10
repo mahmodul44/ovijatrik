@@ -131,7 +131,7 @@
     <!-- Account -->
     <div class="w-full">
         <label for="account_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-            Account <span class="text-red-600">*</span>
+            Account <span class="text-red-600"></span>
         </label>
 
         <input type="hidden" value="10000001" id="project_id" name="project_id">
@@ -188,7 +188,7 @@
         <!-- Mobile Account No -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Account No <span class="text-red-600">*</span>
+                Account No <span class="text-red-600"></span>
             </label>
             <input type="text" id="mobile_account_no" name="mobile_account_no"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
@@ -213,23 +213,22 @@
 <div id="bankFields" class="hidden mt-3">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-        <!-- Bank Account No -->
+         <!-- Bank Name -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Bank Account No <span class="text-red-600">*</span>
+               Donar Bank <span class="text-red-600"></span>
             </label>
-            <input type="text" id="bank_account_no" name="bank_account_no"
+            <input type="text" id="bank_name" name="bank_name"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
                 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
                 focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
-
-        <!-- Bank Name -->
+        <!-- Bank Account No -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Bank Name <span class="text-red-600">*</span>
+                Account No <span class="text-red-600"></span>
             </label>
-            <input type="text" id="bank_name" name="bank_name"
+            <input type="text" id="bank_account_no" name="bank_account_no"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
                 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
                 focus:outline-none focus:ring-2 focus:ring-blue-500">

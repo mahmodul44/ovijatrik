@@ -17,7 +17,7 @@
         </div>
 
         <!-- Alerts -->
-        <div class="space-y-4 mb-4">
+        {{-- <div class="space-y-4 mb-4">
             <div class="alert-danger hidden p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg">
                 <strong>Error!</strong>
                 <p class="alert-message">Something went wrong. Please try again...</p>
@@ -27,7 +27,7 @@
                 <strong>Success!</strong>
                 <p class="alert-message"><i class="fa fa-spinner fa-spin"></i> Redirecting...</p>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Table -->
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4 border border-gray-200 dark:border-gray-700">

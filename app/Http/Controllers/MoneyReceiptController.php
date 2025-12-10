@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Models\FiscalYear;
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\About;
 use App\Models\Account;
 use App\Models\Project;
-use App\Models\MoneyReceipt;
+use App\Models\Category;
+use App\Models\FiscalYear;
 use App\Models\FalseReceipt;
-use App\Models\User;
-use App\Models\PaymentMethod;
+use App\Models\MoneyReceipt;
 use Illuminate\Http\Request;
+use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
 USE DB;
 
 
@@ -259,7 +260,8 @@ class MoneyReceiptController extends Controller
 }
 
 function invoiceDownload($id){
-    $data['invoiceInfo'] = MoneyReceipt::with(['member','paymentmethod','project'])->findOrFail($id);
+    $data['abouts'] = About::first();
+    $data['invoiceInfo'] = MoneyReceipt::with(['member','paymentmethod','project','account','createdUser'])->findOrFail($id);
     return view('admin.pages.moneyreceipt.invoice', $data);
 }
 
