@@ -112,11 +112,28 @@ public function index()
                 'last_date' => $group->sortByDesc('payment_date')->first()->payment_date ?? null,
             ];
         })->values();
+        $lastReceipt = MoneyReceipt::where('member_id', $donorId)
+        ->where('status', 1)
+        ->orderBy('mr_id', 'desc')
+        ->value('selected_months');
+
+        $receiptMonths = [];
+
+        if ($lastReceipt) {
+            $monthsArray = json_decode($lastReceipt, true);
+
+            foreach ($monthsArray as $m) {
+                // $m = "2025-07"
+                $receiptMonths[] = \Carbon\Carbon::createFromFormat('Y-m', $m)->format('F Y');
+            }
+        }
+
          $chartData = [
             'months' => [],
             'amounts' => []
         ];
-        return view('admin.newdashboard', compact('user','totalThisYear','totalAllTime','lastDonation','frequency','fiscalSummary','lastDonateAmount','chartData'));
+        
+        return view('admin.newdashboard', compact('user','totalThisYear','totalAllTime','lastDonation','frequency','fiscalSummary','lastDonateAmount','chartData','receiptMonths'));
     }
 
     abort(403);

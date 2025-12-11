@@ -169,7 +169,7 @@
         </span>
     </div>
 </div>
-
+ 
     {{-- Fiscal Year Summary Table --}}
     <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
         <h2 class="text-xl font-bold mb-4 text-gray-700 dark:text-gray-100">Fiscal Year Summary</h2>
@@ -200,8 +200,26 @@
             </table>
         </div>
     </div>
-    @endif
 
+    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mt-6">
+    <h2 class="text-xl font-bold mb-4 text-gray-700 dark:text-gray-100">
+        Receipt Months (Current Fiscal Year)
+    </h2>
+
+    @if(count($receiptMonths))
+        <div class="text-gray-800 dark:text-gray-200 text-sm leading-6">
+
+            {{-- Convert array to comma-separated string --}}
+            {{ implode(', ', $receiptMonths) }}
+
+        </div>
+    @else
+        <p class="text-gray-500 dark:text-gray-400">No receipt months found</p>
+    @endif
+</div>
+
+
+    @endif
 </div>
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -229,6 +247,7 @@
             }
         }
     });
+
 </script>
 @endpush
 @endsection
