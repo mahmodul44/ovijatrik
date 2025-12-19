@@ -170,7 +170,7 @@
 
                     @if($row->transaction_type == '1')
                         <strong> Receipt No: </strong> {{ $row->mr_no }}<br>
-                        <strong>Name: </strong> {{ $row->member_name }}<br>
+                        <strong>Name: </strong> {{ $row->receipt_donor_name }}<br>
                         <strong style="color: #007bff">Account: </strong> {{ $row->account_name.' '.$row->account_no }}
                     @else
                         @if(!empty($row->expense_cat_name))

@@ -34,13 +34,13 @@
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-15%" style="text-align: center">Email</th>
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-15%" style="text-align: center">Occupation</th>
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-10%" style="text-align: center">Monthly Amount</th>
-                                <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-10%" style="text-align: center">Status</th>
+                <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-10%" style="text-align: center">Status</th>
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-10%" style="text-align: center">Actions</th>
             </tr>
             </thead>
 
             <tbody class="bg-white dark:bg-gray-800">
-                @forelse($members as $index => $value)
+                @foreach($members as $index => $value)
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600" style="text-align: center">{{ $index + 1 }}</td>
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 font-medium text-gray-900 dark:text-gray-100" style="text-align: left">{{ $value->member_id }} - {{ $value->name }}</td>
@@ -91,15 +91,11 @@
                                 </svg>
                             </button>
                         </form>
-
                     </td>
 
                     </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="text-center px-6 py-4 text-gray-500 dark:text-gray-400">No records found.</td>
-                    </tr>
-                @endforelse
+             
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -114,7 +110,7 @@ $(document).ready(function () {
         searching: true,
         responsive: true,
         columnDefs: [
-        { orderable: false, targets: [1, 2, 3, 4, 5] } 
+        { orderable: false, targets: [1, 2, 3, 4, 5, 6, 7] } 
       ]
     });
 });

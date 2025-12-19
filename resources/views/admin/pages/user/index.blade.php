@@ -103,7 +103,7 @@ $(document).ready(function () {
         searching: true,
         responsive: true,
         columnDefs: [
-        { orderable: false, targets: [1, 2, 4] } // disable sort on Image & Actions
+        { orderable: false, targets: [1, 2, 4] } 
       ]
     });
 });
@@ -111,24 +111,51 @@ $(document).ready(function () {
 // Delete confirmation
 $('.deleteProjectForm').on('submit', function (e) {
     e.preventDefault();
-    if (!confirm("Are you sure you want to delete this project?")) return;
 
-    const form = $(this);
-    $.ajax({
-        url: form.attr('action'),
-        type: 'POST',
-        data: form.serialize(),
-        success: function (response) {
-            if (response.success) {
-                toastr.success(response.message);
-                setTimeout(() => window.location.reload(), 1000);
-            }
-        },
-        error: function () {
-            toastr.error('Failed to delete project.');
+    let form = $(this);
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This record will be permanently deleted!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e3342f',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire(
+                            'Deleted!',
+                            response.message,
+                            'success'
+                        );
+
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1200);
+                    }
+                },
+                error: function () {
+                    Swal.fire(
+                        'Failed!',
+                        'Failed to delete project.',
+                        'error'
+                    );
+                }
+            });
+
         }
     });
 });
+
 </script>
 @endpush
 @endsection

@@ -62,6 +62,7 @@ function projectWiseSearch(Request $request)
         ->leftJoin('expense_categories','expense_categories.expense_cat_id','=','expenses.expense_cat_id')
         ->leftJoin('money_receipts','money_receipts.mr_id','=','transactions.reference_id')
         ->leftJoin('projects', 'projects.project_id', '=', 'transactions.project_id')
+        ->leftJoin('users as receipt_users', 'receipt_users.id', '=', 'money_receipts.member_id')
         ->whereNotNull('transactions.project_id')
         ->orderBy('transactions.transaction_date', 'asc')
            ->select(
@@ -72,9 +73,15 @@ function projectWiseSearch(Request $request)
         'transactions.transaction_amount',
         'accounts.*',
         'users.name as member_name','users.member_id as memberID',
-        'expenses.*','money_receipts.mr_no','expense_categories.expense_cat_name',
+        'expenses.*','money_receipts.mr_no','money_receipts.donar_name','expense_categories.expense_cat_name',
         'projects.project_title','projects.project_code','projects.target_amount',
-        'projects.collection_amount','projects.total_expense'
+        'projects.collection_amount','projects.total_expense', DB::raw("
+            CASE 
+                WHEN money_receipts.member_id IS NOT NULL 
+                THEN receipt_users.name
+                ELSE money_receipts.donar_name
+            END as receipt_donor_name
+        ")
     );
 
     if ($projectId) {
