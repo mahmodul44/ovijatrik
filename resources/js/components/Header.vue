@@ -17,7 +17,13 @@
 
   <!-- Left: Logo + Title -->
   <div class="flex items-center space-x-4">
-    <img src="./logo.png" alt="Logo" class="h-11 w-auto object-contain" />
+      <img
+      v-if="logoImg"
+      :src="logoImg"
+      alt="Logo"
+      class="h-11 w-auto object-contain"
+    />
+
 
     <div>
       <h1 class="text-2xl font-bold text-green-700 leading-tight">
@@ -117,12 +123,13 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, inject, onMounted } from 'vue'
 
 const i18n = inject('i18n')
 const isMenuOpen = ref(false)
 const showToast = ref(false)
 const toastMessage = ref('')
+const logoImg = ref('') 
 
 const toggleMenu = () => (isMenuOpen.value = !isMenuOpen.value)
 const closeMenu = () => (isMenuOpen.value = false)
@@ -136,6 +143,21 @@ const changeLanguage = (lang) => {
     setTimeout(() => (showToast.value = false), 2500)
   }
 }
+
+onMounted(() => {
+  axios.get('/api/about')
+    .then(res => {
+      console.log(res.data.logo) 
+
+      if (res.data.logo) {
+        logoImg.value = `/${res.data.logo}`
+       
+      }
+    })
+    .catch(err => {
+      console.error('About API error:', err)
+    })
+})
 </script>
 
 <style scoped>

@@ -43,27 +43,40 @@
                             <td class="px-6 py-4 text-center border text-gray-800 dark:text-gray-300">{{ $value->mr_no }}</td>
                             <td class="px-6 py-4 text-left border text-gray-800 dark:text-gray-300">{{ $value->project->project_title }}</td>
                             <td class="px-6 py-4 text-right font-medium border text-gray-900 dark:text-gray-100">৳ {{ $value->payment_amount }}</td>
-                            <td class="px-6 py-4 text-center border space-x-3">
-                                <!-- Preview -->
-                                <button onclick="openPreviewWindow('{{ route('moneyreceipt.invoicedownload', $value->mr_id) }}')"
-                                    class="flex items-center gap-1 text-blue-600 hover:text-blue-800">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    Preview
-                                </button>
-                                 <!-- Download -->
-                                <button onclick="downloadInvoice('{{ route('moneyreceipt.invoicedownload', $value->mr_id) }}', '{{ $value->mr_no }}')"
-                                    class="flex items-center gap-1 text-green-600 hover:text-green-800">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-6-4v8m0 0l-4-4m4 4l4-4M12 4v8" />
-                                    </svg>
-                                    Download
-                                </button>
+                            <td class="px-6 py-4 flex items-center border">
+    <!-- Preview -->
+    <button
+        onclick="openPreviewWindow('{{ route('moneyreceipt.invoicedownload', $value->mr_id) }}')"
+        class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium
+               text-indigo-600 hover:text-indigo-800
+               hover:bg-indigo-50 rounded-md transition">
+        <!-- Eye Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M1.5 12s4-7.5 10.5-7.5S22.5 12 22.5 12s-4 7.5-10.5 7.5S1.5 12 1.5 12z"/>
+            <circle cx="12" cy="12" r="3"/>
+        </svg>
+        Preview
+    </button>
+
+    <!-- Download -->
+    <button
+        onclick="downloadInvoice('{{ route('moneyreceipt.invoicedownload', $value->mr_id) }}', '{{ $value->mr_no }}')"
+        class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium
+               text-emerald-600 hover:text-emerald-800
+               hover:bg-emerald-50 rounded-md transition">
+        <!-- Download Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 3v12m0 0l4-4m-4 4l-4-4"/>
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M4 17h16"/>
+        </svg>
+        Download
+    </button>
+
                             </td>
                         </tr>
                     @endforeach
@@ -103,14 +116,14 @@
 
     function downloadInvoice(url, invoiceNo) {
     fetch(url)
-        .then(response => response.text())  // get HTML content
+        .then(response => response.text()) 
         .then(html => {
-            const blob = new Blob([html],  { type: 'application/pdf' });  // create a blob
+            const blob = new Blob([html],  { type: 'application/pdf' }); 
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `Invoice-${invoiceNo}.pdf`; // set download filename
+            link.download = `Invoice-${invoiceNo}.pdf`; 
             document.body.appendChild(link);
-            link.click();  // trigger download
+            link.click(); 
             document.body.removeChild(link);
         })
         .catch(err => console.error('Error downloading invoice:', err));
