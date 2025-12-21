@@ -394,7 +394,7 @@ public function expensePreview($id)
 {
     $data['abouts'] = About::first();
     $data['expense'] = Expense::with(['project','expcategory'])->findOrFail($id);
-    return view('admin.pages.expense.expensepreview', $data);
+    return view('admin.pages.expense.expensePreview', $data);
 }
 
 public function destroy($id)

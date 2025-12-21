@@ -119,15 +119,15 @@
         <div class="mt-6 space-y-4 text-gray-700">
           <div class="flex items-start space-x-2">
             <i class="fa-solid fa-phone text-green-600 mt-1"></i>
-            <p><strong>{{ isBangla ? 'ফোন:' : 'Phone:' }}</strong> {{ isBangla ? '+৮৮০১৯২৫৪৮৬৪:' : '+8809610-001089' }} </p>
+            <p><strong>{{ isBangla ? 'ফোন:' : 'Phone:' }}</strong> {{ isBangla ? '+৮৮০১৭১৭০১৭৬৪৫:' : '+8801717 017 645' }} </p>
           </div>
           <div class="flex items-start space-x-2">
             <i class="fa-solid fa-location-dot text-green-600 mt-1"></i>
-            <p><strong>{{ isBangla ? 'ঠিকানা:' : 'Location:' }}</strong> Plot-70, Road-3, Block-C, Aftabnagar, Dhaka-1212</p>
+            <p><strong>{{ isBangla ? 'ঠিকানা:' : 'Location:' }}</strong> Islambagh, Dinajpur</p>
           </div>
           <div class="flex items-start space-x-2">
             <i class="fa-solid fa-envelope text-green-600 mt-1"></i>
-            <p><strong>{{ isBangla ? 'ইমেইল:' : 'Email:' }}</strong> contact@assunnahfoundation.org</p>
+            <p><strong>{{ isBangla ? 'ইমেইল:' : 'Email:' }}</strong> contact@ovijatrik.org</p>
           </div>
         </div>
       </div>

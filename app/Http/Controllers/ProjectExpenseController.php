@@ -393,7 +393,7 @@ function expensePreview($id)
 {
     $data['abouts'] = About::first();
     $data['expense'] = Expense::with(['project','expcategory'])->findOrFail($id);
-    return view('admin.pages.projectexpense.expensepreview',$data);
+    return view('admin.pages.projectexpense.expensePreview',$data);
 }
 
 public function getProjectLedger(Request $request)
