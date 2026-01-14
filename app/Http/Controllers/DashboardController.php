@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Account;
 use App\Models\MoneyReceipt;
+use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,6 +80,8 @@ public function index()
         $fiscalYearEnd   = now()->month >= 7 ? (now()->year+1).'-06-30' : now()->year.'-06-30';
 
         $donations = MoneyReceipt::where('member_id', $donorId)->where('status',1)->get();
+        $activeProjects = Project::where('status',1)->get();
+        $paymentMethods = Account::where('account_type',1)->where('status',1)->get();
 
         $totalThisYear = $donations->whereBetween('payment_date', [$fiscalYearStart, $fiscalYearEnd])->sum('payment_amount');
         $totalAllTime  = $donations->sum('payment_amount');
@@ -101,39 +106,44 @@ public function index()
         };
 
         // Fiscal Year summary
-        $fiscalSummary = $donations->groupBy(function($d){
-            $date = \Carbon\Carbon::parse($d->payment_date);
-            return $date->month >= 7 ? $date->year.'-'.($date->year+1) : ($date->year-1).'-'.$date->year;
-        })->map(function($group, $year){
-            return [
-                'year'      => $year,
-                'total'     => $group->sum('payment_amount'),
-                'count'     => $group->count(),
-                'last_date' => $group->sortByDesc('payment_date')->first()->payment_date ?? null,
-            ];
-        })->values();
+       $fiscalSummary = $donations->groupBy(function($d){
+    $date = \Carbon\Carbon::parse($d->payment_date);
+    return $date->month >= 7 ? $date->year.'-'.($date->year+1) : ($date->year-1).'-'.$date->year;
+})->map(function($group, $year){
+    
+    // ঐ অর্থ বছরের সকল ডোনেশনের selected_months গুলোকে একত্রিত করা
+    $allMonths = [];
+    foreach ($group as $donation) {
+        if ($donation->selected_months) {
+            $monthsArray = json_decode($donation->selected_months, true);
+            if (is_array($monthsArray)) {
+                foreach ($monthsArray as $m) {
+                    // ফরম্যাট পরিবর্তন: "2025-07" -> "July-2025"
+                    $allMonths[] = \Carbon\Carbon::parse($m)->format('F-Y');
+                }
+            }
+        }
+    }
+
+    return [
+        'year'      => $year,
+        'total'     => $group->sum('payment_amount'),
+        'count'     => $group->count(),
+        'last_date' => $group->sortByDesc('payment_date')->first()->payment_date ?? null,
+        'paid_months' => array_unique($allMonths), // ডুপ্লিকেট মাস থাকলে বাদ দিবে
+    ];
+})->values();
         $lastReceipt = MoneyReceipt::where('member_id', $donorId)
         ->where('status', 1)
         ->orderBy('mr_id', 'desc')
         ->value('selected_months');
-
-        $receiptMonths = [];
-
-        if ($lastReceipt) {
-            $monthsArray = json_decode($lastReceipt, true);
-
-            foreach ($monthsArray as $m) {
-                // $m = "2025-07"
-                $receiptMonths[] = \Carbon\Carbon::createFromFormat('Y-m', $m)->format('F Y');
-            }
-        }
 
          $chartData = [
             'months' => [],
             'amounts' => []
         ];
         
-        return view('admin.newdashboard', compact('user','totalThisYear','totalAllTime','lastDonation','frequency','fiscalSummary','lastDonateAmount','chartData','receiptMonths'));
+        return view('admin.newdashboard', compact('user','totalThisYear','totalAllTime','lastDonation','frequency','fiscalSummary','lastDonateAmount','chartData','activeProjects','paymentMethods'));
     }
 
     abort(403);

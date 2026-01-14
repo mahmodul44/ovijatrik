@@ -130,95 +130,251 @@
 
     {{-- Donor --}}
     @if($user->role == 3)
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-green-50 dark:bg-green-900 p-6 rounded-lg shadow hover:shadow-xl transition duration-300">
-            <h2 class="text-lg font-bold mb-2 text-green-700 dark:text-green-300">Total This Year</h2>
-            <p class="text-3xl font-semibold text-green-600 dark:text-green-400">৳ {{ number_format($totalThisYear,2) }}</p>
-        </div>
+  <div class="space-y-8 p-4 md:p-8 bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-200 font-sans">
 
-        <div class="bg-blue-50 dark:bg-blue-900 p-6 rounded-lg shadow hover:shadow-xl transition duration-300">
-            <h2 class="text-lg font-bold mb-2 text-blue-700 dark:text-blue-300">Total Donations</h2>
-            <p class="text-3xl font-semibold text-blue-600 dark:text-blue-400">৳ {{ number_format($totalAllTime,2) }}</p>
-        </div>
-
-        <div class="bg-yellow-50 dark:bg-yellow-900 p-6 rounded-lg shadow hover:shadow-xl transition duration-300">
-            <h2 class="text-lg font-bold mb-2 text-yellow-700 dark:text-yellow-300">Donation Frequency</h2>
-            <span class="inline-block bg-yellow-200 dark:bg-yellow-700 text-yellow-800 dark:text-yellow-100 px-3 py-1 rounded-full text-sm font-semibold">
-                {{ $frequency }}
-            </span>
-        </div>
-    </div>
-
-    <div class="bg-blue-100 dark:bg-blue-800 border-l-4 border-blue-500 dark:border-blue-400 text-blue-800 dark:text-blue-200 p-4 rounded-md shadow-lg flex items-center justify-between transition duration-300 hover:shadow-xl" role="alert">
-    <div class="flex items-center space-x-3">
-        <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-        </svg>
-        
-        <p class="font-semibold text-lg">
-           Last Donation:
-            <span class="ml-2 font-bold text-blue-700 dark:text-blue-300">
-                {{ $lastDonation ? \Carbon\Carbon::parse($lastDonation->payment_date)->format('d M, Y') : 'কোনো অনুদান নেই' }}
-            </span>
-        </p>
-    </div>
+<div class="relative overflow-hidden bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-gray-700 transition-all duration-300">
     
-    <div class="flex items-center">
-        <span class="text-2xl font-extrabold text-blue-600 dark:text-blue-400">
-            ৳ {{ number_format($lastDonateAmount,2) }}
-        </span>
+    <div class="h-20 bg-gradient-to-r from-blue-800 via-indigo-700 to-emerald-700 opacity-90"></div>
+
+    <div class="px-6 pb-8 -mt-12">
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
+            
+            <div class="w-full lg:w-[65%] flex flex-col group">
+                <div class="relative overflow-hidden rounded-3xl shadow-2xl border-4 border-white dark:border-gray-700 transform transition-transform duration-500 hover:scale-[1.01]">
+                    <img src="{{ asset('uploads/cards/salim_card.jpeg') }}" 
+                         alt="Membership Card" 
+                         class="w-full h-auto object-cover">
+                    
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
+                    <a href="{{ asset('uploads/cards/salim_card.jpeg') }}" 
+                    download="Ovijatrik_Membership_Card.jpeg" 
+                    class="flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-2xl font-bold shadow-xl hover:bg-blue-50 transition transform hover:scale-105">
+                        
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        Download Digital Card
+                    </a>
+
+                </div>
+                </div>
+                
+                <div class="hidden lg:flex mt-4 items-center justify-between px-2">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest italic">Digital Identity Card • Ovijatrik Family</p>
+                 
+                </div>
+            </div>
+
+            <div class="w-full lg:w-[35%] space-y-6">
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <img class="h-20 w-20 rounded-2xl border-4 border-white dark:border-gray-700 shadow-lg object-cover" 
+                             src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=036056&color=fff" alt="Profile">
+                        <div class="absolute -bottom-2 -right-2 bg-green-500 border-2 border-white dark:border-gray-800 p-1 rounded-full">
+                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path></svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-black tracking-tight text-gray-800 dark:text-white">{{ $user->name }}</h2>
+                        <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-tighter italic">Premium Benefactor</span>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="flex items-center text-[10px] font-bold text-gray-400 uppercase">  <svg class="w-4 h-4 mr-1.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg>  Donor ID</span>
+                        <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">#{{ $user->member_id ?? 'DR-0042' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-gray-100 dark:border-gray-800 pt-3">
+                        <span class="flex items-center text-[10px] font-bold text-gray-400 uppercase"> <svg class="w-4 h-4 mr-1.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg> Contact</span>
+                        <span class="text-sm font-bold text-gray-700 dark:text-gray-200">{{ $user->phone_no ?? 'N/A' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-gray-100 dark:border-gray-800 pt-3">
+                    <span class="flex items-center text-[10px] font-bold text-gray-400 uppercase">
+                        <svg class="w-4 h-4 mr-1.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                        Status
+                    </span>
+                    
+                    <span class="px-2 py-0.5 rounded-lg text-[11px] font-black uppercase tracking-tighter {{ $user->status == 1 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-gray-100 text-gray-500' }}">
+                        {{ $user->status == 1 ? 'Active Member' : 'Inactive' }}
+                    </span>
+                </div>
+                </div>
+             
+            </div>
+
+        </div>
     </div>
 </div>
- 
-    {{-- Fiscal Year Summary Table --}}
-    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-        <h2 class="text-xl font-bold mb-4 text-gray-700 dark:text-gray-100">Fiscal Year Summary</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-6 rounded-3xl shadow-lg text-white group cursor-default">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-teal-100 font-medium uppercase tracking-wider text-[10px]">Contribution This Year</p>
+                    <h2 class="text-3xl font-bold mt-1">৳ {{ number_format($totalThisYear,2) }}</h2>
+                </div>
+                <div class="p-2 bg-white/20 rounded-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+            </div>
+            <p class="mt-4 text-[10px] bg-black/10 w-max px-2 py-1 rounded">Fiscal: {{ now()->year }}</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-indigo-500 to-blue-600 p-6 rounded-3xl shadow-lg text-white group cursor-default">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-blue-100 font-medium uppercase tracking-wider text-[10px]">Lifetime Donation</p>
+                    <h2 class="text-3xl font-bold mt-1">৳ {{ number_format($totalAllTime,2) }}</h2>
+                </div>
+                <div class="p-2 bg-white/20 rounded-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                </div>
+            </div>
+            <p class="mt-4 text-[10px] bg-black/10 w-max px-2 py-1 rounded">Total Support</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-rose-500 to-orange-600 p-6 rounded-3xl shadow-lg text-white group cursor-default">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-rose-100 font-medium uppercase tracking-wider text-[10px]">Donation Frequency</p>
+                    <h2 class="text-3xl font-bold mt-1">{{ $frequency }}</h2>
+                </div>
+                <div class="p-2 bg-white/20 rounded-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                </div>
+            </div>
+            <p class="mt-4 text-[10px] bg-black/10 w-max px-2 py-1 rounded">Commitment Level</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+            <h3 class="text-xl font-bold mb-6 flex items-center text-gray-700 dark:text-white">
+                <span class="w-2 h-6 bg-red-500 rounded-full mr-3"></span> Active Projects
+            </h3>
+            <div class="space-y-4">
+                @foreach($activeProjects as $project)
+                <div class="p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-700 group hover:border-blue-300 dark:hover:border-blue-800 transition">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h4 class="font-bold text-gray-800 dark:text-gray-100 leading-tight">{{ $project['project_title'] }}</h4>
+                            <p class="text-[10px] text-gray-500 mt-1 uppercase">CODE: {{ $project['project_code'] }}</p>
+                        </div>
+                        <a href="/projects/{{ $project['id'] }}" target="_blank" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded-lg transition shadow-md flex items-center">
+                            Details
+                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                    @php $percentage = $project['target_amount'] > 0 ? round(($project['collection_amount'] / $project['target_amount']) * 100) : 0; @endphp
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-2">
+                        <div class="bg-blue-600 h-2 rounded-full shadow-inner" style="width: {{ $percentage }}%"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] font-bold uppercase">
+                        <span class="text-gray-400 font-medium italic italic">Target: ৳{{ number_format($project['target_amount']) }}</span>
+                        <span class="text-blue-600 tracking-wider">{{ $percentage }}% Goal Reached</span>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
+                <h3 class="text-xl font-bold mb-6 flex items-center text-gray-700 dark:text-white">
+                    <span class="w-2 h-6 bg-indigo-500 rounded-full mr-3"></span> Fast Donation Channels
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    @foreach($paymentMethods as $method)
+                    <div class="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-800 relative overflow-hidden">
+                        <div class="relative z-10">
+                            <p class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tight">{{ $method['account_name'] }}</p>
+                            <p class="text-lg font-mono font-bold text-gray-800 dark:text-white mt-1">{{ $method['account_no'] }}</p>
+                        </div>
+                        <svg class="absolute right-[-10px] bottom-[-10px] w-20 h-20 text-indigo-100 dark:text-indigo-800 opacity-50" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-3xl shadow-xl text-white">
+                <h4 class="font-bold text-lg">Need Support?</h4>
+                <p class="text-xs text-gray-400 mt-1 mb-6">Our team is available to help you with your queries.</p>
+                <div class="flex flex-wrap gap-2">
+                    <a href="mailto:support@obhijatrik.org" class="flex items-center text-xs bg-gray-700 hover:bg-gray-600 px-4 py-2.5 rounded-xl transition font-bold border border-gray-600">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        Email Us
+                    </a>
+                    <a href="tel:+8801XXXXXXX" class="flex items-center text-xs bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-xl transition font-bold">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        Hotline
+                    </a>
+                    <a href="https://facebook.com/ovijatrik.dinajpur" target="_blank" class="flex items-center justify-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl text-xs font-bold border border-blue-100 dark:border-blue-800/30 hover:bg-blue-100 transition">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        Facebook
+                    </a>
+                    <a href="https://wa.me/01717017645" target="_blank" class="flex items-center justify-center gap-2 p-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-xl text-xs font-bold border border-emerald-100 dark:border-emerald-800/30 hover:bg-emerald-100 transition">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.417-.003 6.557-5.338 11.892-11.893 11.892-1.997-.001-3.951-.5-5.688-1.448l-6.305 1.652zm6.599-3.835c1.523.904 3.013 1.358 4.606 1.359 5.343 0 9.689-4.345 9.691-9.691.001-2.589-1.007-5.023-2.839-6.855-1.832-1.832-4.267-2.839-6.858-2.84-5.341 0-9.69 4.344-9.693 9.69-.001 1.745.469 3.447 1.359 4.966l-1.02 3.73 3.83-1.003z"/></svg>
+                        WhatsApp
+                    </a>
+                    
+                </div>
+                 
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700">
+        <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-center bg-gray-50/50 dark:bg-gray-700/20 gap-4">
+            <h2 class="text-xl font-bold text-gray-800 dark:text-white flex items-center">
+                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Fiscal Year Records
+            </h2>
+            <button class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter shadow-sm hover:shadow-md transition flex items-center">
+                <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Download Statement
+            </button>
+        </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full border border-gray-200 dark:border-gray-700">
-                <thead class="bg-gray-100 dark:bg-gray-700">
+            <table class="min-w-full">
+                <thead class="text-gray-400 text-[10px] uppercase tracking-widest border-b border-gray-100 dark:border-gray-700">
                     <tr>
-                        <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">Fiscal Year</th>
-                        <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">Total Amount</th>
-                        <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">No. of Donations</th>
-                        <th class="px-4 py-2 text-left text-gray-700 dark:text-gray-200">Last Donation Date</th>
+                        <th class="px-6 py-4 text-left">Fiscal Year</th>
+                        <th class="px-6 py-4 text-left">Total Contributed</th>
+                        <th class="px-6 py-4 text-left">Times</th>
+                        <th class="px-6 py-4 text-left">Supported Months</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                     @forelse($fiscalSummary as $fy)
-                        <tr class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                            <td class="px-4 py-2 text-gray-700 dark:text-gray-200">{{ $fy['year'] }}</td>
-                            <td class="px-4 py-2 text-gray-700 dark:text-gray-200">৳ {{ number_format($fy['total'],2) }}</td>
-                            <td class="px-4 py-2 text-gray-700 dark:text-gray-200">{{ $fy['count'] }}</td>
-                            <td class="px-4 py-2 text-gray-700 dark:text-gray-200">{{ $fy['last_date'] ? \Carbon\Carbon::parse($fy['last_date'])->format('d M, Y') : 'N/A' }}</td>
-                        </tr>
+                    <tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition group">
+                        <td class="px-6 py-4 font-bold text-gray-700 dark:text-gray-200 text-sm italic italic tracking-tighter">{{ $fy['year'] }}</td>
+                        <td class="px-6 py-4">
+                            <span class="text-green-600 dark:text-green-400 font-extrabold text-lg tracking-tight">৳ {{ number_format($fy['total'],2) }}</span>
+                        </td>
+                        <td class="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs font-bold">{{ $fy['count'] }} TXNs</td>
+                        <td class="px-6 py-4">
+                            <div class="flex flex-wrap gap-1">
+                                @foreach($fy['paid_months'] as $monthName)
+                                    <span class="bg-blue-50/50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 text-[9px] font-black px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-800 uppercase tracking-tighter">
+                                        {{ $monthName }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="4" class="px-4 py-2 text-center text-gray-500 dark:text-gray-400">No donations found</td>
-                        </tr>
+                    <tr>
+                        <td colspan="4" class="px-6 py-12 text-center text-gray-400 text-xs italic">No donation records found.</td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
-
-    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mt-6">
-    <h2 class="text-xl font-bold mb-4 text-gray-700 dark:text-gray-100">
-        Receipt Months (Current Fiscal Year)
-    </h2>
-
-    @if(count($receiptMonths))
-        <div class="text-gray-800 dark:text-gray-200 text-sm leading-6">
-
-            {{-- Convert array to comma-separated string --}}
-            {{ implode(', ', $receiptMonths) }}
-
-        </div>
-    @else
-        <p class="text-gray-500 dark:text-gray-400">No receipt months found</p>
-    @endif
 </div>
-
-
     @endif
 </div>
 @push('scripts')
