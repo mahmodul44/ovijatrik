@@ -85,8 +85,11 @@
                 </button>
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" class="focus:outline-none">
-                        <img src="{{ asset('profile_user.png')}}"  
-                             alt="{{(Auth::user()->name ?? 'Guest') }}" class="w-10 h-10 rounded-full border">
+                        {{-- <img src="{{ asset('profile_user.png')}}"  
+                             alt="{{(Auth::user()->name ?? 'Guest') }}" class="w-10 h-10 rounded-full border"> --}}
+                        <img class="w-10 h-10 rounded-full border border-white dark:border-gray-700 shadow-lg object-cover" 
+                            src="{{ auth()->user()->profile_photo ? asset('storage/' . auth()->user()->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=036056&color=fff' }}" 
+                            alt="{{ auth()->user()->name }}">
                     </button>
 
                    <!-- Dropdown -->

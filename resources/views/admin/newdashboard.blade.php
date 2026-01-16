@@ -141,20 +141,21 @@
             
             <div class="w-full lg:w-[65%] flex flex-col group">
                 <div class="relative overflow-hidden rounded-3xl shadow-2xl border-4 border-white dark:border-gray-700 transform transition-transform duration-500 hover:scale-[1.01]">
-                    <img src="{{ asset('uploads/cards/salim_card.jpeg') }}" 
+                    <img src="{{ $user->id_card_photo ? asset('storage/' . $user->id_card_photo) : asset('images/default-card-placeholder.png') }}" 
                          alt="Membership Card" 
                          class="w-full h-auto object-cover">
                     
                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
-                    <a href="{{ asset('uploads/cards/salim_card.jpeg') }}" 
-                    download="Ovijatrik_Membership_Card.jpeg" 
-                    class="flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-2xl font-bold shadow-xl hover:bg-blue-50 transition transform hover:scale-105">
-                        
-                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                        </svg>
-                        Download Digital Card
-                    </a>
+                    @if($user->id_card_photo)
+                        <a href="{{ asset('storage/' . $user->id_card_photo) }}" 
+                           download="Ovijatrik_Membership_Card.jpeg" 
+                           class="flex items-center gap-2 bg-white text-gray-900 px-6 py-3 rounded-2xl font-bold shadow-xl hover:bg-blue-50 transition transform hover:scale-105">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            Download Digital Card
+                        </a>
+                        @endif
 
                 </div>
                 </div>
@@ -168,14 +169,15 @@
             <div class="w-full lg:w-[35%] space-y-6">
                 <div class="flex items-center space-x-4">
                     <div class="relative">
-                        <img class="h-20 w-20 rounded-2xl border-4 border-white dark:border-gray-700 shadow-lg object-cover" 
-                             src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=036056&color=fff" alt="Profile">
+                       <img class="h-20 w-20 rounded-2xl border-4 border-white dark:border-gray-700 shadow-lg object-cover" 
+                             src="{{ $user->profile_photo ? asset('storage/' . $user->profile_photo) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=036056&color=fff' }}" 
+                             alt="Profile">
                         <div class="absolute -bottom-2 -right-2 bg-green-500 border-2 border-white dark:border-gray-800 p-1 rounded-full">
                             <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path></svg>
                         </div>
                     </div>
                     <div>
-                        <h2 class="text-2xl font-black tracking-tight text-gray-800 dark:text-white">{{ $user->name }}</h2>
+                        <h2 class="text-2xl font-black tracking-tight text-gray-900 dark:text-white">{{ $user->name }}</h2>
                         <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-tighter italic">Premium Benefactor</span>
                     </div>
                 </div>
@@ -250,6 +252,56 @@
         </div>
     </div>
 
+    <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700">
+        <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-center bg-gray-50/50 dark:bg-gray-700/20 gap-4">
+            <h2 class="text-xl font-bold text-gray-800 dark:text-white flex items-center">
+                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Fiscal Year Records
+            </h2>
+            <button class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter shadow-sm hover:shadow-md transition flex items-center">
+                <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Download Statement
+            </button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead class="text-gray-400 text-[10px] uppercase tracking-widest border-b border-gray-100 dark:border-gray-700">
+                    <tr>
+                        <th class="px-6 py-4 text-left">Fiscal Year</th>
+                        <th class="px-6 py-4 text-left">Total Contributed</th>
+                        <th class="px-6 py-4 text-left">Times</th>
+                        <th class="px-6 py-4 text-left">Supported Months</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                    @forelse($fiscalSummary as $fy)
+                    <tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition group">
+                        <td class="px-6 py-4 font-bold text-gray-700 dark:text-gray-200 text-sm italic italic tracking-tighter">{{ $fy['year'] }}</td>
+                        <td class="px-6 py-4">
+                            <span class="text-green-600 dark:text-green-400 font-extrabold text-lg tracking-tight">৳ {{ number_format($fy['total'],2) }}</span>
+                        </td>
+                        <td class="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs font-bold">{{ $fy['count'] }} TXNs</td>
+                        <td class="px-6 py-4">
+                            <div class="flex flex-wrap gap-1">
+                                @foreach($fy['paid_months'] as $monthName)
+                                    <span class="bg-blue-50/50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 text-[9px] font-black px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-800 uppercase tracking-tighter">
+                                        {{ $monthName }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-12 text-center text-gray-400 text-xs italic">No donation records found.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700">
             <h3 class="text-xl font-bold mb-6 flex items-center text-gray-700 dark:text-white">
@@ -263,7 +315,7 @@
                             <h4 class="font-bold text-gray-800 dark:text-gray-100 leading-tight">{{ $project['project_title'] }}</h4>
                             <p class="text-[10px] text-gray-500 mt-1 uppercase">CODE: {{ $project['project_code'] }}</p>
                         </div>
-                        <a href="/projects/{{ $project['id'] }}" target="_blank" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded-lg transition shadow-md flex items-center">
+                        <a href="project/{{ $project['project_id'] }}" target="_blank" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold rounded-lg transition shadow-md flex items-center">
                             Details
                             <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                         </a>
@@ -326,54 +378,6 @@
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700">
-        <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-center bg-gray-50/50 dark:bg-gray-700/20 gap-4">
-            <h2 class="text-xl font-bold text-gray-800 dark:text-white flex items-center">
-                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                Fiscal Year Records
-            </h2>
-            <button class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter shadow-sm hover:shadow-md transition flex items-center">
-                <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                Download Statement
-            </button>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="min-w-full">
-                <thead class="text-gray-400 text-[10px] uppercase tracking-widest border-b border-gray-100 dark:border-gray-700">
-                    <tr>
-                        <th class="px-6 py-4 text-left">Fiscal Year</th>
-                        <th class="px-6 py-4 text-left">Total Contributed</th>
-                        <th class="px-6 py-4 text-left">Times</th>
-                        <th class="px-6 py-4 text-left">Supported Months</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                    @forelse($fiscalSummary as $fy)
-                    <tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition group">
-                        <td class="px-6 py-4 font-bold text-gray-700 dark:text-gray-200 text-sm italic italic tracking-tighter">{{ $fy['year'] }}</td>
-                        <td class="px-6 py-4">
-                            <span class="text-green-600 dark:text-green-400 font-extrabold text-lg tracking-tight">৳ {{ number_format($fy['total'],2) }}</span>
-                        </td>
-                        <td class="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs font-bold">{{ $fy['count'] }} TXNs</td>
-                        <td class="px-6 py-4">
-                            <div class="flex flex-wrap gap-1">
-                                @foreach($fy['paid_months'] as $monthName)
-                                    <span class="bg-blue-50/50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 text-[9px] font-black px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-800 uppercase tracking-tighter">
-                                        {{ $monthName }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="px-6 py-12 text-center text-gray-400 text-xs italic">No donation records found.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
 </div>
     @endif
 </div>

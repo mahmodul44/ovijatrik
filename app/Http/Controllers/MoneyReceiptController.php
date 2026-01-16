@@ -259,10 +259,26 @@ class MoneyReceiptController extends Controller
     return response()->json($formatted);
 }
 
-function invoiceDownload($id){
+// function invoiceDownload($id){
+//     $data['abouts'] = About::first();
+//     $data['invoiceInfo'] = MoneyReceipt::with(['member','paymentmethod','project','account','createdUser'])->findOrFail($id);
+//     return view('admin.pages.moneyreceipt.invoice', $data);
+// }
+
+public function invoiceDownload($id, Request $request)
+{
     $data['abouts'] = About::first();
     $data['invoiceInfo'] = MoneyReceipt::with(['member','paymentmethod','project','account','createdUser'])->findOrFail($id);
-    return view('admin.pages.moneyreceipt.invoice', $data);
+    // Logic for your view
+    $view = view('admin.pages.moneyreceipt.invoice', $data);
+
+    if ($request->has('download')) {
+        return response($view)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="Receipt-'.$data['invoiceInfo']->mr_no.'.pdf"');
+    }
+
+    return $view;
 }
 
 function moneyreceiptpendingList (){

@@ -304,44 +304,80 @@
     </div>
 @endif
 @if(Auth::check() && in_array(Auth::user()->role, [1, 2]))
-    <!-- Gallery Dropdown -->
-    @php $galleryActive = in_array($currentRoute, ['gallery.index', 'gallery.create','gallery.edit']); @endphp
-    <div x-data="{ open: @json($galleryActive) }">
+    <!-- Report Menu -->
+    @php $reportActive = in_array($currentRoute, ['report.index','report.project-wise','report.member-wise','report.account-wise','report.account-ledger','report.date-wise-account','report.paymethod-wise']); @endphp
+    <div x-data="{ open: @json($reportActive) }">
         <button @click="open = !open" 
-                :class="open ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
-                class="flex w-full items-center justify-between p-2 rounded-lg transition-colors">
-            <span class="flex items-center space-x-2">
+            :class="open 
+                ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' 
+                : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
+            class="flex w-full items-center justify-between p-2 rounded-lg transition-colors">
+
+                <span class="flex items-center space-x-2">
+                <!-- Report Icon -->
                 <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7 6 4-5 5 4"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M9 17v-2a4 4 0 014-4h4M5 12h14M5 8h14M5 16h14M4 21h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v15a1 1 0 001 1z"/>
                 </svg>
-                <span x-show="!sidebarCollapsed" x-transition>Gallery</span>
+
+                <span x-show="!sidebarCollapsed" x-transition>Report</span>
             </span>
+
+            <!-- Arrow Icon -->
             <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
-                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
         </button>
-
         <!-- Submenu -->
         <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
-            <a href="{{ route('gallery.create') }}" 
+            <a href="{{ route('report.index') }}" 
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ $currentRoute == 'gallery.create' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                <span>Add New</span>
+                      {{ $currentRoute == 'report.index' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Project Ledger</span>
             </a>
-            <a href="{{ route('gallery.index') }}" 
+        </div>
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('report.account-ledger') }}" 
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ in_array($currentRoute, ['gallery.index','gallery.edit']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
-                </svg>
-                <span>List</span>
+                      {{ $currentRoute == 'report.account-ledger' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Account Ledger</span>
             </a>
-            
+        </div>
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('report.date-wise-account') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'report.date-wise-account' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Date Wise Account</span>
+            </a>
+        </div>
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('report.account-wise') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'report.account-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Account Project Ledger</span>
+            </a>
+        </div>
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('report.paymethod-wise') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'report.paymethod-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Pay Method Report</span>
+            </a>
+        </div>
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('report.project-wise') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'report.project-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Project Wise</span>
+            </a>
+        </div>
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('report.member-wise') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'report.member-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Member Wise</span>
+            </a>
         </div>
     </div>
 
@@ -592,7 +628,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2"/>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12h6m-3-3v6"/>
         </svg>
-        <span x-show="!sidebarCollapsed" x-transition>Expense</span>
+        <span x-show="!sidebarCollapsed" x-transition>Official Expense</span>
         </span>
 
         <!-- Arrow Icon -->
@@ -754,7 +790,46 @@
             @endif
         </div>
     </div> --}}
+      <!-- Gallery Dropdown -->
+    @php $galleryActive = in_array($currentRoute, ['gallery.index', 'gallery.create','gallery.edit']); @endphp
+    <div x-data="{ open: @json($galleryActive) }">
+        <button @click="open = !open" 
+                :class="open ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
+                class="flex w-full items-center justify-between p-2 rounded-lg transition-colors">
+            <span class="flex items-center space-x-2">
+                <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7 6 4-5 5 4"/>
+                </svg>
+                <span x-show="!sidebarCollapsed" x-transition>Gallery</span>
+            </span>
+            <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
+                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
 
+        <!-- Submenu -->
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('gallery.create') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'gallery.create' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <span>Add New</span>
+            </a>
+            <a href="{{ route('gallery.index') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ in_array($currentRoute, ['gallery.index','gallery.edit']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+                </svg>
+                <span>List</span>
+            </a>
+            
+        </div>
+    </div>
     <!-- Member Menu -->
     @php $userActive = in_array($currentRoute, ['member.index', 'member.create','member.edit','member.pendinglist']); @endphp
     <div x-data="{ open: @json($userActive) }">
@@ -990,75 +1065,6 @@
         </div>
     </div>
 
-    <!-- Report Menu -->
-    @php $reportActive = in_array($currentRoute, ['report.index','report.project-wise','report.member-wise','report.account-wise','report.account-ledger','report.date-wise-account']); @endphp
-    <div x-data="{ open: @json($reportActive) }">
-        <button @click="open = !open" 
-            :class="open 
-                ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' 
-                : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
-            class="flex w-full items-center justify-between p-2 rounded-lg transition-colors">
-
-                <span class="flex items-center space-x-2">
-                <!-- Report Icon -->
-                <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M9 17v-2a4 4 0 014-4h4M5 12h14M5 8h14M5 16h14M4 21h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v15a1 1 0 001 1z"/>
-                </svg>
-
-                <span x-show="!sidebarCollapsed" x-transition>Report</span>
-            </span>
-
-            <!-- Arrow Icon -->
-            <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
-                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-        </button>
-        <!-- Submenu -->
-        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
-            <a href="{{ route('report.index') }}" 
-               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ $currentRoute == 'report.index' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Project Ledger</span>
-            </a>
-        </div>
-        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
-            <a href="{{ route('report.account-ledger') }}" 
-               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ $currentRoute == 'report.account-ledger' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Account Ledger</span>
-            </a>
-        </div>
-        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
-            <a href="{{ route('report.date-wise-account') }}" 
-               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ $currentRoute == 'report.date-wise-account' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Date Wise Account</span>
-            </a>
-        </div>
-        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
-            <a href="{{ route('report.account-wise') }}" 
-               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ $currentRoute == 'report.account-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Account Project Ledger</span>
-            </a>
-        </div>
-        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
-            <a href="{{ route('report.project-wise') }}" 
-               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ $currentRoute == 'report.project-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Project Wise</span>
-            </a>
-        </div>
-        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
-            <a href="{{ route('report.member-wise') }}" 
-               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ $currentRoute == 'report.member-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Member Wise</span>
-            </a>
-        </div>
-    </div>
     @endif
     <!-- Users -->
     {{-- <a href="{{ route('user.index') }}" 

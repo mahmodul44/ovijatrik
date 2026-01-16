@@ -20,40 +20,42 @@ class MyTransactionController extends Controller
         return view('admin.pages.mytransaction.myreport');
     }
 
-    function myReportView(Request $request)
-    {
+   public function myReportView(Request $request)
+{
     $userId = Auth::id();
+    
+    // Parse dates correctly
     $from = $request->from_date ? Carbon::createFromFormat('d/m/Y', $request->from_date)->format('Y-m-d') : null;
     $to   = $request->to_date   ? Carbon::createFromFormat('d/m/Y', $request->to_date)->format('Y-m-d') : null;
 
     $query = DB::table('transactions as t')
-        ->join('projects as p', 't.project_id', '=', 'p.project_id') // project name join
+        ->join('projects as p', 't.project_id', '=', 'p.project_id') 
+        ->join('money_receipts as m', 'm.mr_id', '=', 't.reference_id')
+        ->leftJoin('payment_methods as pm', 'm.pay_method_id', '=', 'pm.pay_method_id')
+        ->leftJoin('accounts as a', 'a.account_id', '=', 'm.account_id')
+        ->leftJoin('users as u', 'u.id', '=', 'm.created_by')
         ->select(
             't.transaction_date',
-            't.project_id',
-            'p.project_title as project_name',
-            DB::raw("SUM(CASE WHEN t.transaction_type = 1 THEN t.transaction_amount ELSE 0 END) as total_receipt"),
-            DB::raw("SUM(CASE WHEN t.transaction_type = -1 THEN t.transaction_amount ELSE 0 END) as total_expense")
+            'p.project_title',
+            'm.mr_no','m.selected_months','m.mobile_account_no','m.bank_name',
+            'pm.pay_method_name',
+            'a.account_no','a.account_name',   
+            't.transaction_amount','u.name'
         )
-        ->where('t.member_id', $userId) // only login user transactions
-        ->whereNotNull('t.project_id')
-        ->groupBy('t.transaction_date', 't.project_id', 'p.project_title')
+        ->where('t.member_id', $userId) 
+        ->where('m.receipt_type', 1) 
         ->orderBy('t.transaction_date', 'asc');
 
     if ($from && $to) {
         $query->whereBetween('t.transaction_date', [$from, $to]);
-    } elseif ($from) {
-        $query->where('t.transaction_date', '>=', $from);
-    } elseif ($to) {
-        $query->where('t.transaction_date', '<=', $to);
     }
 
     $reportData = $query->get();
 
     return view('admin.pages.mytransaction.myreportview', [
         'reportData' => $reportData,
-        'from' => $from,
-        'to' => $to
+        'from' => $request->from_date, 
+        'to' => $request->to_date
     ]);
 }
    

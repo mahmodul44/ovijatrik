@@ -225,6 +225,65 @@ function accountWiseSearch(Request $request)
     ]);
 }
 
+function paymethodWise(){
+     $data['projects'] = Project::where('status',1)->where('project_id','!=','10000001')->get();
+     $data['accounts'] = Account::where('status', 1)->get();
+     return view('admin.pages.report.paymethod-wise', $data);
+}
+
+function paymethodWiseReport(Request $request) {
+    $accountId = $request->account_id;
+    $from = $request->from_date ? Carbon::createFromFormat('d/m/Y', $request->from_date)->format('Y-m-d') : null;
+    $to   = $request->to_date   ? Carbon::createFromFormat('d/m/Y', $request->to_date)->format('Y-m-d') : null;
+    
+    if (!$accountId) {
+        return back()->with('error', 'Please select a Account');
+    }
+    $accountName = Account::findOrFail($accountId);
+    $query = DB::table('transactions')
+    ->leftJoin('projects', 'projects.project_id', '=', 'transactions.project_id')
+    ->leftJoin('accounts','accounts.account_id','=','transactions.account_id')
+    ->leftJoin('users','users.id','=','transactions.member_id')
+    ->leftJoin('money_receipts','money_receipts.mr_id','=','transactions.reference_id')
+    // Add Expense Join (Adjust 'expense_id' to your actual FK)
+    ->leftJoin('expenses','expenses.expense_id','=','transactions.reference_id') 
+    ->leftJoin('users as us','us.id','=','transactions.transaction_added_by')
+    ->leftJoin('expense_categories as ec','ec.expense_cat_id','=','expenses.expense_cat_id') 
+    ->select(
+        'transactions.transaction_date',
+        'transactions.transaction_type',
+        'transactions.transaction_amount',
+        'users.name as member_name',
+        'us.name as creator_name',
+        'projects.project_title',
+        'money_receipts.mr_no',
+        'money_receipts.donar_name',
+        'expenses.expense_no', 
+        'expenses.expense_remarks','ec.expense_cat_name'
+    )
+    ->orderBy('transactions.transaction_date', 'asc');
+
+    $query->where('transactions.account_id', $accountId);
+
+    if ($from && $to) {
+        $query->whereBetween('transactions.transaction_date', [$from, $to]);
+    } elseif ($from) {
+        $query->where('transactions.transaction_date', '>=', $from);
+    } elseif ($to) {
+        $query->where('transactions.transaction_date', '<=', $to);
+    }
+
+    $reportData = $query->get();
+
+    return view('admin.pages.report.paymethod-wise-report', [
+        'reportData'  => $reportData,
+        'accountId'   => $accountId,
+        'accountName' => $accountName,
+        'from'        => $from,
+        'to'          => $to
+    ]);
+}
+
 function dateWiseAccount(){
      $data['projects'] = Project::where('status',1)->where('project_id','!=','10000001')->get();
      $data['accounts'] = Account::where('status', 1)->where('account_type', 2)->get();

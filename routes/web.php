@@ -186,7 +186,8 @@ Route::get('/admin/account-wise-search',[ReportController::class,'accountWiseSea
 Route::get('admin/account-ledger',[AccountController::class,'accountLedger'])->name('report.account-ledger');
 Route::get('/admin/date-wise-account',[ReportController::class,'dateWiseAccount'])->name('report.date-wise-account');
 Route::get('/admin/date-wise-account-details',[ReportController::class,'dateWiseAccountDetails'])->name('report.date-wise-account-details');
-
+Route::get('/admin/paymethod-wise',[ReportController::class,'paymethodWise'])->name('report.paymethod-wise');
+Route::get('/admin/paymethod-wise-report',[ReportController::class,'paymethodWiseReport'])->name('report.paymethod-wise-report');
 
 
 Route::put('/project/{id}/complete', [ProjectController::class, 'complete'])->name('project.complete');

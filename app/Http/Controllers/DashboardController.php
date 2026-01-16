@@ -80,7 +80,7 @@ public function index()
         $fiscalYearEnd   = now()->month >= 7 ? (now()->year+1).'-06-30' : now()->year.'-06-30';
 
         $donations = MoneyReceipt::where('member_id', $donorId)->where('status',1)->get();
-        $activeProjects = Project::where('status',1)->get();
+        $activeProjects = Project::where('status',1)->where('project_code','!=','FHP001')->get();
         $paymentMethods = Account::where('account_type',1)->where('status',1)->get();
 
         $totalThisYear = $donations->whereBetween('payment_date', [$fiscalYearStart, $fiscalYearEnd])->sum('payment_amount');
@@ -92,7 +92,6 @@ public function index()
                     ->limit(1)            
                     ->value('payment_amount');
 
-        // Donation Frequency improved
         $monthsGiven = $donations->groupBy(function($d){ 
             return \Carbon\Carbon::parse($d->payment_date)->format('m-Y'); 
         })->count();
@@ -105,20 +104,16 @@ public function index()
             default => 'One-time',
         };
 
-        // Fiscal Year summary
        $fiscalSummary = $donations->groupBy(function($d){
     $date = \Carbon\Carbon::parse($d->payment_date);
     return $date->month >= 7 ? $date->year.'-'.($date->year+1) : ($date->year-1).'-'.$date->year;
 })->map(function($group, $year){
-    
-    // ঐ অর্থ বছরের সকল ডোনেশনের selected_months গুলোকে একত্রিত করা
     $allMonths = [];
     foreach ($group as $donation) {
         if ($donation->selected_months) {
             $monthsArray = json_decode($donation->selected_months, true);
             if (is_array($monthsArray)) {
                 foreach ($monthsArray as $m) {
-                    // ফরম্যাট পরিবর্তন: "2025-07" -> "July-2025"
                     $allMonths[] = \Carbon\Carbon::parse($m)->format('F-Y');
                 }
             }

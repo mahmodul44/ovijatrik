@@ -1,9 +1,8 @@
-// app.js
+
 
 import './bootstrap';
 import '../css/app.css';
 
-// Alpine.js
 import Alpine from 'alpinejs';
 import persist from '@alpinejs/persist';
 
@@ -34,7 +33,7 @@ const globalI18nState = reactive({
             home: 'হোম', about: 'আমাদের সম্পর্কে', project: 'চলমান প্রকল্প',
             volunteer: 'আমাদের সাথে যুক্ত হোন', blog: 'ব্লগ', gallery: 'গ্যালারী',
             contact: 'যোগাযোগ',
-            // Home page এর জন্য কিছু অনুবাদ (উদাহরণস্বরূপ)
+         
             headline: 'একসাথে আমরা জীবন বদলে দিতে পারি',
             subtitle: 'বিশ্বজুড়ে মানুষের জন্য আশা, শিক্ষা ও প্রয়োজনীয় সম্পদ নিয়ে কাজ করছে অভিযাত্রিক। প্রতিটি অনুদানই দীর্ঘস্থায়ী প্রভাব ফেলে।',
             donate_now: 'এখনই ডোনেট করুন',
@@ -51,7 +50,7 @@ const globalI18nState = reactive({
             home: 'Home', about: 'About', project: 'Project',
             volunteer: 'Connect With Us', blog: 'Blog', gallery: 'Gallery',
             contact: 'Contact',
-            // Home page এর জন্য কিছু অনুবাদ (উদাহরণস্বরূপ)
+          
             headline: 'Together We Can Change Lives',
             subtitle: 'Join our mission to bring hope, education, and essential resources to communities worldwide. Every donation creates lasting impact.',
             donate_now: 'Donate Now',
@@ -74,6 +73,5 @@ globalI18nState.initLang();
 const app = createApp(App);
 
 app.use(router)
-    // 'i18n' নামে গ্লোবাল স্টেট সরবরাহ (Provide) করা হচ্ছে
     .provide('i18n', globalI18nState) 
     .mount('#app');
