@@ -183,40 +183,36 @@
 
         /* --- FOOTER & SIGNATURE --- */
         .footer {
-            margin-top: 60px;
-            padding-top: 20px;
+            margin-top: 5px;
+            padding-top: 10px;
             /* border-top: 1px solid #eee; */
         }
 
-        .signature-area {
+        /* --- SIGNATURE AREA --- */
+        .signature-section {
             display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            margin-top: 50px;
+            margin-bottom: 30px;
         }
 
-        .signature {
+        .sig-box {
+            width: 30%;
             text-align: center;
-            width: 200px;
         }
 
-        .sign-line {
+        .sig-line {
             border-top: 1px solid #333;
-            padding-top: 5px;
+            padding-top: 8px;
+            font-size: 12px;
             font-weight: bold;
-            font-size: 14px;
-        }
-
-        .thank-you-msg {
-            text-align: center;
-            font-style: italic;
-            color: var(--text-secondary);
-            font-size: 13px;
+            text-transform: uppercase;
         }
 
         /* --- STAMP EFFECT --- */
         .stamp {
             position: absolute;
-            bottom: 40%;
+            bottom: 50%;
             right: 45%;
             border: 3px solid #27ae60;
             color: #27ae60;
@@ -244,7 +240,42 @@
             font-size: 14px;
         }
         .btn:hover { background: #000; }
+        .box-title {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-light);
+            display: block;
+        }
+        /* --- FOOTER PAYMENT INFO (NEW) --- */
+        .footer-payment-info {
+            background: #fdfdfd;
+            border: 1px dashed #ccc;
+            padding: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
 
+        .payment-channel { width: 40%; font-size: 12px; }
+        .payment-channel h4 { font-size: 11px; text-transform: uppercase; color: var(--theme-dark); margin-bottom: 5px; }
+        .slogan-area {
+            text-align: center;
+            border-top: 1px solid var(--border-light);
+            padding-top: 5px;
+        }
+
+        .slogan-text {
+            font-style: italic;
+            color: var(--theme-dark);
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .disclaimer { font-size: 10px; color: #aaa; margin-top: 10px; }
         /* --- PRINT MEDIA QUERY --- */
         @media print {
             body { background: none; padding: 0; }
@@ -271,8 +302,8 @@
                 <img width="52%" src="{{ asset($abouts->logo_dark) }}" alt="Logo">
                 {{-- <h2>Ovijatrik</h2> --}}
                 <p>
-                    Islambagh, Dinajpur, Dhaka, Bangladesh<br>
-                    Reg No: OVJ-88923 | Contact: +880 1717 017645<br>
+                    Islambagh, Sadar, Dinajpur, Dhaka, Bangladesh<br>
+                    Reg No: Dinaj/2581/2024 | Contact: +880 1717 017645<br>
                     Email: ovijatrik.dinajpur@gmail.com
                 </p>
             </div>
@@ -291,7 +322,7 @@
                     <p><strong>Name:</strong> {{ $invoiceInfo->member ? $invoiceInfo->member->name : 'N/A' }}</p>
                     <p><strong>Phone:</strong> {{ $invoiceInfo->member_id ? $invoiceInfo->member->phone_no : 'N/A' }} </p>
                     <p><strong>Member ID:</strong> {{ $invoiceInfo->member_id ? $invoiceInfo->member->member_id : 'N/A' }}</p>
-                    <p><strong>Email:</strong> {{ $invoiceInfo->member_id ? $invoiceInfo->member->email : 'N/A' }}</p>
+                    {{-- <p><strong>Email:</strong> {{ $invoiceInfo->member_id ? $invoiceInfo->member->email : 'N/A' }}</p> --}}
                      <p><strong>Fiscal Year:</strong> {{ $invoiceInfo->fiscal_year ? $invoiceInfo->fiscal_year : 'N/A' }}</p>
                 </div>
             </div>
@@ -356,22 +387,40 @@
                 </div>
             </div>
         </section>
+     
+        <div class="signature-section">
+            <div class="sig-box">
+                <div class="sig-line">Cashier</div>
+            </div>
+            <div class="sig-box">
+                <div class="sig-line">Secretary</div>
+            </div>
+            <div class="sig-box">
+                <div class="sig-line">President</div>
+            </div>
+        </div>
 
-        <!-- 5. FOOTER -->
-        <footer class="footer">
-            <div class="signature-area">
-                <div class="signature">
-                    <!-- <img src="sig.png" alt="Signature" height="40"> -->
-                    <div class="sign-line">Accounts Officer</div>
-                </div>
+        <span class="box-title" style="margin-bottom: 5px;">Our Official Payment Channels</span>
+        <div class="footer-payment-info">
+            <div class="payment-channel">
+                <h4>Bank Transfer</h4>
+                <strong>City Bank PLC</strong><br>
+                A/C Name: Ovijatrik Shomaj Kollyan Sangstha <br>
+                A/C: 1404603886001<br>
+                Branch: Dinajpur<br>
+                Routing: 225280676, Swift Code: CIBLBDDH
             </div>
-            <div class="thank-you-msg">
-                "Those who spend their wealth in charity will be rewarded."<br>
-                Thank you for your generous contribution to humanity.
+            <div class="payment-channel">
+                <h4>Mobile Banking</h4>
+                <strong>bKash (Personal):</strong> 01339 829783<br>
+                <strong>Nagad (Personal):</strong> 01339 829783
             </div>
-            <div style="text-align: center; font-size: 10px; color: #999; margin-top: 20px;">
-                This is a computer-generated receipt and does not require a physical seal.
-            </div>
+        </div>
+      
+        <footer class="slogan-area">
+            <div class="slogan-text">"Empowering Lives, Restoring Hope."</div>
+            <div style="font-size: 13px; color: #666;">Thank you for being a partner in our journey toward a better humanity.</div>
+            <div class="disclaimer">This is a computer-generated document. No physical signature is required for validity.</div>
         </footer>
 
     </div>

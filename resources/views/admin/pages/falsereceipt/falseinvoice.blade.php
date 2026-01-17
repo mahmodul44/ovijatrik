@@ -26,7 +26,7 @@
 
         /* --- INVOICE CONTAINER (A4 Size) --- */
         .invoice-container {
-            max-width: 800px; /* A4 width approx */
+            max-width: 800px; 
             margin: 0 auto;
             background: var(--white);
             padding-top: 15px!important;
@@ -183,41 +183,37 @@
 
         /* --- FOOTER & SIGNATURE --- */
         .footer {
-            margin-top: 60px;
-            padding-top: 20px;
+            margin-top: 5px;
+            padding-top: 10px;
             /* border-top: 1px solid #eee; */
         }
 
-        .signature-area {
+        /* --- SIGNATURE AREA --- */
+        .signature-section {
             display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            margin-top: 50px;
+            margin-bottom: 30px;
         }
 
-        .signature {
+        .sig-box {
+            width: 30%;
             text-align: center;
-            width: 200px;
         }
 
-        .sign-line {
+        .sig-line {
             border-top: 1px solid #333;
-            padding-top: 5px;
+            padding-top: 8px;
+            font-size: 12px;
             font-weight: bold;
-            font-size: 14px;
-        }
-
-        .thank-you-msg {
-            text-align: center;
-            font-style: italic;
-            color: var(--text-secondary);
-            font-size: 13px;
+            text-transform: uppercase;
         }
 
         /* --- STAMP EFFECT --- */
         .stamp {
             position: absolute;
-            bottom: 40%;
-            right: 45%;
+            bottom: 50%;
+            right: 35%;
             border: 3px solid #27ae60;
             color: #27ae60;
             font-size: 24px;
@@ -244,7 +240,42 @@
             font-size: 14px;
         }
         .btn:hover { background: #000; }
+        .box-title {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--border-light);
+            display: block;
+        }
+        /* --- FOOTER PAYMENT INFO (NEW) --- */
+        .footer-payment-info {
+            background: #fdfdfd;
+            border: 1px dashed #ccc;
+            padding: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
 
+        .payment-channel { width: 40%; font-size: 12px; }
+        .payment-channel h4 { font-size: 11px; text-transform: uppercase; color: var(--theme-dark); margin-bottom: 5px; }
+        .slogan-area {
+            text-align: center;
+            border-top: 1px solid var(--border-light);
+            padding-top: 5px;
+        }
+
+        .slogan-text {
+            font-style: italic;
+            color: var(--theme-dark);
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .disclaimer { font-size: 10px; color: #aaa; margin-top: 10px; }
         /* --- PRINT MEDIA QUERY --- */
         @media print {
             body { background: none; padding: 0; }
@@ -342,21 +373,37 @@
             </div>
         </section>
 
-        <!-- 5. FOOTER -->
-        <footer class="footer">
-            <div class="signature-area">
-                <div class="signature">
-                    <!-- <img src="sig.png" alt="Signature" height="40"> -->
-                    <div class="sign-line">Accounts Officer</div>
-                </div>
+        <div class="signature-section">
+            <div class="sig-box">
+                <div class="sig-line">Cashier</div>
             </div>
-            <div class="thank-you-msg">
-                "Those who spend their wealth in charity will be rewarded."<br>
-                Thank you for your generous contribution to humanity.
+            <div class="sig-box">
+                <div class="sig-line">Secretary</div>
             </div>
-            <div style="text-align: center; font-size: 10px; color: #999; margin-top: 20px;">
-                This is a computer-generated receipt and does not require a physical seal.
+            <div class="sig-box">
+                <div class="sig-line">President</div>
             </div>
+        </div>
+
+        <span class="box-title" style="margin-bottom: 5px;">Our Official Payment Channels</span>
+        <div class="footer-payment-info">
+            <div class="payment-channel">
+                <h4>Bank Transfer</h4>
+                <strong>Islami Bank PLC</strong><br>
+                A/C: 2050 1234 5678 9012<br>
+                Branch: Dinajpur
+            </div>
+            <div class="payment-channel">
+                <h4>Mobile Banking</h4>
+                <strong>bKash (Personal):</strong> 01339 829783<br>
+                <strong>Nagad (Personal):</strong> 01339 829783
+            </div>
+        </div>
+      
+        <footer class="slogan-area">
+            <div class="slogan-text">"Empowering Lives, Restoring Hope."</div>
+            <div style="font-size: 13px; color: #666;">Thank you for being a partner in our journey toward a better humanity.</div>
+            <div class="disclaimer">This is a computer-generated document. No physical signature is required for validity.</div>
         </footer>
 
     </div>

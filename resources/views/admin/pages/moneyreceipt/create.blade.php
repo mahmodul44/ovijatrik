@@ -112,7 +112,7 @@
         <!-- Mobile Account No -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Account No <span class="text-red-600"></span>
+                Sender Account No <span class="text-red-600"></span>
             </label>
             <input type="text" id="mobile_account_no" name="mobile_account_no"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2

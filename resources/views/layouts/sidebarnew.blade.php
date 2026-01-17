@@ -248,7 +248,10 @@
         </div>
     </div> --}}
     <!-- Project Dropdown -->
-    @php $projectActive = in_array($currentRoute, ['project.index', 'project.create', 'project.edit', 'project.show','project.completeprojectlist']); @endphp
+  
+@endif
+@if(Auth::check() && in_array(Auth::user()->role, [1, 2]))
+      @php $projectActive = in_array($currentRoute, ['project.index', 'project.create', 'project.edit', 'project.show','project.completeprojectlist']); @endphp
     <div x-data="{ open: @json($projectActive) }">
         <button @click="open = !open" 
                 :class="open ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
@@ -302,8 +305,6 @@
     </a>
         </div>
     </div>
-@endif
-@if(Auth::check() && in_array(Auth::user()->role, [1, 2]))
     <!-- Report Menu -->
     @php $reportActive = in_array($currentRoute, ['report.index','report.project-wise','report.member-wise','report.account-wise','report.account-ledger','report.date-wise-account','report.paymethod-wise']); @endphp
     <div x-data="{ open: @json($reportActive) }">
@@ -877,7 +878,7 @@
                 <span>List</span>
             </a>
             
-            @if(Auth::check() && Auth::user()->role == 1)
+            @if(Auth::check() && Auth::user()->role == 2)
             <a href="{{ route('member.pendinglist') }}" 
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{ $currentRoute == 'member.pendinglist' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">

@@ -1,5 +1,19 @@
 @extends('layouts.main')
 @section('content')
+
+<style>
+    /* Style for the months already paid */
+.month-wrapper.text-green-600 {
+    background-color: rgba(34, 197, 94, 0.05); /* Very light green background */
+    border-radius: 4px;
+}
+
+.paid-icon {
+    font-weight: bold;
+    font-size: 14px;
+    margin-right: 4px;
+}
+</style>
 <div class="p-4 max-w-7xl mx-auto">
 
     <!-- Breadcrumb & Action Button -->
@@ -126,7 +140,7 @@
         <!-- Mobile Account No -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Account No <span class="text-red-600"></span>
+                Sender Account No <span class="text-red-600"></span>
             </label>
             <input type="text" id="mobile_account_no" name="mobile_account_no"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
@@ -164,7 +178,7 @@
         <!-- Bank Account No -->
         <div>
             <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-                Account No <span class="text-red-600"></span>
+               Account No <span class="text-red-600"></span>
             </label>
             <input type="text" id="bank_account_no" name="bank_account_no"
                 class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
@@ -270,9 +284,10 @@ function renderFiscalMonths() {
         const value = `${year}-${String(month).padStart(2, '0')}`;
 
         html += `
-            <label class="flex items-center space-x-2 text-sm text-gray-800 dark:text-gray-200">
-                <input type="checkbox" name="months[]" value="${value}" class="month-checkbox rounded text-blue-600 focus:ring-blue-500">
-                <span>${m}</span>
+            <label class="month-wrapper flex items-center space-x-2 text-sm text-gray-800 dark:text-gray-200 p-1 rounded transition-colors">
+                <input type="checkbox" name="months[]" value="${value}" 
+                       class="month-checkbox rounded text-blue-600 focus:ring-blue-500">
+                <span class="month-name">${m}</span>
             </label>
         `;
     });
@@ -291,21 +306,33 @@ $('#member_id').on('change', function () {
         type: 'GET',
         dataType: 'json',
         success: function (res) {
-              let html = "";
+            let html = "";
+            $('.month-checkbox').show().prop('checked', false).prop('disabled', false);
+            $('.paid-icon').remove(); 
+            $('.month-label').removeClass('text-green-600 font-bold opacity-100').addClass('text-gray-800 dark:text-gray-200');
+
             if (res.paid_months && res.paid_months.length > 0) {
                 res.paid_months.forEach(function (m) {
+                    let $checkbox = $(`.month-checkbox[value="${m}"]`);
+                    
+                    if($checkbox.length) {
+                        // 2. Hide the checkbox
+                        $checkbox.hide();
+                        
+                        // 3. Add a Green Checkmark icon before the month name
+                        $checkbox.after('<span class="paid-icon text-green-500">✔</span>');
+                        
+                        // 4. Style the Label to be Green and Bold
+                        $checkbox.closest('label').addClass('text-green-600 font-bold').removeClass('text-gray-800 dark:text-gray-200');
+                    }
 
-                    // Convert "2024-08" → "Aug 2024"
+                    // For the "Donated Month List" at the bottom
                     let parts = m.split("-");
-                    let year = parts[0];
-                    let month = parts[1];
-
                     let monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-                    let formatted = monthNames[parseInt(month) - 1] + " " + year;
+                    let formatted = monthNames[parseInt(parts[1]) - 1] + " " + parts[0];
 
                     html += `
-                        <span class="px-2 py-1 rounded-md text-xs font-semibold 
-                               bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200">
+                        <span class="px-2 py-1 rounded-md text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200 border border-green-200">
                             ${formatted}
                         </span>
                     `;

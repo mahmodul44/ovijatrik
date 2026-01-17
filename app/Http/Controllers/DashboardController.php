@@ -104,28 +104,50 @@ public function index()
             default => 'One-time',
         };
 
-       $fiscalSummary = $donations->groupBy(function($d){
+     $fiscalSummary = $donations->groupBy(function($d){
     $date = \Carbon\Carbon::parse($d->payment_date);
+    // Fiscal Year logic: July to June
     return $date->month >= 7 ? $date->year.'-'.($date->year+1) : ($date->year-1).'-'.$date->year;
 })->map(function($group, $year){
-    $allMonths = [];
+    $allPaidMonths = [];
     foreach ($group as $donation) {
         if ($donation->selected_months) {
             $monthsArray = json_decode($donation->selected_months, true);
             if (is_array($monthsArray)) {
                 foreach ($monthsArray as $m) {
-                    $allMonths[] = \Carbon\Carbon::parse($m)->format('F-Y');
+                    // Normalize to 'F-Y' for comparison
+                    $allPaidMonths[] = \Carbon\Carbon::parse($m)->format('F-Y');
                 }
             }
         }
     }
+    
+    $uniquePaid = array_unique($allPaidMonths);
+
+    // --- Generate Full Fiscal Year Months (July to June) ---
+    [$startYear, $endYear] = explode('-', $year);
+    $fullFYMonths = [];
+    
+    // July to Dec of start year
+    for ($m = 7; $m <= 12; $m++) {
+        $fullFYMonths[] = \Carbon\Carbon::create($startYear, $m, 1)->format('F-Y');
+    }
+    // Jan to June of end year
+    for ($m = 1; $m <= 6; $m++) {
+        $fullFYMonths[] = \Carbon\Carbon::create($endYear, $m, 1)->format('F-Y');
+    }
+
+    // Calculate Unpaid
+    $unpaidMonths = array_diff($fullFYMonths, $uniquePaid);
 
     return [
-        'year'      => $year,
-        'total'     => $group->sum('payment_amount'),
-        'count'     => $group->count(),
-        'last_date' => $group->sortByDesc('payment_date')->first()->payment_date ?? null,
-        'paid_months' => array_unique($allMonths), // ডুপ্লিকেট মাস থাকলে বাদ দিবে
+        'year'          => $year,
+        'total'         => $group->sum('payment_amount'),
+        'count'         => $group->count(),
+        'paid_months'   => $uniquePaid,
+        'unpaid_months' => array_values($unpaidMonths),
+        'paid_count'    => count($uniquePaid),
+        'unpaid_count'  => count($unpaidMonths),
     ];
 })->values();
         $lastReceipt = MoneyReceipt::where('member_id', $donorId)

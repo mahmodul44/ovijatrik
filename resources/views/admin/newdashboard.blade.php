@@ -124,7 +124,59 @@
                 {{ $lastDonation ? \Carbon\Carbon::parse($lastDonation->payment_date)->format('d M, Y') : 'N/A' }}
             </p>
         </div>
-      
+    </div>
+     {{-- Analytics Section --}}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        {{-- Donation Trend Chart --}}
+        <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow">
+            <h2 class="text-lg font-semibold mb-4 dark:text-gray-100">Donation Trend (Last 6 Months)</h2>
+            <canvas id="donationChart"></canvas>
+        </div>
+
+        {{-- Top Donors --}}
+        <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow">
+            <h2 class="text-lg font-semibold mb-4 dark:text-gray-100">Top Donors (Member)</h2>
+
+            <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+                @foreach($topDonors as $d)
+                <li class="py-3 flex justify-between">
+                    <span class="font-medium dark:text-gray-200">{{ $d->member->member_id }} - {{ $d->member->name }}</span>
+                    <span class="font-semibold text-blue-600 dark:text-blue-300">৳ {{ number_format($d->total,2) }}</span>
+                </li>
+                @endforeach
+            </ul>
+        </div>
+
+    </div>
+    {{-- Latest Donations Table --}}
+    <div class="bg-white dark:bg-gray-800 shadow rounded-2xl p-6">
+        <h2 class="text-xl font-semibold mb-4 dark:text-gray-100">Recent Donations</h2>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead>
+                    <tr class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                        <th class="px-4 py-2 text-left">Receipt No</th>
+                        <th class="px-4 py-2 text-left">Donor</th>
+                        <th class="px-4 py-2 text-left">Amount</th>
+                        <th class="px-4 py-2 text-left">Method</th>
+                        <th class="px-4 py-2 text-left">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($latestDonations as $item)
+                    <tr class="border-b dark:border-gray-700">
+                        <td class="px-4 py-2 dark:text-gray-200">{{ $item->mr_no }}</td>
+                        <td class="px-4 py-2 dark:text-gray-200">{{ $item->member_id ?  $item->member->name : $item->donar_name }}</td>
+                        <td class="px-4 py-2 text-green-600 font-medium">৳ {{ number_format($item->payment_amount,2) }}</td>
+                        <td class="px-4 py-2 dark:text-gray-200">{{ $item->paymentmethod->pay_method_name }}</td>
+                        <td class="px-4 py-2 dark:text-gray-200">{{ \Carbon\Carbon::parse($item->payment_date)->format('d M, Y') }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
     @endif
 
@@ -177,8 +229,8 @@
                         </div>
                     </div>
                     <div>
-                        <h2 class="text-2xl font-black tracking-tight text-gray-900 dark:text-white">{{ $user->name }}</h2>
-                        <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-tighter italic">Premium Benefactor</span>
+                       <h2 class="inline-block px-4 py-1 rounded-full bg-white/20 dark:bg-black/20 backdrop-blur-md border border-white/30 text-2xl font-black tracking-tight text-gray-900 dark:text-white">{{ $user->name }}</h2>
+                        {{-- <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-tighter italic">Premium Benefactor</span> --}}
                     </div>
                 </div>
 
@@ -203,6 +255,10 @@
                         {{ $user->status == 1 ? 'Active Member' : 'Inactive' }}
                     </span>
                 </div>
+                <div class="flex items-center justify-between border-t border-gray-100 dark:border-gray-800 pt-3">
+                        <span class="flex items-center text-[10px] font-bold text-gray-400 uppercase">Monthly Donate Amount</span>
+                        <span class="text-sm font-bold text-gray-700 dark:text-gray-200">{{ $user->monthly_donate ?? '0.00' }} BDT</span>
+                    </div>
                 </div>
              
             </div>
@@ -258,47 +314,64 @@
                 <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 Fiscal Year Records
             </h2>
-            <button class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter shadow-sm hover:shadow-md transition flex items-center">
+            <a href="{{ route('mytransaction.index') }}" class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter shadow-sm hover:shadow-md transition flex items-center">
                 <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 Download Statement
-            </button>
+            </a>
         </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full">
-                <thead class="text-gray-400 text-[10px] uppercase tracking-widest border-b border-gray-100 dark:border-gray-700">
-                    <tr>
-                        <th class="px-6 py-4 text-left">Fiscal Year</th>
-                        <th class="px-6 py-4 text-left">Total Contributed</th>
-                        <th class="px-6 py-4 text-left">Times</th>
-                        <th class="px-6 py-4 text-left">Supported Months</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                    @forelse($fiscalSummary as $fy)
-                    <tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition group">
-                        <td class="px-6 py-4 font-bold text-gray-700 dark:text-gray-200 text-sm italic italic tracking-tighter">{{ $fy['year'] }}</td>
-                        <td class="px-6 py-4">
-                            <span class="text-green-600 dark:text-green-400 font-extrabold text-lg tracking-tight">৳ {{ number_format($fy['total'],2) }}</span>
-                        </td>
-                        <td class="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs font-bold">{{ $fy['count'] }} TXNs</td>
-                        <td class="px-6 py-4">
-                            <div class="flex flex-wrap gap-1">
-                                @foreach($fy['paid_months'] as $monthName)
-                                    <span class="bg-blue-50/50 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 text-[9px] font-black px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-800 uppercase tracking-tighter">
-                                        {{ $monthName }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="px-6 py-12 text-center text-gray-400 text-xs italic">No donation records found.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    <table class="min-w-full">
+        <thead class="text-gray-400 text-[10px] uppercase tracking-widest border-b border-gray-100 dark:border-gray-700">
+            <tr>
+                <th class="px-6 py-4 text-left">Fiscal Year</th>
+                <th class="px-6 py-4 text-left">TXN Info</th>
+                <th class="px-6 py-4 text-left">Paid Months</th>
+                <th class="px-6 py-4 text-left">Unpaid Months</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+            @forelse($fiscalSummary as $fy)
+            <tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition group">
+                <td class="px-6 py-4 font-bold text-gray-700 dark:text-gray-200 text-sm italic tracking-tighter">
+                    {{ $fy['year'] }}
+                </td>
+
+                <td class="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs font-bold">
+                    <span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                        {{ $fy['count'] }} TXNs
+                    </span>
+                </td>
+
+                <td class="px-6 py-4">
+                    <div class="flex flex-wrap gap-1">
+                        <span class="w-full text-[12px] text-blue-600 font-bold mb-1">Total: {{ $fy['paid_count'] }}</span>
+                        @foreach($fy['paid_months'] as $monthName)
+                            <span class="bg-green-50/50 text-green-700 dark:bg-green-900/50 dark:text-blue-300 text-[11px] font-black px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-800 uppercase tracking-tighter">
+                                {{ $monthName }}
+                            </span>
+                        @endforeach
+                    </div>
+                </td>
+
+                <td class="px-6 py-4">
+                    <div class="flex flex-wrap gap-1">
+                        <span class="w-full text-[14px] text-red-500 font-bold mb-1">Due: {{ $fy['unpaid_count'] }}</span>
+                        @foreach($fy['unpaid_months'] as $monthName)
+                            <span class="bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 text-[11px] font-bold px-2 py-0.5 rounded-md border border-red-100 dark:border-red-900/30 uppercase tracking-tighter opacity-70">
+                                {{ $monthName }}
+                            </span>
+                        @endforeach
+                    </div>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="4" class="px-6 py-12 text-center text-gray-400 text-xs italic">No donation records found.</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
     </div>
 
 

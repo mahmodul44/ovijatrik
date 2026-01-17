@@ -34,11 +34,11 @@
                 <table id="myreceiptTable" class="w-full text-left border-separate border-spacing-y-2">
                     <thead>
                         <tr class="text-slate-400">
-                            <th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest">Receipt Detail</th>
+                            <th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest">Date & Inv No</th>
                             <th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest">Project Description</th>
                             <th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest">Payment Info</th>
                             <th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-right">Amount</th>
-                            <th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-center">Action</th>
+                            <th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest !text-center">Receipt Detail</th>
                         </tr>
                     </thead>
                     <tbody class="bg-transparent">

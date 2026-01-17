@@ -55,6 +55,7 @@
                         </td>
                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center flex items-center justify-center gap-3">
                         <!-- Preview -->
+                        @if(Auth::check() && Auth::user()->role == 1)
                         <a href="{{ route('member.show', $value->id) }}"
                         class="p-2 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300
                                 hover:bg-blue-200 dark:hover:bg-blue-800 transition shadow-sm hover:shadow-md">
@@ -65,7 +66,7 @@
                                 <circle cx="12" cy="12" r="3" />
                             </svg>
                         </a>
-
+                        @endif
                         <!-- Edit -->
                         <a href="{{ route('member.edit', $value->id) }}"
                         class="p-2 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300
@@ -76,7 +77,7 @@
                                     d="M15.232 5.232l3.536 3.536M14.121 4.121a3 3 0 014.243 4.243L7.5 19.207H3v-4.5z" />
                             </svg>
                         </a>
-
+                        @if(Auth::check() && Auth::user()->role == 1)
                         <!-- Delete -->
                         <form action="{{ route('member.destroy', $value->id) }}" method="POST" class="inline-block deleteMember">
                             @csrf
@@ -91,6 +92,7 @@
                                 </svg>
                             </button>
                         </form>
+                        @endif
                     </td>
 
                     </tr>
