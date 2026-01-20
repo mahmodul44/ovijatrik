@@ -5,10 +5,10 @@
     <!-- Header -->
     <div class="text-center mb-8">
         <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 flex justify-center items-center gap-2">
-            📊 FIscal Year Wise Member Report
+            📊 FIscal Year Month Wise Report
         </h2>
         <p class="text-gray-500 dark:text-gray-400 mt-1 text-sm">
-            View detailed report of each member’s transactions within a selected date range.
+            View detailed report of month's wise transactions.
         </p>
     </div>
 
@@ -39,12 +39,12 @@
     </select>
 </div>
             
-            </div>
+</div>
             
             <!-- Search Button -->
             <div class="md:col-span-3 flex justify-end mt-4">
                 <button type="button" 
-                    onclick="openfiscalyrmemberWReportWindow('{{ route('report.fiscalyearmember-wise-report') }}')" 
+                    onclick="openfiscalyrmonthWReportWindow('{{ route('report.fsyrmonth-wise-report-view') }}')" 
                     class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl font-semibold transition-transform transform hover:-translate-y-0.5 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-offset-gray-900">
                     🔍 Generate Report
                 </button>
@@ -57,7 +57,7 @@
 @push('scripts')
 <script>
 
-function openfiscalyrmemberWReportWindow(url) {
+function openfiscalyrmonthWReportWindow(url) {
     let fiscalYear = document.querySelector("[name='fiscal_year']").value;
     if (!fiscalYear) {
       toastr.error("Please select a Fiscal Year.");

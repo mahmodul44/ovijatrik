@@ -13,7 +13,7 @@
                 <li class="text-gray-800 dark:text-gray-200 font-medium">Add New</li>
             </ol>
         </nav>
-        <a href="{{ route('transfer.index') }}"
+        <a href="{{ route('accbalancetransfer.index') }}"
            class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition">
             View All
         </a>
@@ -22,27 +22,29 @@
     <!-- Form Card -->
     <div class="bg-white dark:bg-gray-900 shadow-lg rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
 
-        <form id="transferInsertForm" enctype="multipart/form-data" class="space-y-6">
+        <form id="accbalancetransferInsertForm" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <!-- Project Selection -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="project_id" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                    <label for="from_account" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
                         From Account <span class="text-red-600">*</span>
                     </label>
-                    <select id="project_id" name="project_id" class="project-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none text-sm"> 
+                    <select id="from_account" name="from_account" class="project-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none text-sm"> 
                         @foreach($accounts as $value)
                         <option>{{ $value->account_name}}</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label for="to_project" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                    <label for="to_account" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
                         To Account <span class="text-red-600">*</span>
                     </label>
-                    <select id="to_project" name="to_project" class="toproject-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none text-sm">
-                        
+                    <select id="to_account" name="to_account" class="toproject-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none text-sm">
+                        @foreach($accounts as $value)
+                        <option>{{ $value->account_name}}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>
@@ -99,82 +101,21 @@ flatpickr("#transfer_date", {
     allowInput: true
 });
 
-$(document).ready(function () {
-    $('.project-select').select2({
-        placeholder: "Search by Name Or Code",
-        minimumInputLength: 2,
-        allowClear: true,
-        ajax: {
-            url: '{{ route("project.search") }}', 
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return {
-                    q: params.term 
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data
-                };
-            },
-            cache: true
-        }
-    });
-
-    $('.project-select').on('select2:open', function () {
-        setTimeout(() => {
-            document.querySelector('.select2-container--open .select2-search__field').focus();
-        }, 100);
-    });
-});
-
-$(document).ready(function () {
-    $('.toproject-select').select2({
-        placeholder: "Search by Name Or Code",
-        minimumInputLength: 2,
-        allowClear: true,
-        ajax: {
-            url: '{{ route("project.search") }}', 
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return {
-                    q: params.term 
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data
-                };
-            },
-            cache: true
-        }
-    });
-
-    $('.toproject-select').on('select2:open', function () {
-        setTimeout(() => {
-            document.querySelector('.select2-container--open .select2-search__field').focus();
-        }, 100);
-    });
-});
-
-$("#transferInsertForm").on('submit', function(e){
+$("#accbalancetransferInsertForm").on('submit', function(e){
     e.preventDefault();
     let thisForm = $(this);
 
-    let fromProject = $('#project_id').val();
-    let toProject = $('#to_project').val();
+    let fromAccount = $('#from_account').val();
+    let toAccount = $('#to_account').val();
 
-    // Check if From Project and To Project are the same
-    if(fromProject && toProject && fromProject === toProject){
-        toastr.error('From Project and To Project cannot be the same.');
+    if(fromAccount && toAccount && fromAccount === toAccount){
+        toastr.error('From Account and To Account cannot be the same.');
         return; 
     }
 
     $.ajax({
         type: "POST",
-        url: "{{route('transfer.store')}}",
+        url: "{{route('accbalancetransfer.store')}}",
         data: new FormData(this),
         dataType: "json",
         contentType: false,
@@ -189,7 +130,7 @@ $("#transferInsertForm").on('submit', function(e){
         success: function (response) {
             toastr.success(response.message);
             setTimeout(function() {
-                location.href = "{{route('transfer.index')}}";
+                location.href = "{{route('accbalancetransfer.index')}}";
             }, 2000)
         },
         error: function(xhr) {

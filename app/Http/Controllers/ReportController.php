@@ -483,4 +483,67 @@ public function fsyrmembertypeWiseReport(Request $request) {
     return view('admin.pages.report.fsyrmember-type-wise-info', compact('reportData', 'months', 'fiscalYear', 'abouts'));
 }
 
+
+function fsyrmonthWise(){
+     return view('admin.pages.report.month-wise-report');
+}
+
+public function fsyrmonthWiseReport(Request $request) {
+    $fiscalYear = $request->fiscal_year; 
+    [$startYear, $endYear] = explode('-', $fiscalYear);
+
+    $months = [
+        "$startYear-07", "$startYear-08", "$startYear-09", "$startYear-10", "$startYear-11", "$startYear-12",
+        "$endYear-01", "$endYear-02", "$endYear-03", "$endYear-04", "$endYear-05", "$endYear-06"
+    ];
+
+    $members = User::whereNotNull('member_id')->where('member_id', '!=', '0')->get();
+    $activities = MoneyReceipt::where('fiscal_year', $fiscalYear)->get();
+
+    $reportData = [];
+    $typeMapping = [
+        'OBM'  => 'Single Brick',
+        'ODBM' => 'Double Brick',
+        'OTBM' => 'Triple Brick',
+        'OPM'  => 'Single Piller',
+        'ODPM' => 'Double Piller'
+    ];
+    foreach ($members as $member) {
+        preg_match('/^[a-zA-Z]+/', $member->member_id, $matches);
+        $code = $matches[0] ?? 'Unknown';
+        $typeName = $typeMapping[$code] ?? $code;
+
+        if (!isset($reportData[$typeName])) {
+            $reportData[$typeName] = [
+                'type_name'        => $typeName,
+                'total_type_paid'  => 0,
+                'payments'         => array_fill_keys($months, 0)
+            ];
+        }
+
+        $memberActivities = $activities->where('member_id', $member->id);
+
+        foreach ($memberActivities as $activity) {
+            $selectedMonths = json_decode($activity->selected_months, true);
+            $totalPayment = $activity->payment_amount;
+
+            if (is_array($selectedMonths) && count($selectedMonths) > 0) {
+                $amountPerMonth = $totalPayment / count($selectedMonths);
+
+                foreach ($selectedMonths as $mKey) {
+                    if (array_key_exists($mKey, $reportData[$typeName]['payments'])) {
+                        $reportData[$typeName]['payments'][$mKey] += $amountPerMonth;
+                        $reportData[$typeName]['total_type_paid'] += $amountPerMonth;
+                    }
+                }
+            }
+        }
+    }
+
+    $abouts = About::first();
+    ksort($reportData);
+
+    return view('admin.pages.report.month-wise-report-info', compact('reportData', 'months', 'fiscalYear', 'abouts'));
+}
+
 }

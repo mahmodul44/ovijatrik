@@ -25,7 +25,7 @@ class AccbalanceTransferController extends Controller
         $data = array();
         $data['fiscalyears'] = FiscalYear::where('status',1)->get();
         $data['projects'] = Project::where('status', 1)->get();
-         $data['accounts'] = Account::where('status', 1)->get();
+        $data['accounts'] = Account::where('status', 1)->get();
         return view('admin.pages.accbalancetransfer.create', $data);
     }
 
@@ -34,8 +34,8 @@ class AccbalanceTransferController extends Controller
         //dd($request->all());
         try {
             $validate = Validator::make($request->all(), [
-                'project_id'         => 'required',
-                'to_project'       => 'required',
+                'from_account'       => 'required',
+                'to_account'         => 'required',
                 'transfer_date'      => 'required',
                 'transfer_amount'    => 'required',
             ]);
@@ -56,8 +56,8 @@ class AccbalanceTransferController extends Controller
             } while (AccBalanceTransfer::where('transfer_no', $transferNo)->exists());
 
             $transfer->transfer_no       = $transferNo;
-            $transfer->from_project      = $request->project_id;
-            $transfer->to_project        = $request->to_project;
+            $transfer->from_account      = $request->from_account;
+            $transfer->to_account        = $request->to_account;
             $transfer->fiscal_year       = $fiscalYear;
             $transfer->transfer_date     = $transferDate;
             $transfer->transfer_amount   = $request->transfer_amount;
@@ -91,6 +91,7 @@ class AccbalanceTransferController extends Controller
         $data['submenu'] = "list-Transfer";
         $data['fiscalyears'] = FiscalYear::where('status',1)->get();
         $data['projects'] = Project::where('status', 1)->get();
+        $data['accounts'] = Account::where('status', 1)->get();
         $data['transferEdit'] = AccBalanceTransfer::findOrFail($id);
         return view('admin.pages.accbalancetransfer.edit', $data);
     }
@@ -99,8 +100,8 @@ class AccbalanceTransferController extends Controller
          try {
              
             $validate = Validator::make($request->all(), [
-                'from_project'      => 'required',
-                'to_project'        => 'required',
+                'from_account'      => 'required',
+                'to_account'        => 'required',
                 'transfer_date'     => 'required',
                 'transfer_amount'   => 'required',
             ]);
@@ -116,12 +117,12 @@ class AccbalanceTransferController extends Controller
            
             $transfer = AccBalanceTransfer::find($id);
 
-            $transfer->from_project      = $request->from_project;
-            $transfer->to_project        = $request->to_project;
+            $transfer->from_account      = $request->from_account;
+            $transfer->to_account        = $request->to_account;
             $transfer->fiscal_year       = $fiscalYear;
             $transfer->transfer_date     = $transferDate;
-            $transfer->transfer_amount    = $request->transfer_amount;
-            $transfer->transfer_remarks   = $request->transfer_remarks;
+            $transfer->transfer_amount   = $request->transfer_amount;
+            $transfer->transfer_remarks  = $request->transfer_remarks;
             $transfer->updated_by        = Auth::id();
             $transfer->transfer_status   = $request->transfer_status ? $request->transfer_status : 0;
 

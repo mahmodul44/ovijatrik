@@ -195,6 +195,8 @@ Route::get('/admin/fiscalyear-member-wise',[ReportController::class,'fiscalyearm
 Route::get('/admin/fiscalyearmember-wise-report',[ReportController::class,'fiscalyearmemberWiseReport'])->name('report.fiscalyearmember-wise-report');
 Route::get('/admin/fsyr-member-type-wise',[ReportController::class,'fsyrmembertypeWise'])->name('report.fsyrmember-type-wise');
 Route::get('/admin/fsyr-member-type-wise-report',[ReportController::class,'fsyrmembertypeWiseReport'])->name('report.fsyrmember-type-wise-report');
+Route::get('/admin/fsyrmonth-wise',[ReportController::class,'fsyrmonthWise'])->name('report.fsyrmonth-wise');
+Route::get('/admin/fsyrmonth-wise-report-view',[ReportController::class,'fsyrmonthWiseReport'])->name('report.fsyrmonth-wise-report-view');
 
 
 
