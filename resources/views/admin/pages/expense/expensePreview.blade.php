@@ -274,13 +274,13 @@
                 <img width="52%" src="{{ asset($abouts->logo_dark) }}" alt="Logo">
                 {{-- <h2>Ovijatrik</h2> --}}
                 <p>
-                    Islambagh, Dinajpur, Dhaka, Bangladesh<br>
-                    Reg No: OVJ-88923 | Contact: +880 1717 017645<br>
+                    Islambagh, Sadar, Dinajpur, Bangladesh<br>
+                    Reg No: Dinaj/2581/2024 | Contact: +880 1717 017645<br>
                     Email: ovijatrik.dinajpur@gmail.com
                 </p>
             </div>
             <div class="invoice-title">
-                <h1>VOUCHER RECEIPT</h1>
+                <h1>DEBIT VOUCHER</h1>
                 {{-- <div class="receipt-id">Voucher No#: {{ $expense->expense_no }}</div> --}}
             </div>
         </header>

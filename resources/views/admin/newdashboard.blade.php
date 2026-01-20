@@ -205,7 +205,7 @@
                             <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                             </svg>
-                            Download Digital Card
+                            Virtual Membership Card
                         </a>
                         @endif
 
@@ -213,7 +213,7 @@
                 </div>
                 
                 <div class="hidden lg:flex mt-4 items-center justify-between px-2">
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest italic">Digital Identity Card • Ovijatrik Family</p>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest italic">Virtual Membership Card • Ovijatrik Social Walfare Organization</p>
                  
                 </div>
             </div>
@@ -237,7 +237,7 @@
                 <div class="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700 space-y-4">
                     <div class="flex items-center justify-between">
                         <span class="flex items-center text-[10px] font-bold text-gray-400 uppercase">  <svg class="w-4 h-4 mr-1.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg>  Donor ID</span>
-                        <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">#{{ $user->member_id ?? 'DR-0042' }}</span>
+                        <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-200">{{ $user->member_id ?? 'DR-0042' }}</span>
                     </div>
                     <div class="flex items-center justify-between border-t border-gray-100 dark:border-gray-800 pt-3">
                         <span class="flex items-center text-[10px] font-bold text-gray-400 uppercase"> <svg class="w-4 h-4 mr-1.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg> Contact</span>
@@ -271,14 +271,17 @@
         <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-6 rounded-3xl shadow-lg text-white group cursor-default">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-teal-100 font-medium uppercase tracking-wider text-[10px]">Contribution This Year</p>
+                    <p class="text-teal-100 font-medium uppercase tracking-wider text-[10px]">Paid This Fiscal Year</p>
                     <h2 class="text-3xl font-bold mt-1">৳ {{ number_format($totalThisYear,2) }}</h2>
                 </div>
                 <div class="p-2 bg-white/20 rounded-lg">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
             </div>
-            <p class="mt-4 text-[10px] bg-black/10 w-max px-2 py-1 rounded">Fiscal: {{ now()->year }}</p>
+            <p class="mt-4 text-[10px] bg-black/10 w-max px-2 py-1 rounded">
+            Fiscal: 
+            {{ now()->month >= 7 ? now()->year . '-' . (now()->year + 1) : (now()->year - 1) . '-' . now()->year }}
+        </p>
         </div>
 
         <div class="bg-gradient-to-br from-indigo-500 to-blue-600 p-6 rounded-3xl shadow-lg text-white group cursor-default">
@@ -291,20 +294,36 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                 </div>
             </div>
-            <p class="mt-4 text-[10px] bg-black/10 w-max px-2 py-1 rounded">Total Support</p>
+            <p class="mt-4 text-[10px] bg-black/10 w-max px-2 py-1 rounded">Total Paid</p>
         </div>
 
         <div class="bg-gradient-to-br from-rose-500 to-orange-600 p-6 rounded-3xl shadow-lg text-white group cursor-default">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-rose-100 font-medium uppercase tracking-wider text-[10px]">Donation Frequency</p>
-                    <h2 class="text-3xl font-bold mt-1">{{ $frequency }}</h2>
+    <div class="flex justify-between items-start">
+        <div>
+            <p class="text-rose-100 font-medium uppercase tracking-wider text-[10px]">
+                @php
+                    $memberId = Auth::user()->member_id ?? '';
+                    
+                    if (str_starts_with($memberId, 'OBBBM')) {
+                        $memberType = 'Triple Brick';
+                    } elseif (str_starts_with($memberId, 'OBBM')) {
+                        $memberType = 'Double Brick';
+                    } elseif (str_starts_with($memberId, 'OBM')) {
+                        $memberType = 'Brick';
+                    } else {
+                        $memberType = 'General';
+                    }
+                    @endphp
+                        Member Type
+                    </p>
+                    <h4 class="text-2xl font-bold mt-1 uppercase">{{ $memberType }}</h4>
+                    <p class="mt-4 text-[10px] bg-black/10 w-max px-2 py-1 rounded">{{ $frequency }}</p>
                 </div>
                 <div class="p-2 bg-white/20 rounded-lg">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 00-2 2z"></path></svg>
                 </div>
             </div>
-            <p class="mt-4 text-[10px] bg-black/10 w-max px-2 py-1 rounded">Commitment Level</p>
+            
         </div>
     </div>
 
@@ -320,57 +339,57 @@
             </a>
         </div>
         <div class="overflow-x-auto">
-    <table class="min-w-full">
-        <thead class="text-gray-400 text-[10px] uppercase tracking-widest border-b border-gray-100 dark:border-gray-700">
-            <tr>
-                <th class="px-6 py-4 text-left">Fiscal Year</th>
-                <th class="px-6 py-4 text-left">TXN Info</th>
-                <th class="px-6 py-4 text-left">Paid Months</th>
-                <th class="px-6 py-4 text-left">Unpaid Months</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-            @forelse($fiscalSummary as $fy)
-            <tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition group">
-                <td class="px-6 py-4 font-bold text-gray-700 dark:text-gray-200 text-sm italic tracking-tighter">
-                    {{ $fy['year'] }}
-                </td>
+   <table class="min-w-full border-collapse border border-gray-200 dark:border-gray-700">
+    <thead class="text-gray-400 text-[12px] uppercase tracking-widest bg-gray-50 dark:bg-gray-800/50">
+        <tr>
+            <th class="px-6 py-4 text-left border border-gray-200 dark:border-gray-700">Fiscal Year</th>
+            <th class="px-6 py-4 text-left border border-gray-200 dark:border-gray-700">TXN Info</th>
+            <th class="px-6 py-4 text-left border border-gray-200 dark:border-gray-700">Paid Months</th>
+            <th class="px-6 py-4 text-left border border-gray-200 dark:border-gray-700">Unpaid Months</th>
+        </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+        @forelse($fiscalSummary as $fy)
+        <tr class="hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition group">
+            <td class="px-6 py-4 font-bold text-gray-700 dark:text-gray-200 text-sm italic tracking-tighter border border-gray-200 dark:border-gray-700">
+                {{ $fy['year'] }}
+            </td>
 
-                <td class="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs font-bold">
-                    <span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
-                        {{ $fy['count'] }} TXNs
-                    </span>
-                </td>
+            <td class="px-6 py-4 text-gray-500 dark:text-gray-400 text-xs font-bold border border-gray-200 dark:border-gray-700">
+                <span class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                    {{ $fy['count'] }} TXNs
+                </span>
+            </td>
 
-                <td class="px-6 py-4">
-                    <div class="flex flex-wrap gap-1">
-                        <span class="w-full text-[12px] text-blue-600 font-bold mb-1">Total: {{ $fy['paid_count'] }}</span>
-                        @foreach($fy['paid_months'] as $monthName)
-                            <span class="bg-green-50/50 text-green-700 dark:bg-green-900/50 dark:text-blue-300 text-[11px] font-black px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-800 uppercase tracking-tighter">
-                                {{ $monthName }}
-                            </span>
-                        @endforeach
-                    </div>
-                </td>
+            <td class="px-6 py-4 border border-gray-200 dark:border-gray-700">
+                <div class="flex flex-wrap gap-1">
+                    <span class="w-full text-[12px] text-blue-600 font-bold mb-1">Total: {{ $fy['paid_count'] }}</span>
+                    @foreach($fy['paid_months'] as $monthName)
+                        <span class="bg-green-50/50 text-green-700 dark:bg-green-900/50 dark:text-blue-300 text-[11px] font-black px-2 py-0.5 rounded-md border border-blue-100 dark:border-blue-800 uppercase tracking-tighter">
+                            {{ $monthName }}
+                        </span>
+                    @endforeach
+                </div>
+            </td>
 
-                <td class="px-6 py-4">
-                    <div class="flex flex-wrap gap-1">
-                        <span class="w-full text-[14px] text-red-500 font-bold mb-1">Due: {{ $fy['unpaid_count'] }}</span>
-                        @foreach($fy['unpaid_months'] as $monthName)
-                            <span class="bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 text-[11px] font-bold px-2 py-0.5 rounded-md border border-red-100 dark:border-red-900/30 uppercase tracking-tighter opacity-70">
-                                {{ $monthName }}
-                            </span>
-                        @endforeach
-                    </div>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="4" class="px-6 py-12 text-center text-gray-400 text-xs italic">No donation records found.</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+            <td class="px-6 py-4 border border-gray-200 dark:border-gray-700">
+                <div class="flex flex-wrap gap-1">
+                    <span class="w-full text-[14px] text-red-500 font-bold mb-1">Total: {{ $fy['unpaid_count'] }}</span>
+                    @foreach($fy['unpaid_months'] as $monthName)
+                        <span class="bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 text-[11px] font-bold px-2 py-0.5 rounded-md border border-red-100 dark:border-red-900/30 uppercase tracking-tighter opacity-70">
+                            {{ $monthName }}
+                        </span>
+                    @endforeach
+                </div>
+            </td>
+        </tr>
+        @empty
+        <tr>
+            <td colspan="4" class="px-6 py-12 text-center text-gray-400 text-xs italic border border-gray-200 dark:border-gray-700">No donation records found.</td>
+        </tr>
+        @endforelse
+    </tbody>
+</table>
 </div>
     </div>
 
@@ -415,6 +434,7 @@
                     @foreach($paymentMethods as $method)
                     <div class="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-800 relative overflow-hidden">
                         <div class="relative z-10">
+                            <p class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tight">{{ $method['bank_name'] }}</p>
                             <p class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tight">{{ $method['account_name'] }}</p>
                             <p class="text-lg font-mono font-bold text-gray-800 dark:text-white mt-1">{{ $method['account_no'] }}</p>
                         </div>
@@ -432,7 +452,7 @@
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         Email Us
                     </a>
-                    <a href="tel:+8801XXXXXXX" class="flex items-center text-xs bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-xl transition font-bold">
+                    <a href="tel:+8801717017645" class="flex items-center text-xs bg-blue-600 hover:bg-blue-500 px-4 py-2.5 rounded-xl transition font-bold">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         Hotline
                     </a>

@@ -49,6 +49,7 @@ class ExpenseController extends Controller
             'expense_amount'    => 'required|numeric|min:1',
             'account_id'        => 'required',
             'pay_method_id'     => 'required',
+            'receiver_name'     => 'nullable|Max:200',
             'bank_name'         => 'nullable|Max:100',
             'bank_account_no'   => 'nullable|Max:50',
             'mobile_account_no' => 'nullable|Max:15',
@@ -93,21 +94,28 @@ class ExpenseController extends Controller
             ], 200);
         }
 
-        $prefix    = 'OVJEXP';
-        $yearMonth = date('ym');
+        $prefix = 'OVJEXP';
 
-        $lastExpense = Expense::where('expense_no', 'LIKE', "$prefix-$yearMonth%")
-            ->where('expense_type', 2)
+        $lastExpense = Expense::where('expense_no', 'LIKE', $prefix.'%')
             ->orderBy('expense_id', 'desc')
             ->first();
 
-        $newNumber = $lastExpense ? str_pad(intval(substr($lastExpense->expense_no, -3)) + 1, 3, '0', STR_PAD_LEFT) : '001';
-        $expNo = "$prefix-$yearMonth$newNumber";
-
-        while (Expense::where('expense_no', $expNo)->exists()) {
-            $newNumber = str_pad(intval($newNumber) + 1, 3, '0', STR_PAD_LEFT);
-            $expNo = "$prefix-$yearMonth$newNumber";
+        if ($lastExpense) {
+            // prefix বাদ দিয়ে নাম্বার অংশ নিলাম
+            $lastNumber = (int) substr($lastExpense->expense_no, strlen($prefix));
+            $newNumber  = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        } else {
+            $newNumber = '0001';
         }
+
+        $expNo = $prefix . $newNumber;
+
+        // extra safety (duplicate avoid)
+        while (Expense::where('expense_no', $expNo)->exists()) {
+            $newNumber = str_pad(((int)$newNumber) + 1, 4, '0', STR_PAD_LEFT);
+            $expNo = $prefix . $newNumber;
+        }
+
 
         // =========================
         // SAVE EXPENSE (AUTO APPROVE)
@@ -121,6 +129,7 @@ class ExpenseController extends Controller
         $expense->account_id        = $accountID;
         $expense->project_id        = $projectId;
         $expense->expense_amount    = $expenseAmount;
+        $expense->receiver_name     = $request->receiver_name;
         $expense->expense_remarks   = $request->expense_remarks;
         $expense->pay_method_id     = $request->pay_method_id;
         $expense->bank_account_no   = $request->bank_account_no;

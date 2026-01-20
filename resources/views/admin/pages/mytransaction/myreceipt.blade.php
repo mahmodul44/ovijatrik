@@ -34,7 +34,7 @@
                 <table id="myreceiptTable" class="w-full text-left border-separate border-spacing-y-2">
                     <thead>
                         <tr class="text-slate-400">
-                            <th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest">Date & Inv No</th>
+                            <th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest !text-center">Date</th>
                             <th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest">Project Description</th>
                             <th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest">Payment Info</th>
                             <th class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-right">Amount</th>
@@ -46,12 +46,11 @@
                         <tr class="group bg-slate-50/50 dark:bg-slate-800/20 hover:bg-white dark:hover:bg-slate-800 transition-all duration-300">
                             <td class="px-6 py-5 first:rounded-l-2xl">
                                 <span class="block text-sm font-black text-slate-900 dark:text-white">{{ \Carbon\Carbon::parse($value->payment_date)->format('d M, Y') }}</span>
-                                <span class="text-[10px] font-mono text-blue-500 dark:text-blue-400 font-bold uppercase tracking-tighter">{{ $value->mr_no }}</span>
                             </td>
                             <td class="px-6 py-5">
                                 <div class="max-w-[220px]">
                                     <p class="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{{ $value->project->project_title ?? 'General' }}</p>
-                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">FY: {{ $value->fiscal_year ?? '2024-25' }}</p>
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Inv No: {{ $value->mr_no }}</p>
                                 </div>
                             </td>
                             <td class="px-6 py-5">

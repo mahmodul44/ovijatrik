@@ -25,6 +25,7 @@ use App\Http\Controllers\MemberReceiptController;
 use App\Http\Controllers\MyTransactionController;
 use App\Http\Controllers\ProjectExpenseController;
 use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\AccbalanceTransferController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +81,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('loanaccount', LoanAccountController::class);
         Route::resource('salary', SalaryController::class);
         Route::resource('falsereceipt', FalseReceiptController::class);
+        Route::resource('accbalancetransfer', AccbalanceTransferController::class);
     });
 
 /* About */
@@ -188,6 +190,12 @@ Route::get('/admin/date-wise-account',[ReportController::class,'dateWiseAccount'
 Route::get('/admin/date-wise-account-details',[ReportController::class,'dateWiseAccountDetails'])->name('report.date-wise-account-details');
 Route::get('/admin/paymethod-wise',[ReportController::class,'paymethodWise'])->name('report.paymethod-wise');
 Route::get('/admin/paymethod-wise-report',[ReportController::class,'paymethodWiseReport'])->name('report.paymethod-wise-report');
+
+Route::get('/admin/fiscalyear-member-wise',[ReportController::class,'fiscalyearmemberWise'])->name('report.fiscalyearmember-wise');
+Route::get('/admin/fiscalyearmember-wise-report',[ReportController::class,'fiscalyearmemberWiseReport'])->name('report.fiscalyearmember-wise-report');
+Route::get('/admin/fsyr-member-type-wise',[ReportController::class,'fsyrmembertypeWise'])->name('report.fsyrmember-type-wise');
+Route::get('/admin/fsyr-member-type-wise-report',[ReportController::class,'fsyrmembertypeWiseReport'])->name('report.fsyrmember-type-wise-report');
+
 
 
 Route::put('/project/{id}/complete', [ProjectController::class, 'complete'])->name('project.complete');

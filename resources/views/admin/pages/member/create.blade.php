@@ -49,7 +49,7 @@
                         <x-text-input id="member_id" type="text" name="member_id" :value="old('member_id')"
                             class="block w-full rounded-xl border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100"
                             required autocomplete="off" />
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Format: OBM1234, OBBM5678, OBBBM91011</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Format: OBM001, ODBM001, OTBM001, OPM001, ODPM001</p>
                         <x-input-error :messages="$errors->get('member_id')" class="mt-2" />
                     </div>
                 </div>

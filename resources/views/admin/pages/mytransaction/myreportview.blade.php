@@ -11,7 +11,7 @@
         
         /* Company Header */
         .header { display: flex; justify-content: space-between; border-bottom: 3px solid #036056; padding-bottom: 20px; margin-bottom: 30px; }
-        .company-info h1 { margin: 0; color: #036056; font-size: 28px; letter-spacing: -1px; }
+        .company-info h1 { margin: 0; color: #036056; font-size: 18px; letter-spacing: -1px; }
         .company-info p { margin: 2px 0; font-size: 12px; color: #666; }
         
         .report-title { text-align: right; }
@@ -35,6 +35,21 @@
         .btn { padding: 10px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; text-decoration: none; }
         .btn-print { background: #036056; color: white; }
         .btn-close { background: #e5e7eb; color: #374151; }
+        .logo-container {
+            margin: 0px 0;
+        }
+
+        .header-logo {
+            max-height: 80px; 
+            width: auto;     
+            display: block;   
+        }
+
+        .user-details div {
+            display: flex;
+            justify-content: flex-end; 
+            gap: 5px;
+        }
 
         @media print {
             body { background: white; padding: 0; }
@@ -48,8 +63,12 @@
 <div class="report-canvas">
     <div class="header">
         <div class="company-info">
-            <h1>OVIJATRIK</h1>
-            <p>Islambagh, Dinajpur, Bangladesh</p>
+            <div class="logo-container">
+                <img src="{{ asset($abouts->logo_dark) }}" alt="OVIJATRIK Logo" class="header-logo">
+            </div>
+            <h1>Ovijatrik Social Walfare Organization</h1>
+            <p>Reg No: Dinaj/2581/2024</p>
+            <p>Islambagh, Sadar, Dinajpur, Bangladesh</p>
             <p>Phone: +880 1717-017645 | Email: ovijatrik.dinajpur@gmail.com</p>
         </div>
         <div class="report-title">
@@ -57,6 +76,10 @@
             <div class="date-range">
                 <b>Period:</b> {{ $from ?? 'All Time' }} — {{ $to ?? 'Today' }}
             </div>
+            <div class="user-details" style="margin-top: 5px; font-size: 0.9em;">
+            <div><b>Name:</b> {{ Auth::user()->name }}</div>
+            <div><b>Member ID:</b> {{ Auth::user()->member_id ?? 'N/A' }}</div>
+        </div>
         </div>
     </div>
 

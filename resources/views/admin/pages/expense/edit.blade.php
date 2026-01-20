@@ -150,7 +150,7 @@
             @foreach ($accounts as $item)
                 <option value="{{ $item->account_id }}" 
                     {{ $expense->account_id == $item->account_id ? 'selected' : '' }}>
-                    {{ $item->account_name }} ({{ $item->account_no }})
+                    {{ $item->bank_name }} ({{ $item->account_no }})
                 </option>
             @endforeach
         </select>
@@ -162,7 +162,7 @@
     </span>
 </div>
  <!-- Amount & Remarks -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <div>
         <label for="expense_amount" class="block text-gray-700 dark:text-gray-300 font-medium mb-1">
             Amount <span class="text-red-600">*</span>
@@ -176,6 +176,15 @@
                 focus:ring-2 focus:ring-blue-500 text-sm"
                 autocomplete="off">
     </div>
+<div class="md:col-span-1">
+<label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+    Receiver Name <span class="text-red-600"></span>
+</label>
+<input type="text" id="receiver_name" name="receiver_name" value="{{ $expense->receiver_name }}"
+    class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2
+    bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200
+    focus:outline-none focus:ring-2 focus:ring-blue-500">
+</div>
    <!-- Payment Method -->
     <div>
         <label for="pay_method_id" class="block text-gray-700 dark:text-gray-300 font-medium mb-1">

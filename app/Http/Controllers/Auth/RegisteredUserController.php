@@ -32,14 +32,22 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'member_id' => ['required','string','max:255','regex:/^(OBM|OBBM|OBBBM)\d+$/',
-             ],
-            'phone_no' => ['required', 'digits:11','unique:'.User::class],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            ], [
-            'member_id.regex' => 'Member ID must start with OBM, OBBM, or OBBBM followed by numbers.',
-            ]);
+
+            'member_id' => [
+                'required',
+                'string',
+                'regex:/^(OBM|ODBM|OTBM|OPM|ODPM)\d{3}$/',
+                'unique:users,member_id',
+            ],
+
+            'phone_no' => ['required', 'digits:11', 'unique:users,phone_no'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'min:8', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'member_id.regex' => 'Member ID format must be like OPM001, OBM001.',
+            'member_id.unique' => 'This Member ID is already registered.',
+        ]);
+
 
         $user = User::create([
             'name' => $request->name,

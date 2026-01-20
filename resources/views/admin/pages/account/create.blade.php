@@ -36,6 +36,16 @@
 
             <div class="flex flex-col md:flex-row md:items-end gap-4">
                 <div class="w-full">
+                    <label for="bank_name" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
+                        Bank Name <span class="text-red-600"> *</span>
+                    </label>
+                    <input type="text" required name="bank_name" id="bank_name" value="{{ old('bank_name') }}"
+                        class="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition"/>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row md:items-end gap-4">
+                <div class="w-full">
                     <label for="account_name" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
                         Account Name <span class="text-red-600">*</span>
                     </label>
@@ -69,17 +79,15 @@
                     </select>
                </div>
             </div>
-
             <div class="flex flex-col md:flex-row md:items-end gap-4">
                 <div class="w-full">
                     <label for="bank_name" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
-                        Bank Name <span class="text-red-600"></span>
+                       Details <span class="text-red-600"> </span>
                     </label>
-                    <input type="text" name="bank_name" id="bank_name" value="{{ old('bank_name') }}"
-                        class="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition"/>
+                    <textarea type="text" name="bank_details" id="bank_details"
+                        class="w-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition"></textarea>
                 </div>
             </div>
-
             <div class="pt-4">
                 <button type="submit"
                     class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg shadow transition">
@@ -95,11 +103,11 @@
 $("#accountInsertForm").on('submit', function(e){
     e.preventDefault();
     let thisForm = $(this);
-
+    let bank_name = $('#bank_name').val().trim();
     let account_name = $('#account_name').val().trim();
     let account_no = $('#account_no').val().trim();
 
-    if (!account_name || !account_no) {
+    if (!bank_name || !account_name || !account_no) {
         toastr.error('Please fill all required fields');
         return;
     }

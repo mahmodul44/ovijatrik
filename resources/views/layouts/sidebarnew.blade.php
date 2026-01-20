@@ -306,7 +306,9 @@
         </div>
     </div>
     <!-- Report Menu -->
-    @php $reportActive = in_array($currentRoute, ['report.index','report.project-wise','report.member-wise','report.account-wise','report.account-ledger','report.date-wise-account','report.paymethod-wise']); @endphp
+    @php $reportActive = in_array($currentRoute, ['report.index','report.project-wise',
+    'report.member-wise','report.account-wise','report.account-ledger','report.date-wise-account',
+    'report.paymethod-wise','report.fiscalyearmember-wise','report.fsyrmember-type-wise']); @endphp
     <div x-data="{ open: @json($reportActive) }">
         <button @click="open = !open" 
             :class="open 
@@ -378,6 +380,20 @@
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{ $currentRoute == 'report.member-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
                <span>- Member Wise</span>
+            </a>
+        </div>
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('report.fiscalyearmember-wise') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'report.fiscalyearmember-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Fiscal Year Member Wise</span>
+            </a>
+        </div>
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('report.fsyrmember-type-wise') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'report.fsyrmember-type-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Fiscal Year Member Type Wise</span>
             </a>
         </div>
     </div>
@@ -676,7 +692,67 @@
             @endif --}}
         </div>
     </div>
+    <!-- Transfer Menu -->
+     @php $mrActive = in_array($currentRoute, ['transfer.index', 'transfer.create','transfer.edit','transfer.transferpending']); @endphp
+    <div x-data="{ open: @json($mrActive) }">
+        <button @click="open = !open" 
+            :class="open 
+                ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' 
+                : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
+            class="flex w-full items-center justify-between p-2 rounded-lg transition-colors">
 
+            <span class="flex items-center space-x-2">
+                <!-- Transfer Icon -->
+                <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M9 17v-2a4 4 0 014-4h4M5 12h.01M5 16h.01M5 8h.01M17 17h.01M17 13h.01M17 9h.01M4 21h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v15a1 1 0 001 1z"/>
+                </svg>
+
+                <span x-show="!sidebarCollapsed" x-transition>Balance Transfer</span>
+            </span>
+
+            <!-- Arrow Icon -->
+            <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
+                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+        <!-- Submenu -->
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+             <a href="{{ route('accbalancetransfer.create') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'accbalancetransfer.create' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+                stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" 
+                    d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <span> Add New</span>
+            </a>
+            <a href="{{ route('accbalancetransfer.index') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ in_array($currentRoute, ['accbalancetransfer.index','accbalancetransfer.edit']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M4 6h12M4 10h12M4 14h12M4 18h12" />
+                </svg>
+                <span>List</span>
+            </a>
+            {{-- @if(Auth::check() && Auth::user()->role == 1)
+            <a href="{{ route('transfer.transferpending') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'transfer.transferpending' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+                stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" 
+                    d="M12 6v6l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span> Pending List</span>
+            </a>
+            @endif --}}
+        </div>
+    </div> 
     <!-- Loan Account info Menu Dropdown -->
     {{-- @php $accountActive = in_array($currentRoute, ['loan.loanapply', 'loan.loancreate','loan.loanedit','loan.loanpending']); @endphp
     <div x-data="{ open: @json($accountActive) }">

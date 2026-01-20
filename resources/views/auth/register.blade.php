@@ -27,7 +27,7 @@
                         <span class="font-bold">✨ Success!</span> {{ session('success') }}
                     </div>
                     <script>
-                        setTimeout(() => { window.location.href = "{{ route('login') }}"; }, 1500);
+                        setTimeout(() => { window.location.href = "{{ route('login') }}"; }, 3500);
                     </script>
                 @endif
 
@@ -41,27 +41,27 @@
 
                     <div>
                         <x-input-label for="name" class="text-xs uppercase tracking-widest font-bold text-gray-400" :value="__('Full Name')" />
-                        <x-text-input id="name" class="block mt-1 w-full bg-gray-50 border-gray-200 focus:bg-white focus:ring-emerald-500" type="text" name="name" :value="old('name')" required autofocus placeholder="John Doe" />
+                        <x-text-input id="name" class="block mt-1 w-full bg-gray-50 border-gray-200 focus:bg-white focus:ring-emerald-500" type="text" name="name" :value="old('name')" required autofocus placeholder="" />
                         <x-input-error :messages="$errors->get('name')" class="mt-1" />
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <x-input-label for="member_id" class="text-xs uppercase tracking-widest font-bold text-gray-400" :value="__('Member ID')" />
-                            <x-text-input id="member_id" class="block mt-1 w-full bg-gray-50 border-gray-200" type="text" name="member_id" :value="old('member_id')" required placeholder="OBM1234" />
-                            <p class="text-[10px] text-emerald-600 mt-1 font-medium">Format: OBM, OBBM, or OBBBM</p>
+                            <x-input-label for="member_id" class="text-xs uppercase tracking-widest font-bold text-gray-400" :value="__('Membership ID')" />
+                            <x-text-input id="member_id" class="block mt-1 w-full bg-gray-50 border-gray-200" type="text" name="member_id" :value="old('member_id')" required placeholder="OBM001" />
+                            <p class="text-[10px] text-emerald-600 mt-1 font-medium">Format: OBM, ODBM, OTBM, OPM, ODPM</p>
                             <x-input-error :messages="$errors->get('member_id')" class="mt-1" />
                         </div>
                         <div>
                             <x-input-label for="phone_no" class="text-xs uppercase tracking-widest font-bold text-gray-400" :value="__('Phone Number')" />
-                            <x-text-input id="phone_no" class="block mt-1 w-full bg-gray-50 border-gray-200" type="text" name="phone_no" :value="old('phone_no')" required placeholder="+880" />
+                            <x-text-input id="phone_no" class="block mt-1 w-full bg-gray-50 border-gray-200" type="text" name="phone_no" :value="old('phone_no')" required placeholder="" />
                             <x-input-error :messages="$errors->get('phone_no')" class="mt-1" />
                         </div>
                     </div>
 
                     <div>
                         <x-input-label for="email" class="text-xs uppercase tracking-widest font-bold text-gray-400" :value="__('Email Address')" />
-                        <x-text-input id="email" class="block mt-1 w-full bg-gray-50 border-gray-200" type="email" name="email" :value="old('email')" required placeholder="email@example.com" />
+                        <x-text-input id="email" class="block mt-1 w-full bg-gray-50 border-gray-200" type="email" name="email" :value="old('email')" required placeholder="" />
                         <x-input-error :messages="$errors->get('email')" class="mt-1" />
                     </div>
 

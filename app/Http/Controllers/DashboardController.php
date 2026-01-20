@@ -128,11 +128,9 @@ public function index()
     [$startYear, $endYear] = explode('-', $year);
     $fullFYMonths = [];
     
-    // July to Dec of start year
     for ($m = 7; $m <= 12; $m++) {
         $fullFYMonths[] = \Carbon\Carbon::create($startYear, $m, 1)->format('F-Y');
     }
-    // Jan to June of end year
     for ($m = 1; $m <= 6; $m++) {
         $fullFYMonths[] = \Carbon\Carbon::create($endYear, $m, 1)->format('F-Y');
     }

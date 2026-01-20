@@ -26,6 +26,7 @@
             <thead class="bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
                 <tr>
                     <th class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-center">#</th>
+                    <th class="border border-gray-300 dark:border-gray-700 px-3 py-2">Bank Name</th>
                     <th class="border border-gray-300 dark:border-gray-700 px-3 py-2">Account Name</th>
                     <th class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-center">Account No</th>
                     <th class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-right">Current Balance</th>
@@ -38,7 +39,9 @@
                     <td class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-center">
                         {{ $key + 1 }}
                     </td>
-
+                    <td class="border border-gray-300 dark:border-gray-700 px-3 py-2">
+                        {{ $acc->bank_name }}
+                    </td>
                     <td class="border border-gray-300 dark:border-gray-700 px-3 py-2">
                         {{ $acc->account_name }}
                     </td>
@@ -56,7 +59,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="text-center py-4 text-gray-500 dark:text-gray-400">
+                    <td colspan="5" class="text-center py-4 text-gray-500 dark:text-gray-400">
                         No Membership Accounts Found
                     </td>
                 </tr>
@@ -66,7 +69,7 @@
             <!-- FOOTER TOTAL -->
             <tfoot class="bg-gray-200 dark:bg-gray-800 font-bold text-gray-900 dark:text-gray-100">
                 <tr>
-                    <td colspan="3" class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-right">
+                    <td colspan="4" class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-right">
                         TOTAL
                     </td>
                     <td class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-right text-green-700 dark:text-green-400">
@@ -91,6 +94,7 @@
             <thead class="bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
                 <tr>
                     <th class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-center">#</th>
+                    <th class="border border-gray-300 dark:border-gray-700 px-3 py-2">Bank Name</th>
                     <th class="border border-gray-300 dark:border-gray-700 px-3 py-2">Account Name</th>
                     <th class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-center">Account No</th>
                     <th class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-right">Current Balance</th>
@@ -103,7 +107,9 @@
                     <td class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-center">
                         {{ $key + 1 }}
                     </td>
-
+                    <td class="border border-gray-300 dark:border-gray-700 px-3 py-2">
+                        {{ $acc->bank_name }}
+                    </td>
                     <td class="border border-gray-300 dark:border-gray-700 px-3 py-2">
                         {{ $acc->account_name }}
                     </td>
@@ -121,7 +127,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="text-center py-4 text-gray-500 dark:text-gray-400">
+                    <td colspan="5" class="text-center py-4 text-gray-500 dark:text-gray-400">
                         No Other Accounts Found
                     </td>
                 </tr>
@@ -131,7 +137,7 @@
             <!-- FOOTER TOTAL -->
             <tfoot class="bg-gray-200 dark:bg-gray-800 font-bold text-gray-900 dark:text-gray-100">
                 <tr>
-                    <td colspan="3" class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-right">
+                    <td colspan="4" class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-right">
                         TOTAL
                     </td>
                     <td class="border border-gray-300 dark:border-gray-700 px-3 py-2 text-right text-green-700 dark:text-green-400">

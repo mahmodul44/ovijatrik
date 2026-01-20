@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\About;
 use App\Models\MoneyReceipt;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class MyTransactionController extends Controller
 {
@@ -20,11 +21,10 @@ class MyTransactionController extends Controller
         return view('admin.pages.mytransaction.myreport');
     }
 
-   public function myReportView(Request $request)
+public function myReportView(Request $request)
 {
     $userId = Auth::id();
     
-    // Parse dates correctly
     $from = $request->from_date ? Carbon::createFromFormat('d/m/Y', $request->from_date)->format('Y-m-d') : null;
     $to   = $request->to_date   ? Carbon::createFromFormat('d/m/Y', $request->to_date)->format('Y-m-d') : null;
 
@@ -51,11 +51,12 @@ class MyTransactionController extends Controller
     }
 
     $reportData = $query->get();
-
+    $abouts = About::first();
     return view('admin.pages.mytransaction.myreportview', [
         'reportData' => $reportData,
         'from' => $request->from_date, 
-        'to' => $request->to_date
+        'to' => $request->to_date,
+        'abouts' => $abouts
     ]);
 }
    

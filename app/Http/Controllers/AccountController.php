@@ -41,6 +41,7 @@ class AccountController extends Controller
             $account->account_type     = $request->account_type;
             $account->status           = $request->status ? $request->status : 1;
             $account->bank_name        = $request->bank_name;
+            $account->bank_details     = $request->bank_details;
             
             if ($account->save()) {
                 $data['status'] = true;
