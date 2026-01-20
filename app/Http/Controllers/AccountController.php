@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Account;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -84,4 +85,24 @@ class AccountController extends Controller
         'otherTotal'
     ));
     }
+
+    public function getBalance(Request $request)
+{
+    $account = DB::table('accounts')
+        ->where('account_id', $request->account_id)
+        ->first();
+
+    if (!$account) {
+        return response()->json([
+            'status' => false,
+            'balance' => 0
+        ]);
+    }
+
+    return response()->json([
+        'status' => true,
+        'balance' => number_format($account->current_balance, 2)
+    ]);
+}
+
 }

@@ -38,7 +38,16 @@
         @endforeach
     </select>
 </div>
-            
+    <div>
+    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Select Month</label>
+    <select required name="report_month" id="report_month"
+        class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 transition duration-200">
+        <option value="">-- Select Month --</option>
+        @foreach(range(1, 12) as $m)
+            <option value="{{ $m }}">{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
+        @endforeach
+    </select>
+</div>        
 </div>
             
             <!-- Search Button -->
@@ -59,21 +68,24 @@
 
 function openfiscalyrmonthWReportWindow(url) {
     let fiscalYear = document.querySelector("[name='fiscal_year']").value;
-    if (!fiscalYear) {
-      toastr.error("Please select a Fiscal Year.");
-      return;
-    }
-    let query = `?fiscal_year=${fiscalYear}`;
+    let reportMonth = document.querySelector("[name='report_month']").value; 
 
-    let width = 900;
-    let height = 650;
+    if (!fiscalYear || !reportMonth) {
+        toastr.error("Please select both Fiscal Year and Month.");
+        return;
+    }
+
+    let query = `?fiscal_year=${fiscalYear}&report_month=${reportMonth}`;
+
+    let width = 1000;
+    let height = 800;
     let left = (screen.width / 2) - (width / 2);
     let top = (screen.height / 2) - (height / 2);
 
     window.open(
         url + query,
         'previewWindow',
-        `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=no`
+        `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
     );
 }
 </script>

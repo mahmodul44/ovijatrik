@@ -25,27 +25,34 @@
         <form id="accbalancetransferInsertForm" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
-            <!-- Project Selection -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="from_account" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
                         From Account <span class="text-red-600">*</span>
                     </label>
-                    <select id="from_account" name="from_account" class="project-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none text-sm"> 
+                    <select id="from_account" name="from_account" class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none text-sm"> 
+                        <option value=""></option>
                         @foreach($accounts as $value)
-                        <option>{{ $value->account_name}}</option>
+                        <option value="{{ $value->account_id}}">{{ $value->bank_name}} - {{ $value->account_no}} ({{ $value->account_type == 1 ? "Membership" : "others";}})</option>
                         @endforeach
                     </select>
+                     <p class="mt-2 text-sm text-white">
+                        Current Balance: <span id="from_balance">--</span>
+                    </p>
                 </div>
                 <div>
                     <label for="to_account" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
                         To Account <span class="text-red-600">*</span>
                     </label>
-                    <select id="to_account" name="to_account" class="toproject-select block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none text-sm">
+                    <select id="to_account" name="to_account" class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none text-sm">
+                        <option value=""></option>
                         @foreach($accounts as $value)
-                        <option>{{ $value->account_name}}</option>
+                        <option value="{{ $value->account_id}}">{{ $value->bank_name}} - {{ $value->account_no}} ({{ $value->account_type == 1 ? "Membership" : "others";}})</option>
                         @endforeach
                     </select>
+                    <p class="mt-2 text-sm text-white">
+                        Current Balance: <span id="to_balance">--</span>
+                    </p>
                 </div>
             </div>
 
@@ -149,6 +156,57 @@ $("#accbalancetransferInsertForm").on('submit', function(e){
     });
 });
 
+$(document).ready(function () {
+
+    $('#from_account').on('change', function () {
+        let accountId = $(this).val();
+
+        if (accountId === '') {
+            $('#from_balance').text('--');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('account.balance') }}",
+            type: "GET",
+            data: { account_id: accountId },
+            success: function (res) {
+                if (res.status) {
+                    $('#from_balance').text(res.balance);
+                } else {
+                    $('#from_balance').text('0');
+                }
+            }
+        });
+    });
+
+});
+
+$(document).ready(function () {
+
+    $('#to_account').on('change', function () {
+        let accountId = $(this).val();
+
+        if (accountId === '') {
+            $('#to_balance').text('--');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('account.balance') }}",
+            type: "GET",
+            data: { account_id: accountId },
+            success: function (res) {
+                if (res.status) {
+                    $('#to_balance').text(res.balance);
+                } else {
+                    $('#to_balance').text('0');
+                }
+            }
+        });
+    });
+
+});
 
 </script>
 @endpush

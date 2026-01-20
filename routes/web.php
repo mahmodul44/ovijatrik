@@ -94,6 +94,8 @@ Route::put('/about/basicsetting/basicsettingupdate/{id}',
 
 
 // web.php
+Route::get('/account/balance', [AccountController::class, 'getBalance'])
+    ->name('account.balance');
 
 Route::post('/employee/toggle-status', [EmployeeController::class, 'toggleStatus'])->name('employee.toggleStatus');    
 Route::get('/get-subcategories/{category_id}', [CategoryController::class, 'getSubcategories']);

@@ -24,7 +24,7 @@
             </li>
             </ol>
         </nav>
-        <a href="{{ route('transfer.create') }}"
+        <a href="{{ route('accbalancetransfer.create') }}"
         class="inline-flex items-center gap-1 bg-blue-600 dark:bg-blue-500 
                 text-white text-sm px-3 py-1.5 rounded-full shadow-sm 
                 hover:bg-blue-700 dark:hover:bg-blue-600 
@@ -47,16 +47,15 @@
 
     <!-- Transfer Table -->
     <div class="bg-white dark:bg-gray-900 shadow-lg rounded-lg overflow-x-auto border border-gray-200 dark:border-gray-700">
-        <table id="transferTable" class="min-w-full text-sm text-gray-700 dark:text-gray-300 border-collapse border border-gray-200 dark:border-gray-600">
+        <table id="acctransferTable" class="min-w-full text-sm text-gray-700 dark:text-gray-300 border-collapse border border-gray-200 dark:border-gray-600">
             <thead class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-xs uppercase">
                 <tr>
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600">#</th>
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Date</th>
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Invoice No</th>
-                    <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">From Project</th>
-                    <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">To Project</th>
+                    <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">From Account</th>
+                    <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">To Account</th>
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Amount</th>
-                    <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Status</th>
                     <th class="px-6 py-3 font-semibold border border-gray-200 dark:border-gray-600 !text-center">Action</th>
                 </tr>
             </thead>
@@ -65,18 +64,14 @@
                 @foreach ($transferlist as $index => $value)
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition">
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center">{{ $index + 1 }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center">{{ $value->transfer_date }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center text-gray-600 dark:text-gray-300">{{ $value->transfer_no }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-left text-gray-700 dark:text-gray-200">{{ $value->fromProject->project_title }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-left text-gray-700 dark:text-gray-200">{{ $value->toProject->project_title }}</td>
+                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center">  {{ \Carbon\Carbon::parse($value->acc_transfer_date)->format('d/m/Y') }}</td>
+                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center text-gray-600 dark:text-gray-300">{{ $value->acc_transfer_no }}</td>
+                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-left text-gray-700 dark:text-gray-200">{{ $value->fromAccount->bank_name }} - {{ $value->fromAccount->account_no }}</td>
+                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-left text-gray-700 dark:text-gray-200">{{ $value->toAccount->bank_name }} - {{ $value->toAccount->account_no }}</td>
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-right font-medium text-gray-900 dark:text-gray-100">৳ {{ number_format($value->transfer_amount, 2) }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center">
-                            <span class="px-3 py-1 text-xs font-medium rounded-full {{ getStatusLabel($value->status)['class'] }}">
-                                {{ getStatusLabel($value->transfer_status)['label'] }}
-                            </span>
-                        </td>
+                       
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 flex justify-center items-center gap-2">
-                            <button onclick="openPreviewWindow('{{ route('transfer.transferPreview', $value->transfer_id) }}')" 
+                            <button onclick="openPreviewWindow('{{ route('accbalancetransfer.show', $value->acc_transfer_id) }}')" 
                                 title="Preview"
                                 class="inline-flex items-center justify-center w-7 h-7 text-blue-600 bg-blue-50 rounded hover:bg-blue-100 mr-1">
                             <svg xmlns="http://www.w3.org/2000/svg" 
@@ -94,7 +89,7 @@
                         </button>
                             @if($value->transfer_status == -1)
                                 <!-- Edit -->
-                                <a href="{{ route('transfer.edit', $value->transfer_id) }}"
+                                <a href="{{ route('transfer.edit', $value->acc_transfer_id) }}"
                                     title="Edit"
                                     class="inline-flex items-center justify-center w-7 h-7 rounded 
                                             bg-indigo-50 hover:bg-indigo-100 text-indigo-600 
@@ -114,7 +109,7 @@
                                 </a>
 
                                 <!-- Delete -->
-                                <form action="{{ route('transfer.destroy', $value->transfer_id) }}" 
+                                <form action="{{ route('transfer.destroy', $value->acc_transfer_id) }}" 
                                       method="POST" class="deleteTransfer inline-block">
                                     @csrf
                                     @method('DELETE')
@@ -150,7 +145,7 @@
 @push('scripts')
 <script>
     $(document).ready(function () {
-        $('#transferTable').DataTable({
+        $('#acctransferTable').DataTable({
             paging: true,
             searching: true,
             responsive: true,
@@ -159,7 +154,7 @@
                 search: "",
             },
             columnDefs: [
-            { orderable: false, targets: [ 2, 3, 4, 5, 6, 7] } 
+            { orderable: false, targets: [ 2, 3, 4, 5, 6] } 
             ]
         });
     });

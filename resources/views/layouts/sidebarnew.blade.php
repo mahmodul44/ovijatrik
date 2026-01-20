@@ -308,7 +308,7 @@
     <!-- Report Menu -->
     @php $reportActive = in_array($currentRoute, ['report.index','report.project-wise',
     'report.member-wise','report.account-wise','report.account-ledger','report.date-wise-account',
-    'report.paymethod-wise','report.fiscalyearmember-wise','report.fsyrmember-type-wise']); @endphp
+    'report.paymethod-wise','report.fiscalyearmember-wise','report.fsyrmember-type-wise','report.fsyrmonth-wise']); @endphp
     <div x-data="{ open: @json($reportActive) }">
         <button @click="open = !open" 
             :class="open 
@@ -394,6 +394,13 @@
                class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
                       {{ $currentRoute == 'report.fsyrmember-type-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
                <span>- Fiscal Year Member Type Wise</span>
+            </a>
+        </div>
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('report.fsyrmonth-wise') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'report.fsyrmonth-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Month Wise Report</span>
             </a>
         </div>
     </div>
@@ -693,7 +700,7 @@
         </div>
     </div>
     <!-- Transfer Menu -->
-     @php $mrActive = in_array($currentRoute, ['transfer.index', 'transfer.create','transfer.edit','transfer.transferpending']); @endphp
+     @php $mrActive = in_array($currentRoute, ['accbalancetransfer.index', 'accbalancetransfer.create','accbalancetransfer.edit']); @endphp
     <div x-data="{ open: @json($mrActive) }">
         <button @click="open = !open" 
             :class="open 
