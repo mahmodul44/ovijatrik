@@ -52,6 +52,7 @@
             class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-b dark:border-gray-700">
             <tr>
                 <th class="px-6 py-3 !text-center font-semibold border dark:border-gray-700">#</th>
+                <th class="px-6 py-3 !text-center font-semibold border dark:border-gray-700">Bank Name</th>
                 <th class="px-6 py-3 !text-center font-semibold border dark:border-gray-700">Account Name</th>
                 <th class="px-6 py-3 !text-center font-semibold border dark:border-gray-700">Account No</th>
                 <th class="px-6 py-3 !text-center font-semibold border dark:border-gray-700">Account Type</th>
@@ -64,6 +65,9 @@
                     <td
                         class="px-6 py-4 text-center text-gray-600 dark:text-gray-300 border dark:border-gray-700">
                         {{ $index + 1 }}
+                    </td>
+                    <td class="px-6 py-4 text-gray-600 dark:text-gray-300 border dark:border-gray-700">
+                        {{ $value->bank_name }}
                     </td>
                     <td class="px-6 py-4 text-gray-600 dark:text-gray-300 border dark:border-gray-700">
                         {{ $value->account_name }}

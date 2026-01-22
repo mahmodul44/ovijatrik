@@ -136,6 +136,8 @@
             
         </div>
     </div>
+    @endif
+    @if(Auth::check() && in_array(Auth::user()->role, [1, 2]))
     <!-- Head Menu Dropdown -->
     @php $projectActive = in_array($currentRoute, ['category.index', 'category.create', 'subcategory.index', 'subcategory.create', 'category.edit','expensecategory.index','expensecategory.edit','expensecategory.create']); @endphp
     <div x-data="{ open: @json($projectActive) }">

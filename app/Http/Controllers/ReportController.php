@@ -247,13 +247,16 @@ function paymethodWiseReport(Request $request) {
     ->leftJoin('accounts','accounts.account_id','=','transactions.account_id')
     ->leftJoin('users','users.id','=','transactions.member_id')
     ->leftJoin('money_receipts','money_receipts.mr_id','=','transactions.reference_id')
-    // Add Expense Join (Adjust 'expense_id' to your actual FK)
+ 
     ->leftJoin('expenses','expenses.expense_id','=','transactions.reference_id') 
-    ->leftJoin('users as us','us.id','=','transactions.transaction_added_by')
     ->leftJoin('expense_categories as ec','ec.expense_cat_id','=','expenses.expense_cat_id') 
+    ->leftJoin('salaries', 'salaries.salary_id', '=', 'transactions.reference_id') 
+    ->leftJoin('acc_balance_transfers as transfers', 'transfers.acc_transfer_id', '=', 'transactions.reference_id')
+    ->leftJoin('users as us','us.id','=','transactions.transaction_added_by')
     ->select(
         'transactions.transaction_date',
         'transactions.transaction_type',
+        'transactions.reference_type',
         'transactions.transaction_amount',
         'users.name as member_name',
         'us.name as creator_name',
@@ -261,7 +264,8 @@ function paymethodWiseReport(Request $request) {
         'money_receipts.mr_no',
         'money_receipts.donar_name',
         'expenses.expense_no', 
-        'expenses.expense_remarks','ec.expense_cat_name'
+        'expenses.expense_remarks','ec.expense_cat_name',
+        'salaries.salary_no','salaries.salary_month','salaries.salary_year','transfers.acc_transfer_no'
     )
     ->orderBy('transactions.transaction_date', 'asc');
 
@@ -500,7 +504,7 @@ public function fsyrmonthWiseReport(Request $request) {
                     ->whereIn('receipt_type', [1])->sum('payment_amount');
     $prevExpense = Expense::where('expense_date', '<', $startDate)
                     ->whereIn('expense_type', [2])->sum('expense_amount');
-    
+
     $openingBalance = $prevIncome - $prevExpense;
 
     $incomeItems = MoneyReceipt::whereBetween('payment_date', [$startDate, $endDate])
@@ -511,6 +515,7 @@ public function fsyrmonthWiseReport(Request $request) {
     
     $accountBalances = DB::table('accounts')
         ->select('accounts.account_id', 'accounts.account_name','accounts.account_no', 'accounts.bank_name')
+        ->where('accounts.account_type', 1)
         ->get()
         ->map(function ($account) use ($endDate) {
             $totalIn = DB::table('money_receipts')
@@ -525,7 +530,17 @@ public function fsyrmonthWiseReport(Request $request) {
                 ->where('expense_type', 2)
                 ->sum('expense_amount');
 
-            $account->calculated_balance = $totalIn - $totalOut;
+            $transferIn = DB::table('acc_balance_transfers') 
+                ->where('to_account', $account->account_id)
+                ->where('acc_transfer_date', '<=', $endDate)
+                ->sum('transfer_amount');
+
+            $transferOut = DB::table('acc_balance_transfers')
+                ->where('from_account', $account->account_id)
+                ->where('acc_transfer_date', '<=', $endDate)
+                ->sum('transfer_amount');
+
+            $account->calculated_balance = ($totalIn + $transferIn) - ($totalOut + $transferOut);
 
             return $account;
         })

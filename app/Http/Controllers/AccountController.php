@@ -24,9 +24,10 @@ class AccountController extends Controller
     {
         try {
             $validate = Validator::make($request->all(), [
-                'account_name'  => 'required|max:50',
+                'account_name'  => 'required|max:75',
                 'account_no'    => 'required|max:50',
-                'account_type'  => 'required'
+                'account_type'  => 'required',
+                'branch_name'   => 'nullable|max:250',
             ]);
 
             if ($validate->fails()) {
@@ -42,6 +43,7 @@ class AccountController extends Controller
             $account->account_type     = $request->account_type;
             $account->status           = $request->status ? $request->status : 1;
             $account->bank_name        = $request->bank_name;
+            $account->branch_name      = $request->branch_name;
             $account->bank_details     = $request->bank_details;
             
             if ($account->save()) {
@@ -70,8 +72,6 @@ class AccountController extends Controller
 
     $membershipTotal = $membershipAccounts->sum('current_balance');
 
-
-    // Other Accounts (account_type = 0)
     $otherAccounts = Account::where('account_type', 2)
         ->orderBy('account_id', 'desc')
         ->get();

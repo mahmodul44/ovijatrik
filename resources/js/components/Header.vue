@@ -16,7 +16,10 @@
       <div class="flex justify-between items-center p-4 md:p-5 bg-white border-b border-gray-200 shadow-sm">
 
   <!-- Left: Logo + Title -->
-  <div class="flex items-center space-x-4">
+ <router-link
+  to="/"
+  class="flex items-center space-x-4 cursor-pointer select-none"
+>
       <img
       v-if="logoImg"
       :src="logoImg"
@@ -33,7 +36,7 @@
         {{ i18n.currentLang === 'bn' ? 'হাসিমুখের খুঁজে অভিযাত্রা' : 'A journey in search of a smile' }}
       </p>
     </div>
-  </div>
+  </router-link>
 
   <!-- Right: Social + Language + Mobile Menu -->
   <div class="flex items-center space-x-5">
@@ -67,6 +70,17 @@
             d="M6.6 2A2.6 2.6 0 0 0 4 4.6C4 14.4 9.6 20 19.4 20a2.6 2.6 0 0 0 2.6-2.6v-1.8a1 1 0 0 0-.9-1l-4.4-.5a1 1 0 0 0-1 .5l-1.4 2.2a12 12 0 0 1-5.5-5.6l2.2-1.4a1 1 0 0 0 .5-1L10.4 4a1 1 0 0 0-1-.9H6.6z" />
         </svg>
       </a>
+
+    <a href="/login"
+    class="flex items-center space-x-2 px-4 h-9 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-300 shadow-sm font-medium text-sm">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+    </svg>
+
+    <span>{{ i18n.currentLang === 'bn' ? 'লগইন' : 'Login' }}</span>
+  </a>
 
     </div>
 

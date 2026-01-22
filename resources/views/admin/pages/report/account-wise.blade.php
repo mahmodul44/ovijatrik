@@ -14,7 +14,7 @@
 
     <!-- Form Card -->
     <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl shadow-2xl rounded-2xl p-8 ring-1 ring-gray-200 dark:ring-gray-700">
-        <form id="reportForm" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <form id="reportForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             <!-- Project -->
             <div>
@@ -40,7 +40,7 @@
                     <option value="">-- Select --</option>
                     @foreach ($accounts as $item)
                         <option value="{{ $item->account_id }}">
-                            {{ $item->account_name }} - {{ $item->account_no }}
+                            {{ $item->bank_name }} - {{ $item->account_no }}
                         </option>
                     @endforeach
                 </select>

@@ -195,9 +195,14 @@
                     </td>
                     <td>{{ $row->project_title ?? 'N/A' }}</td>
                     <td>
-                        @if($row->mr_no)
-                            <strong>MR:</strong> {{ $row->mr_no }} <br>
-                            <small>{{ $row->donar_name ?? $row->member_name }}</small>
+                        @if($row->reference_type == 'money_receipt')
+                        <strong>MR:</strong> {{ $row->mr_no }} <br>
+                        @elseif($row->reference_type == 'salary-expenses')
+                        <strong>Salary:</strong> {{ $row->salary_no }} <br>
+                        <small>month & Year: {{ $row->salary_month}} - {{ $row->salary_year }}</small>
+                        @elseif($row->reference_type == 'acc_balance_transfers')
+                            <strong>TRF:</strong> {{ $row->acc_transfer_no }} <br>
+                            <small>Balance Adjustment</small>
                         @else
                             <strong>Exp:</strong> {{ $row->expense_no ?? 'General Expense' }} <br>
                             <small>{{ $row->expense_cat_name }}</small>
