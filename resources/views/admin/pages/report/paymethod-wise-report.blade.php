@@ -40,26 +40,14 @@
             margin-bottom: 30px;
         }
 
-        .company-info h1 {
-            margin: 0;
-            font-size: 24px;
-            text-transform: uppercase;
-        }
+        .header { display: flex; justify-content: space-between; border-bottom: 4px double #036056; padding-bottom: 20px; margin-bottom: 30px; }
+        .company-info h1 { margin: 5px 0; color: #036056; font-size: 22px; }
+        .company-info p { margin: 2px 0; font-size: 13px; color: #555; }
+        .report-title { text-align: right; }
+        .report-title h2 { margin: 0; font-size: 20px; color: #006666; border-bottom: 2px solid #006666; display: inline-block; }
+        
+        .btn-print { margin-top: 15px; background: #036056; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
-        .company-info p {
-            margin: 5px 0;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .report-title {
-            text-align: right;
-        }
-
-        .report-title h2 {
-            margin: 0;
-            color: var(--accent-color);
-        }
 
         /* Table Styling */
         .report-table {
@@ -123,7 +111,7 @@
         }
 
         .btn {
-            padding: 10px 25px;
+            padding: 10px 15px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -131,8 +119,7 @@
             transition: 0.3s;
         }
 
-        .btn-print { background-color: var(--accent-color); color: white; }
-        .btn-close { background-color: #95a5a6; color: white; }
+        .btn-close { margin-top: 15px; background: #2e3a39; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
         
         .btn:hover { opacity: 0.8; }
 
@@ -147,18 +134,21 @@
 <body>
 
 <div class="report-container">
-    <header class="report-header">
+  <div class="header">
         <div class="company-info">
-            <h1>OVIJATRIK</h1>
-            <p>Islambagh, Dinajpur, Bangladesh</p>
+            <img src="{{ asset($abouts->logo_dark) }}" alt="Logo" style="width: 150px;">
+            <h1>Ovijatrik Social Welfare Organization</h1>
+            <p><strong>Reg No:</strong> Dinaj/2581/2024</p>
+            <p>Islambagh, Sadar, Dinajpur, Bangladesh</p>
             <p>Phone: +880 1717-017645 | Email: ovijatrik.dinajpur@gmail.com</p>
         </div>
+
         <div class="report-title">
-            <h2>Transaction Report</h2>
-            <p><strong>Method:</strong> {{ $accountName->account_name }} {{ $accountName->account_no }}</p>
+            <h2>Payment Method Wise Summary</h2>
+             <p><strong>Method:</strong> {{ $accountName->bank_name }} {{ $accountName->account_no }}</p>
             <p><strong>Period:</strong> {{ $from ?? 'All Time' }} — {{ $to ?? 'Today' }}</p>
         </div>
-    </header>
+    </div>
 
    <main>
     <table class="report-table">
@@ -173,48 +163,74 @@
             </tr>
         </thead>
         <tbody>
-            @php $totalReceipts = 0; 
-               $totalExpenses = 0;
-            @endphp
-            @foreach($reportData as $row)
-                @php 
-                    if($row->transaction_type == 1) {
-                        $totalReceipts += $row->transaction_amount;
-                    } else {
-                        $totalExpenses += $row->transaction_amount;
-                    }
-                @endphp
-                <tr>
-                    <td>{{ \Carbon\Carbon::parse($row->transaction_date)->format('d/m/Y') }}</td>
-                    <td>
-                        @if($row->mr_no)
-                            <span style="color: green; font-weight: bold;">[Receipt]</span>
-                        @else
-                            <span style="color: #e74c3c; font-weight: bold;">[Expense]</span>
-                        @endif
-                    </td>
-                    <td>{{ $row->project_title ?? 'N/A' }}</td>
-                    <td>
-                        @if($row->reference_type == 'money_receipt')
-                        <strong>MR:</strong> {{ $row->mr_no }} <br>
-                        @elseif($row->reference_type == 'salary-expenses')
-                        <strong>Salary:</strong> {{ $row->salary_no }} <br>
-                        <small>month & Year: {{ $row->salary_month}} - {{ $row->salary_year }}</small>
-                        @elseif($row->reference_type == 'acc_balance_transfers')
-                            <strong>TRF:</strong> {{ $row->acc_transfer_no }} <br>
-                            <small>Balance Adjustment</small>
-                        @else
-                            <strong>Exp:</strong> {{ $row->expense_no ?? 'General Expense' }} <br>
-                            <small>{{ $row->expense_cat_name }}</small>
-                        @endif
-                    </td>
-                    <td>{{ $row->creator_name }}</td>
-                    <td class="amount-cell" style="color: {{ $row->mr_no ? '#27ae60' : '#c0392b' }}">
-                        {{ $row->mr_no ? '' : '-' }}৳ {{ number_format($row->transaction_amount, 2) }}
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
+    @php 
+        $totalReceipts = 0; 
+        $totalExpenses = 0;
+    @endphp
+    @foreach($reportData as $row)
+        @php 
+            /* Logic:
+               Positive (+): Type 1 (Receipt), Type 5 (Transfer In)
+               Negative (-): Type 2 (Expense/Salary), Type -5 (Transfer Out)
+            */
+            $isPositive = in_array($row->transaction_type, [1, 5]);
+            
+            if($isPositive) {
+                $totalReceipts += $row->transaction_amount;
+            } else {
+                $totalExpenses += $row->transaction_amount;
+            }
+        @endphp
+        <tr>
+            <td>{{ \Carbon\Carbon::parse($row->transaction_date)->format('d/m/Y') }}</td>
+            <td>
+                @if($row->transaction_type == 1)
+                    <span style="color: green; font-weight: bold;">[Receipt]</span>
+                @elseif($row->transaction_type == 5)
+                    <span style="color: #3498db; font-weight: bold;">[Transfer In]</span>
+                @elseif($row->transaction_type == -5)
+                    <span style="color: #e67e22; font-weight: bold;">[Transfer Out]</span>
+                @elseif($row->reference_type == 'salary-expenses')
+                    <span style="color: #9b59b6; font-weight: bold;">[Salary]</span>
+                @else
+                    <span style="color: #e74c3c; font-weight: bold;">[Expense]</span>
+                @endif
+            </td>
+            <td>{{ $row->project_title ?? 'N/A' }}</td>
+            <td>
+                @if($row->reference_type == 'money_receipt')
+                    <strong>MR:</strong> {{ $row->mr_no }} <br>
+                    <small>{{ $row->donar_name }}</small>
+                @elseif($row->reference_type == 'member_receipt')
+                    <strong>MR:</strong> {{ $row->mr_no }} <br>
+                    <small>{{ $row->member_name  }}</small>
+                @elseif($row->reference_type == 'salary-expenses')
+                    <strong>Salary:</strong> 
+                    {{ \Carbon\Carbon::createFromDate($row->salary_year, $row->salary_month, 1)->format('M - Y') }} 
+                    <br> 
+                    <small>Salary No: {{ $row->salary_no }}</small>
+                @elseif(in_array($row->transaction_type, [5, -5]))
+                    <strong>TRF:</strong> {{ $row->acc_transfer_no }} <br>
+                    <small>@if($row->transaction_type == 5)
+            {{-- Money came INTO this account --}}
+            Received from: <strong>{{ $row->from_account_info }}</strong>
+        @elseif($row->transaction_type == -5)
+            {{-- Money went OUT of this account --}}
+            Sent to: <strong>{{ $row->to_account_info }}</strong>
+        @endif</small>
+                @else
+                    <strong>Exp:</strong> {{ $row->expense_no ?? 'General' }} <br>
+                    <small>{{ $row->expense_cat_name }}</small>
+                @endif
+            </td>
+            <td>{{ $row->creator_name }}</td>
+            
+            <td class="amount-cell" style="color: {{ $isPositive ? '#27ae60' : '#c0392b' }}">
+                {{ $isPositive ? '' : '-' }}৳ {{ number_format($row->transaction_amount, 2) }}
+            </td>
+        </tr>
+    @endforeach
+</tbody>
     </table>
 
     <div class="summary-box">

@@ -7,8 +7,10 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\About;
 use App\Models\Ledger;
+use App\Models\Salary;
 use App\Models\Account;
 use App\Models\Expense;
+use App\Models\ExpenseCategory;
 use App\Models\Project;
 use App\Models\MoneyReceipt;
 use Illuminate\Http\Request;
@@ -252,6 +254,8 @@ function paymethodWiseReport(Request $request) {
     ->leftJoin('expense_categories as ec','ec.expense_cat_id','=','expenses.expense_cat_id') 
     ->leftJoin('salaries', 'salaries.salary_id', '=', 'transactions.reference_id') 
     ->leftJoin('acc_balance_transfers as transfers', 'transfers.acc_transfer_id', '=', 'transactions.reference_id')
+    ->leftJoin('accounts as from_acc', 'from_acc.account_id', '=', 'transfers.from_account')
+    ->leftJoin('accounts as to_acc', 'to_acc.account_id', '=', 'transfers.to_account')
     ->leftJoin('users as us','us.id','=','transactions.transaction_added_by')
     ->select(
         'transactions.transaction_date',
@@ -265,7 +269,10 @@ function paymethodWiseReport(Request $request) {
         'money_receipts.donar_name',
         'expenses.expense_no', 
         'expenses.expense_remarks','ec.expense_cat_name',
-        'salaries.salary_no','salaries.salary_month','salaries.salary_year','transfers.acc_transfer_no'
+        'salaries.salary_no','salaries.salary_month','salaries.salary_year',
+        'transfers.acc_transfer_no',
+        DB::raw("CONCAT(from_acc.bank_name, ' (', from_acc.account_no, ')') as from_account_info"),
+        DB::raw("CONCAT(to_acc.bank_name, ' (', to_acc.account_no, ')') as to_account_info")
     )
     ->orderBy('transactions.transaction_date', 'asc');
 
@@ -280,13 +287,14 @@ function paymethodWiseReport(Request $request) {
     }
 
     $reportData = $query->get();
-
+    $abouts = About::first();
     return view('admin.pages.report.paymethod-wise-report', [
         'reportData'  => $reportData,
         'accountId'   => $accountId,
         'accountName' => $accountName,
         'from'        => $from,
-        'to'          => $to
+        'to'          => $to,
+        'abouts'      => $abouts
     ]);
 }
 
@@ -375,6 +383,7 @@ function fiscalyearmemberWise(){
 
 public function fiscalYearMemberWiseReport(Request $request) {
     $fiscalYear = $request->fiscal_year;
+    $memberID   = $request->member_id;
     [$startYear, $endYear] = explode('-', $fiscalYear);
 
     $months = [
@@ -383,8 +392,11 @@ public function fiscalYearMemberWiseReport(Request $request) {
     ];
 
     $members = User::whereNotNull('member_id')
-                   ->where('member_id', '!=', '0')
-                   ->get();
+                    ->where('member_id', '!=', '0')
+                    ->when($memberID, function ($query) use ($memberID) {
+                        return $query->where('id', $memberID);
+                    })
+                    ->get();
 
     $activities = MoneyReceipt::where('fiscal_year', $fiscalYear)->get();
 
@@ -504,14 +516,31 @@ public function fsyrmonthWiseReport(Request $request) {
                     ->whereIn('receipt_type', [1])->sum('payment_amount');
     $prevExpense = Expense::where('expense_date', '<', $startDate)
                     ->whereIn('expense_type', [2])->sum('expense_amount');
-
-    $openingBalance = $prevIncome - $prevExpense;
+    $prevSalary = Salary::where('salary_date', '<', $startDate)->sum('total_salary');
+    $openingBalance = $prevIncome - ($prevExpense + $prevSalary);
 
     $incomeItems = MoneyReceipt::whereBetween('payment_date', [$startDate, $endDate])
                     ->where('receipt_type', 1)->get(); 
 
-    $expenseItems = Expense::with('expcategory')->whereBetween('expense_date', [$startDate, $endDate])
-                    ->where('expense_type', 2)->get();
+    $expenseItems = Expense::with('expcategory')
+                    ->selectRaw('expense_cat_id, SUM(expense_amount) as total_amount')
+                    ->whereBetween('expense_date', [$startDate, $endDate])
+                    ->where('expense_type', 2)->groupBy('expense_cat_id')->get()
+                    ->map(function($item) {
+                    return [
+                        'head_name' => $item->expcategory->expense_cat_name ?? 'Unknown',
+                        'totalexp_amount'  => $item->total_amount
+                        ];
+                    });
+    $totalSalary = Salary::whereBetween('salary_date', [$startDate, $endDate]) 
+    ->sum('total_salary');
+
+        if ($totalSalary > 0) {
+            $expenseItems->push([
+                'head_name'          => 'Staff Salary',
+                'totalexp_amount'    => $totalSalary
+            ]);
+        }
     
     $accountBalances = DB::table('accounts')
         ->select('accounts.account_id', 'accounts.account_name','accounts.account_no', 'accounts.bank_name')
@@ -530,6 +559,11 @@ public function fsyrmonthWiseReport(Request $request) {
                 ->where('expense_type', 2)
                 ->sum('expense_amount');
 
+            $totalSalaryOut = DB::table('salaries')
+                ->where('account_id', $account->account_id) 
+                ->where('salary_date', '<=', $endDate)
+                ->sum('total_salary');
+
             $transferIn = DB::table('acc_balance_transfers') 
                 ->where('to_account', $account->account_id)
                 ->where('acc_transfer_date', '<=', $endDate)
@@ -540,7 +574,7 @@ public function fsyrmonthWiseReport(Request $request) {
                 ->where('acc_transfer_date', '<=', $endDate)
                 ->sum('transfer_amount');
 
-            $account->calculated_balance = ($totalIn + $transferIn) - ($totalOut + $transferOut);
+            $account->calculated_balance = ($totalIn + $transferIn) - ($totalOut + $totalSalaryOut + $transferOut);
 
             return $account;
         })
@@ -551,5 +585,64 @@ public function fsyrmonthWiseReport(Request $request) {
      $abouts = About::first();
     return view('admin.pages.report.month-wise-report-info', compact('openingBalance', 'incomeItems', 'expenseItems', 'fiscalYear', 'month', 'abouts','accountBalances','endDate'));
 }
+
+function expenseWise(){
+    $data['expensecat'] = ExpenseCategory::where('status',1)->get();
+    return view('admin.pages.report.expense-wise-report',$data);
+}
+
+public function expenseReportview(Request $request)
+{
+    $fiscalYear = $request->fiscal_year;
+    $month = $request->report_month;
+    $expenseCatId = $request->expense_cat_id;
+
+    [$startYear, $endYear] = explode('-', $fiscalYear);
+    $startDate = "$startYear-07-01";
+    $endDate = "$endYear-06-30";
+
+    $expensesQuery = DB::table('expenses')
+        ->select('expense_cat_id', 'expense_amount as amount', 'expense_date')
+        ->where('project_id', '10000001')
+        ->where('expense_type', 2)
+        ->whereBetween('expense_date', [$startDate, $endDate]);
+
+    $salariesQuery = DB::table('salaries')
+        ->select(DB::raw("'salary' as expense_cat_id"), 'total_salary as amount', 'salary_date as expense_date')
+        ->where('project_id', '10000001')
+        ->whereBetween('salary_date', [$startDate, $endDate]);
+
+    if ($month) {
+        $expensesQuery->whereMonth('expense_date', $month);
+        $salariesQuery->whereMonth('salary_date', $month);
+    }
+
+    if ($expenseCatId) {
+        if ($expenseCatId === 'salary') {
+            $expensesQuery->whereRaw('1 = 0');
+        } else {
+            $expensesQuery->where('expense_cat_id', $expenseCatId);
+            $salariesQuery->whereRaw('1 = 0');
+        }
+    }
+
+    $combinedData = $expensesQuery->unionAll($salariesQuery);
+
+    $reports = DB::table(DB::raw("({$combinedData->toSql()}) as combined"))
+        ->mergeBindings($combinedData)
+        ->leftJoin('expense_categories', 'combined.expense_cat_id', '=', 'expense_categories.expense_cat_id')
+        ->select(
+            'combined.expense_cat_id',
+            'expense_categories.expense_cat_name',
+            DB::raw('SUM(combined.amount) as total_amount'),
+            DB::raw('COUNT(*) as transaction_count')
+        )
+        ->groupBy('combined.expense_cat_id', 'expense_categories.expense_cat_name')
+        ->get();
+    $abouts = About::first();
+    return view('admin.pages.report.expense-wise-report-info', compact('reports', 'fiscalYear', 'month','abouts'));
+}
+
+
 
 }

@@ -115,16 +115,17 @@
                 <td>
                     @foreach($expenseItems as $item)
                         <div class="data-row">
-                            <span style="font-size: 12px; color: #64748b;">{{ date('d M', strtotime($item->expense_date)) }}</span>
-                            <span style="flex-grow: 1; margin-left: 10px;">{{ $item->expcategory->expense_cat_name }}</span>
-                            <span>{{ number_format($item->expense_amount, 2) }}</span>
+                            <span style="flex-grow: 1; margin-left: 10px;">
+                {{ $item['head_name'] }}
+            </span>
+                            <span>{{ number_format($item['totalexp_amount'], 2) }}</span>
                         </div>
                     @endforeach
                     
                     <div class="total-row" style="color: #dc2626;">
                         <div class="data-row">
                             <span>Total Expense</span>
-                            <span>{{ number_format($expenseItems->sum('expense_amount'), 2) }}</span>
+                            <span>{{ number_format($expenseItems->sum('totalexp_amount'), 2) }}</span>
                         </div>
                     </div>
                 </td>
@@ -137,12 +138,12 @@
                         </div>
                         <div class="data-row">
                             <span>Total Expense:</span>
-                            <strong style="color: #dc2626;">-{{ number_format($expenseItems->sum('expense_amount'), 2) }}</strong>
+                            <strong style="color: #dc2626;">-{{ number_format($expenseItems->sum('totalexp_amount'), 2) }}</strong>
                         </div>
                         <hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 10px 0;">
                         <div class="data-row" style="font-size: 16px;">
                             <span>Net Balance:</span>
-                            <strong style="color: #2563eb;">{{ number_format(($openingBalance + $incomeItems->sum('payment_amount')) - $expenseItems->sum('expense_amount'), 2) }}</strong>
+                            <strong style="color: #2563eb;">{{ number_format(($openingBalance + $incomeItems->sum('payment_amount')) - $expenseItems->sum('totalexp_amount'), 2) }}</strong>
                         </div>
                     </div>
                     <p style="font-size: 11px; color: #94a3b8; margin-top: 15px; text-align: center; font-style: italic;">

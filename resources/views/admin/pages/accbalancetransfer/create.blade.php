@@ -30,26 +30,47 @@
                     <label for="from_account" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
                         From Account <span class="text-red-600">*</span>
                     </label>
-                    <select id="from_account" name="from_account" class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none text-sm"> 
-                        <option value=""></option>
-                        @foreach($accounts as $value)
-                        <option value="{{ $value->account_id}}">{{ $value->bank_name}} - {{ $value->account_no}} ({{ $value->account_type == 1 ? "Membership" : "others";}})</option>
+                    <select required id="from_account" name="from_account"
+                class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
+                
+                <option value="">-- Select Account --</option>
+
+                @foreach ($accounts->groupBy('account_type') as $type => $items)
+                    <optgroup label="{{ strtoupper($type == 1 ? 'MEMBERSHIP ACCOUNTS' : 'OTHER ACCOUNTS') }}" class="bg-gray-100 dark:bg-gray-700 font-bold text-blue-400">
+                        @foreach ($items as $item)
+                            <option value="{{ $item->account_id }}" class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
+                                {{ $item->bank_name }} - {{ $item->account_no }}
+                            </option>
                         @endforeach
-                    </select>
-                     <p class="mt-2 text-sm text-white">
+                    </optgroup>
+                @endforeach
+            </select>
+            <p class="mt-2 text-sm text-white">
                         Current Balance: <span id="from_balance">--</span>
                     </p>
+                    
+                     
                 </div>
                 <div>
                     <label for="to_account" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
                         To Account <span class="text-red-600">*</span>
                     </label>
-                    <select id="to_account" name="to_account" class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none text-sm">
-                        <option value=""></option>
-                        @foreach($accounts as $value)
-                        <option value="{{ $value->account_id}}">{{ $value->bank_name}} - {{ $value->account_no}} ({{ $value->account_type == 1 ? "Membership" : "others";}})</option>
+                    <select required id="to_account" name="to_account"
+                class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
+                
+                <option value="">-- Select Account --</option>
+
+                @foreach ($accounts->groupBy('account_type') as $type => $items)
+                    <optgroup label="{{ strtoupper($type == 1 ? 'MEMBERSHIP ACCOUNTS' : 'OTHER ACCOUNTS') }}" class="bg-gray-100 dark:bg-gray-700 font-bold text-blue-400">
+                        @foreach ($items as $item)
+                            <option value="{{ $item->account_id }}" class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
+                                {{ $item->bank_name }} - {{ $item->account_no }}
+                            </option>
                         @endforeach
-                    </select>
+                    </optgroup>
+                @endforeach
+            </select>
+                   
                     <p class="mt-2 text-sm text-white">
                         Current Balance: <span id="to_balance">--</span>
                     </p>
@@ -115,43 +136,62 @@ $("#accbalancetransferInsertForm").on('submit', function(e){
     let fromAccount = $('#from_account').val();
     let toAccount = $('#to_account').val();
 
+    // 1. Validation Check
     if(fromAccount && toAccount && fromAccount === toAccount){
         toastr.error('From Account and To Account cannot be the same.');
         return; 
     }
 
-    $.ajax({
-        type: "POST",
-        url: "{{route('accbalancetransfer.store')}}",
-        data: new FormData(this),
-        dataType: "json",
-        contentType: false,
-        cache: false,
-        processData: false,
-        beforeSend: function() {
-            thisForm.find('button[type="submit"]')
-                .prop("disabled", true)
-                .addClass('opacity-50 cursor-not-allowed')
-                .text('Submitting...');
-        },
-        success: function (response) {
-            toastr.success(response.message);
-            setTimeout(function() {
-                location.href = "{{route('accbalancetransfer.index')}}";
-            }, 2000)
-        },
-        error: function(xhr) {
-            let responseText = jQuery.parseJSON(xhr.responseText);
-            toastr.error(responseText.message);
-            $.each(responseText.errors, function(key, val) {
-                thisForm.find("." + key + "-error").text(val[0]);
+    // 2. SweetAlert confirmation
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you want to transfer this balance?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, transfer it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // 3. Move AJAX inside the confirmation
+            $.ajax({
+                type: "POST",
+                url: "{{route('accbalancetransfer.store')}}",
+                data: new FormData(thisForm[0]), // Use thisForm[0] for FormData
+                dataType: "json",
+                contentType: false,
+                cache: false,
+                processData: false,
+                beforeSend: function() {
+                    thisForm.find('button[type="submit"]')
+                        .prop("disabled", true)
+                        .addClass('opacity-50 cursor-not-allowed')
+                        .text('Submitting...');
+                },
+                success: function (response) {
+                    toastr.success(response.message);
+                    setTimeout(function() {
+                        location.href = "{{route('accbalancetransfer.index')}}";
+                    }, 2000)
+                },
+                error: function(xhr) {
+                    let responseText = jQuery.parseJSON(xhr.responseText);
+                    toastr.error(responseText.message);
+                    
+                    // Clear previous errors
+                    thisForm.find('.text-danger').text(''); 
+                    
+                    $.each(responseText.errors, function(key, val) {
+                        thisForm.find("." + key + "-error").text(val[0]);
+                    });
+                },
+                complete: function() {
+                    thisForm.find('button[type="submit"]')
+                        .prop("disabled", false)
+                        .removeClass('opacity-50 cursor-not-allowed')
+                        .text('Save');
+                }
             });
-        },
-        complete: function() {
-            thisForm.find('button[type="submit"]')
-                .prop("disabled", false)
-                .removeClass('opacity-50 cursor-not-allowed')
-                .text('Save');
         }
     });
 });

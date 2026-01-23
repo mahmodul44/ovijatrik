@@ -405,6 +405,13 @@
                <span>- Month Wise Report</span>
             </a>
         </div>
+        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+            <a href="{{ route('report.expense-wise') }}" 
+               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
+                      {{ $currentRoute == 'report.expense-wise' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
+               <span>- Expense Report</span>
+            </a>
+        </div>
     </div>
 
      <!-- Member Receipt Menu -->

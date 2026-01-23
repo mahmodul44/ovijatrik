@@ -39,17 +39,31 @@
     </select>
     </div>
     <div class="w-full">
-        <label for="member_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
-            Member <span class="text-red-600">*</span>
+        <label for="expense_cat" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+            Expense Category <span class="text-red-600">*</span>
         </label>
-        <select required id="member_id" name="member_id" class="member-select block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
-        </select>
+        <select id="expense_cat_id" name="expense_cat_id" class="...">
+        <option value="">-- All Categories --</option>
+        <option value="salary">💼 Staff Salary</option> @foreach($expensecat as $value)
+            <option value="{{ $value->expense_cat_id }}">{{ $value->expense_cat_name }}</option>
+        @endforeach
+    </select>
     </div> 
+    <div>
+    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Select Month</label>
+    <select required name="report_month" id="report_month"
+        class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 transition duration-200">
+        <option value="">-- Select Month --</option>
+        @foreach(range(1, 12) as $m)
+            <option value="{{ $m }}">{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
+        @endforeach
+    </select>
+</div>  
     </div>
             
         <div class="md:col-span-3 flex justify-end mt-4">
             <button type="button" 
-                onclick="openfiscalyrmemberWReportWindow('{{ route('report.fiscalyearmember-wise-report') }}')" 
+                onclick="openfiscalyrmemberWReportWindow('{{ route('report.expense-wise-report-view') }}')" 
                 class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl font-semibold transition-transform transform hover:-translate-y-0.5 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-offset-gray-900">
                 🔍 Generate Report
             </button>
@@ -61,54 +75,25 @@
 
 @push('scripts')
 <script>
- $('.member-select').select2({
-        placeholder: "Search by Name, ID, or Mobile",
-        minimumInputLength: 2,
-        allowClear: true,
-        ajax: {
-            url: '{{ route("member.search") }}', 
-            dataType: 'json',
-            delay: 250,
-            data: function (params) {
-                return {
-                    q: params.term 
-                };
-            },
-            processResults: function (data) {
-                return {
-                    results: data
-                };
-            },
-            cache: true
-        }
-    });
-
-    $('.member-select').on('select2:open', function () {
-        setTimeout(() => {
-            document.querySelector('.select2-container--open .select2-search__field').focus();
-        }, 100);
-    });
-  
-
+ 
 function openfiscalyrmemberWReportWindow(url) {
+
     let fiscalYear = document.querySelector("[name='fiscal_year']").value;
-    let memberID = document.querySelector("[name='member_id']").value;
+    let expense_cat_id = document.querySelector("[name='expense_cat_id']").value;
+    let report_month = document.querySelector("[name='report_month']").value;
+
     if (!fiscalYear) {
       toastr.error("Please select a Fiscal Year.");
       return;
     }
-    let query = `?fiscal_year=${fiscalYear}&member_id=${memberID}`;
+    let query = `?fiscal_year=${fiscalYear}&expense_cat_id=${expense_cat_id}&report_month=${report_month}`;
 
-    let width = 900;
-    let height = 650;
+    let width = 1000;
+    let height = 700;
     let left = (screen.width / 2) - (width / 2);
     let top = (screen.height / 2) - (height / 2);
 
-    window.open(
-        url + query,
-        'previewWindow',
-        `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=no`
-    );
+    window.open(url + query, 'reportWindow', `width=${width},height=${height},top=${top},left=${left},scrollbars=yes`);
 }
 </script>
 @endpush
