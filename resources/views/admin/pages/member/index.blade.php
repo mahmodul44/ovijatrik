@@ -77,7 +77,8 @@
                                     d="M15.232 5.232l3.536 3.536M14.121 4.121a3 3 0 014.243 4.243L7.5 19.207H3v-4.5z" />
                             </svg>
                         </a>
-                        @if(Auth::check() && Auth::user()->role == 1)
+                        @if(Auth::check() && Auth::user()->role == 1 || 2)
+                        @if($value->status == 0)
                         <!-- Delete -->
                         <form action="{{ route('member.destroy', $value->id) }}" method="POST" class="inline-block deleteMember">
                             @csrf
@@ -92,6 +93,7 @@
                                 </svg>
                             </button>
                         </form>
+                        @endif
                         @endif
                     </td>
 

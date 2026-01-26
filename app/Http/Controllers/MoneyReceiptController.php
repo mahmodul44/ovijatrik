@@ -269,8 +269,7 @@ public function invoiceDownload($id, Request $request)
 {
     $data['abouts'] = About::first();
     $data['invoiceInfo'] = MoneyReceipt::with(['member','paymentmethod','project','account','createdUser'])->findOrFail($id);
-    // Logic for your view
-    $view = view('admin.pages.memberreceipt.invoice', $data);
+    $view = view('admin.pages.moneyreceipt.invoice', $data);
 
     if ($request->has('download')) {
         return response($view)
@@ -345,7 +344,6 @@ public function moneyreceiptApprove(Request $request)
 
 public function moneyreceiptDecline(Request $request)
 {
-   // dd($request->all());
     $request->validate([
         'id' => 'required|exists:money_receipts,mr_id',
         'remarks' => 'required|string|max:255',

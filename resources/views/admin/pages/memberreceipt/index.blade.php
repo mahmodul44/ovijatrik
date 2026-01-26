@@ -172,7 +172,13 @@
                                 </form>
 
                                 @endif
-
+                                <button type="button" 
+                                onclick="shareReceipt('{{ $value->mr_no }}', '{{ \Carbon\Carbon::parse($value->payment_date)->format('d M, Y') }}', '{{ $value->member->name ?? 'N/A' }}', '{{ $value->member->member_id ?? 'N/A' }}', '{{ $value->project->project_title ?? 'General Donation' }}', '{{ number_format($value->payment_amount, 2) }}', '{{ $value->paymentmethod->pay_method_name ?? 'Cash' }}')"
+                                class="text-blue-600 hover:text-blue-900 mx-1" title="Share as Image">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                </svg>
+                                </button>
                             </td>
                         </tr>
                     @endforeach
@@ -187,7 +193,54 @@
 
 </div>
 
+<div id="share-invoice-wrapper" class="absolute -left-[9999px] top-0">
+    <div id="hidden-share-card" class="w-[450px] bg-white p-6 border-t-8 border-green-600 font-sans">
+        <div class="flex justify-between items-start mb-6 border-bottom pb-4 border-gray-100">
+            <div>
+                <h2 class="text-green-700 text-2xl font-bold uppercase tracking-tight">Ovijatrik</h2>
+                <p class="text-[10px] text-gray-500 leading-tight">Social Walfare Organization</p>
+            </div>
+            <div class="text-right">
+                <span class="bg-green-100 text-green-800 text-[10px] font-bold px-2 py-1 rounded">DONATION RECEIPT</span>
+                <p id="s_mr_no" class="text-xs font-bold mt-1 text-gray-700"></p>
+            </div>
+        </div>
 
+        <div class="space-y-3 mb-6">
+            <div class="flex justify-between text-sm border-b border-dashed pb-1">
+                <span class="text-gray-500">Date:</span>
+                <span id="s_date" class="font-semibold"></span>
+            </div>
+            <div class="flex justify-between text-sm border-b border-dashed pb-1">
+                <span class="text-gray-500">Donor Name:</span>
+                <span id="s_name" class="font-semibold text-green-700"></span>
+            </div>
+            <div class="flex justify-between text-sm border-b border-dashed pb-1">
+                <span class="text-gray-500">Member ID:</span>
+                <span id="s_mid" class="font-semibold"></span>
+            </div>
+            <div class="flex justify-between text-sm border-b border-dashed pb-1">
+                <span class="text-gray-500">Purpose:</span>
+                <span id="s_purpose" class="font-semibold"></span>
+            </div>
+            <div class="flex justify-between text-sm border-b border-dashed pb-1">
+                <span class="text-gray-500">Payment:</span>
+                <span id="s_method" class="font-semibold uppercase"></span>
+            </div>
+        </div>
+
+        <div class="bg-green-50 p-4 rounded-lg text-center mb-6">
+            <p class="text-xs text-green-600 uppercase font-bold tracking-widest mb-1">Total Received</p>
+            <h1 id="s_amount" class="text-3xl font-black text-green-800"></h1>
+        </div>
+
+        <div class="text-center border-t pt-4 border-gray-100">
+            <p class="text-[10px] text-gray-400 italic mb-2">Thank you for your generous contribution.</p>
+            <p class="text-[9px] font-bold text-gray-500 tracking-tighter uppercase">www.ovijatrik.org</p>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 @push('scripts')
 <script>
     $(document).ready(function () {
@@ -264,6 +317,76 @@
             `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=no`
         );
     }
+
+async function shareReceipt(mrNo, date, name, mermberid, purpose, amount, method) {
+    document.getElementById('s_mr_no').innerText = '#' + mrNo;
+    document.getElementById('s_date').innerText = date;
+    document.getElementById('s_name').innerText = name;
+    document.getElementById('s_mid').innerText = mermberid;
+    document.getElementById('s_purpose').innerText = purpose;
+    document.getElementById('s_method').innerText = method;
+    document.getElementById('s_amount').innerText = '৳ ' + amount;
+
+    const element = document.getElementById("hidden-share-card");
+
+    Swal.fire({
+        title: 'Please Wait...',
+        text: 'Preparing receipt image',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+    });
+
+    try {
+        const canvas = await html2canvas(element, { scale: 2 });
+        const imageData = canvas.toDataURL("image/png");
+        
+        canvas.toBlob(async (blob) => {
+            Swal.close(); 
+
+            Swal.fire({
+                title: 'Share Receipt',
+                html: `
+                    <div class="flex flex-col gap-3 p-2">
+                        <button id="copyBtn" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700">📋 Copy to Clipboard</button>
+                        <button id="waBtn" class="w-full bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700">💬 Share on WhatsApp</button>
+                        <button id="dlBtn" class="w-full bg-gray-600 text-white py-2 rounded font-bold hover:bg-gray-700">📥 Download Image</button>
+                    </div>
+                `,
+                showConfirmButton: false,
+                showCloseButton: true,
+                didOpen: () => {
+                 
+                    document.getElementById('copyBtn').addEventListener('click', async () => {
+                        try {
+                            const item = new ClipboardItem({ "image/png": blob });
+                            await navigator.clipboard.write([item]);
+                            Swal.fire({ icon: 'success', title: 'Copied!', text: 'Now paste (Ctrl+V) in Messenger/WhatsApp', timer: 2000, showConfirmButton: false });
+                        } catch (err) {
+                            Swal.fire('Error', 'Copying failed. Please use Download.', 'error');
+                        }
+                    });
+
+              
+                    document.getElementById('waBtn').addEventListener('click', () => {
+                        const text = `Money Receipt: ${mrNo}\nDonor: ${name}\nAmount: ${amount} BDT`;
+                        window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+                    });
+
+               
+                    document.getElementById('dlBtn').addEventListener('click', () => {
+                        const link = document.createElement('a');
+                        link.download = `Receipt_${mrNo}.png`;
+                        link.href = imageData;
+                        link.click();
+                    });
+                }
+            });
+        });
+    } catch (error) {
+        Swal.fire('Error', 'Something went wrong!', 'error');
+        console.error(error);
+    }
+}
 </script>
 @endpush
 @endsection

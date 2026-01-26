@@ -324,7 +324,7 @@
                     <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($invoiceInfo->payment_date)->format('d M, Y') }}</p>
                     {{-- <p><strong>Time:</strong> {{ \Carbon\Carbon::parse($invoiceInfo->created_at)->format('h:i A') }}</p> --}}
                     <p><strong>Received By:</strong>  {{ $invoiceInfo->createdUser->name ?? 'N/A' }}</p>
-                    <p><strong>Received Account:</strong> {{ $invoiceInfo->account->account_name }} - {{ $invoiceInfo->account->account_no }}</p>
+                    <p><strong>Received Account:</strong> {{ $invoiceInfo->account->bank_name }} - {{ $invoiceInfo->account->account_no }}</p>
                 </div>
             </div>
         </section>

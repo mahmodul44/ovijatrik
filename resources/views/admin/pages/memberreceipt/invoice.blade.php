@@ -60,13 +60,13 @@
         }
 
         .invoice-title {
-            margin-top: 40px;
+            margin-top: 30px;
             text-align: right;
         }
 
         .invoice-title h1 {
-            font-size: 30px;
-            color: #ddd;
+            font-size: 24px;
+            color: #16ada1;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 5px;
@@ -254,7 +254,7 @@
             background: #fdfdfd;
             border: 1px dashed #ccc;
             padding: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
         }
@@ -284,11 +284,13 @@
             .stamp { opacity: 0.5; } /* Darker on print */
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
     <div class="actions">
         <button class="btn" onclick="window.print()">🖨️ Print Receipt / Download PDF</button>
+        <button class="btn" style="background: #27ae60;" onclick="downloadImage()">🖼️ Download Image</button>
     </div>
 
     <div class="invoice-container">
@@ -300,7 +302,7 @@
         <header class="header">
             <div class="company-details">
                 <img width="52%" src="{{ asset($abouts->logo_dark) }}" alt="Logo">
-                {{-- <h2>Ovijatrik</h2> --}}
+                 <h3>Ovijatrik Welfare Society</h3> 
                 <p>
                     Islambagh, Sadar, Dinajpur, Dhaka, Bangladesh<br>
                     Reg No: Dinaj/2581/2024 | Contact: +880 1717 017645<br>
@@ -308,7 +310,7 @@
                 </p>
             </div>
             <div class="invoice-title">
-                <h1>DONATION RECEIPT</h1>
+                <h1>MEMBERSHIP DONATION RECEIPT</h1>
                 <div class="receipt-id">Receipt No#: {{ $invoiceInfo->mr_no }}</div>
             </div>
         </header>
@@ -333,7 +335,7 @@
                     <p><strong>Created On:</strong> {{ \Carbon\Carbon::parse($invoiceInfo->created_at)->format('d M, Y') }}</p>
                     {{-- <p><strong>Time:</strong> {{ \Carbon\Carbon::parse($invoiceInfo->created_at)->format('h:i A') }}</p> --}}
                     <p><strong>Created By:</strong>  {{ $invoiceInfo->createdUser->name ?? 'N/A' }}</p>
-                    <p><strong>Received Account:</strong> {{ $invoiceInfo->account->account_name }} - {{ $invoiceInfo->account->account_no }}</p>
+                    <p><strong>Received Account:</strong> {{ $invoiceInfo->account->bank_name }} - {{ $invoiceInfo->account->account_no }}</p>
                 </div>
             </div>
         </section>
@@ -390,21 +392,22 @@
      
         <div class="signature-section">
             <div class="sig-box">
-                <div class="sig-line">Cashier</div>
+                <div class="sig-line">Chief Operations Coordinator</div>
+            </div>
+            <div class="sig-box">
+                <div class="sig-line">Treasurer</div>
             </div>
             <div class="sig-box">
                 <div class="sig-line">Secretary</div>
             </div>
-            <div class="sig-box">
-                <div class="sig-line">President</div>
-            </div>
+           
         </div>
 
-        <span class="box-title" style="margin-bottom: 5px;">Our Official Payment Channels</span>
+        <span class="box-title" style="margin-bottom: 5px;">Our Official Membership Payment Channels</span>
         <div class="footer-payment-info">
             <div class="payment-channel">
                 <h4>Bank Transfer</h4>
-                <strong>City Bank PLC</strong><br>
+                <strong>The City Bank PLC</strong><br>
                 A/C Name: Ovijatrik Shomaj Kollyan Sangstha <br>
                 A/C: 1404603886001<br>
                 Branch: Dinajpur<br>
@@ -418,7 +421,7 @@
         </div>
       
         <footer class="slogan-area">
-            <div class="slogan-text">"Empowering Lives, Restoring Hope."</div>
+            <div class="slogan-text">"A Journey in Search of a Smile"</div>
             <div style="font-size: 13px; color: #666;">Thank you for being a partner in our journey toward a better humanity.</div>
             <div class="disclaimer">This is a computer-generated document. No physical signature is required for validity.</div>
         </footer>
@@ -427,3 +430,26 @@
 
 </body>
 </html>
+
+<script>
+    function downloadImage() {
+        const receipt = document.querySelector(".invoice-container");
+        
+        // বাটন চাপলে একটু লোডিং ফিল দেওয়ার জন্য মাউস কার্সার পরিবর্তন
+        document.body.style.cursor = 'wait';
+
+        html2canvas(receipt, {
+            scale: 2, 
+            useCORS: true, // যদি লোগো অন্য ডোমেইন থেকে আসে তবে এটি দরকার
+            logging: false,
+            backgroundColor: "#ffffff" // ব্যাকগ্রাউন্ড সাদা নিশ্চিত করা
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'Receipt_{{ $invoiceInfo->mr_no }}.png';
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            
+            document.body.style.cursor = 'default';
+        });
+    }
+</script>

@@ -8,7 +8,7 @@
             📊 Member Type Wise Fiscal Report
         </h2>
         <p class="text-gray-500 dark:text-gray-400 mt-1 text-sm">
-            View detailed report of each member’s transactions within a selected date range.
+            View detailed report of each member’s transactions.
         </p>
     </div>
 

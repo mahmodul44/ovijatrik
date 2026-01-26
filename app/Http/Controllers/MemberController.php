@@ -73,6 +73,7 @@ class MemberController extends Controller
             'phone_no'          => 'required',
             'monthly_donate'    => 'required',
             'email'             => 'required|email|unique:users,email,' . $id,
+            'id_card'           => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'member_id' => [
                     'required',
                     'string',
@@ -97,6 +98,19 @@ class MemberController extends Controller
 
         if ($request->filled('password')) {
             $member->password = bcrypt($request->password);
+        }
+
+        if ($request->hasFile('id_card')) {
+            if ($member->id_card_photo && file_exists(public_path('storage/' . $member->id_card_photo))) {
+                unlink(public_path('storage/' . $member->id_card_photo));
+            }
+
+            $file = $request->file('id_card');
+            $filename = 'id_' . time() . '.' . $file->getClientOriginalExtension();
+            
+            $file->move(public_path('storage/id_cards'), $filename);
+            
+            $member->id_card_photo = 'id_cards/' . $filename;
         }
 
         $member->save();

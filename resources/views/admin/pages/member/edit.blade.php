@@ -126,6 +126,28 @@
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                     </div>
                 </div>
+
+                <div class="mt-6">
+                <x-input-label for="id_card" :value="__('Upload ID Card')" class="text-gray-700 dark:text-gray-200 font-medium mb-2" />
+                <div class="flex items-center justify-center w-full">
+                    <label for="id_card" class="flex flex-col items-center justify-center w-full h-44 border-2 border-gray-300 border-dashed rounded-2xl cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 transition-all">
+                        
+                        <div id="preview-container" class="{{ $member->id_card_photo ? '' : 'hidden' }} relative w-full h-full p-2">
+                            <img id="image-preview" src="{{ $member->id_card_photo ? asset('storage/'.$member->id_card_photo) : '#' }}" class="w-full h-full object-contain rounded-xl shadow-md" alt="Preview">
+                            <span class="absolute top-4 right-4 bg-indigo-600 text-white text-[10px] px-2 py-1 rounded-full">Change Image</span>
+                        </div>
+
+                        <div id="placeholder-container" class="{{ $member->id_card_photo ? 'hidden' : '' }} flex flex-col items-center justify-center pt-5 pb-6">
+                            <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-3"></i>
+                            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400 font-semibold">Click to upload or drag and drop</p>
+                            <p class="text-xs text-gray-400 uppercase">PNG, JPG or JPEG (Max 2MB)</p>
+                        </div>
+
+                        <input id="id_card" type="file" name="id_card" class="hidden" accept="image/*" onchange="previewImage(this)" />
+                    </label>
+                </div>
+                <x-input-error :messages="$errors->get('id_card')" class="mt-2" />
+            </div>
             </div>
 
             <!-- Action buttons -->
@@ -180,6 +202,23 @@ $("#memberUpdateForm").on('submit', function(e){
         }
     });
 });
+
+function previewImage(input) {
+    const file = input.files[0];
+    const preview = document.getElementById('image-preview');
+    const previewContainer = document.getElementById('preview-container');
+    const placeholderContainer = document.getElementById('placeholder-container');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            previewContainer.classList.remove('hidden');
+            placeholderContainer.classList.add('hidden');
+        }
+        reader.readAsDataURL(file);
+    }
+}
 </script>
 @endpush
 @endsection

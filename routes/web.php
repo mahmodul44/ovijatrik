@@ -105,7 +105,7 @@ Route::get('/admin/moneyreceiptpending', [MoneyReceiptController::class, 'moneyr
 Route::post('/admin/moneyreceipt-approve', [MoneyReceiptController::class, 'moneyreceiptApprove'])->name('moneyreceipt.moneyreceiptapprove');
 Route::post('/admin/moneyreceipt-decline', [MoneyReceiptController::class, 'moneyreceiptDecline'])
      ->name('moneyreceipt.moneyreceiptdecline');
-Route::get('/admin/moneyreceipt/show/{id}', [MoneyReceiptController::class, 'show'])->name('moneyreceipt.show');
+// Route::get('/admin/moneyreceipt/show/{id}', [MoneyReceiptController::class, 'show'])->name('moneyreceipt.show');
 
 /* False Receipt Start  
 Route::get('/admin/falsereceipt/invoice-preview/{id}', [MoneyReceiptController::class, 'flaseInvoice'])->name('falsereceipt.invoice-preview');  
@@ -140,7 +140,7 @@ Route::post('/admin/expense-approve', [ExpenseController::class, 'expenseApprove
 Route::post('/admin/expense-decline', [ExpenseController::class, 'expenseDecline'])
      ->name('expense.expensedecline');
 Route::get('/admin/expense/preview/{id}', [ExpenseController::class, 'expensePreview'])->name('expense.preview');       
-Route::get('/admin/expense/show/{id}', [ExpenseController::class, 'show'])->name('expense.show');     
+// Route::get('/admin/expense/show/{id}', [ExpenseController::class, 'show'])->name('expense.show');     
 
 // Project wise expense
 Route::get('/admin/projectexpensepending', [ProjectExpenseController::class, 'expensePendinglist'])->name('projectexpense.projectexpensepending');
@@ -148,7 +148,7 @@ Route::post('/admin/project-expense-approve', [ProjectExpenseController::class, 
 Route::post('/admin/project-expense-decline', [ProjectExpenseController::class, 'projectexpenseDecline'])
      ->name('projectexpense.projectexpensedecline');
 Route::get('/admin/projectexpense/preview/{id}', [ProjectExpenseController::class, 'expensePreview'])->name('projectexpense.preview');       
-Route::get('/admin/projectexpense/show/{id}', [ProjectExpenseController::class, 'show'])->name('projectexpense.show');   
+// Route::get('/admin/projectexpense/show/{id}', [ProjectExpenseController::class, 'show'])->name('projectexpense.show');   
 
 // web.php
 Route::post('/admin/approve-user', [UserController::class, 'approveUser'])->name('users.approve');

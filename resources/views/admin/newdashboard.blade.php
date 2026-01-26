@@ -111,74 +111,138 @@
 
 
     {{-- Employee --}}
-    @if($user->role == 2)
-        <p class="text-lg text-gray-600 dark:text-gray-400">Welcome {{ $user->name }}</p>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-indigo-50 dark:bg-indigo-900 p-6 rounded-xl shadow hover:shadow-lg transition duration-300">
-            <h2 class="font-bold text-lg text-indigo-700 dark:text-indigo-300 mb-2">Added Donations</h2>
-            <p class="text-3xl font-semibold text-indigo-600 dark:text-indigo-400">৳ {{ number_format($totalHandledDonations,2) }}</p>
+   @if($user->role == 2)
+<div class="space-y-8 p-4 md:p-8 min-h-screen">
+    
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Admin Overview</h1>
+            <p class="text-gray-500 dark:text-gray-400">Welcome back, <span class="font-semibold text-green-600">{{ $user->name }}</span>. Here is your activity summary.</p>
         </div>
-        <div class="bg-yellow-50 dark:bg-yellow-900 p-6 rounded-xl shadow hover:shadow-lg transition duration-300">
-            <h2 class="font-bold text-lg text-yellow-700 dark:text-yellow-300 mb-2">Last Donation Added</h2>
-            <p class="text-2xl font-medium text-yellow-600 dark:text-yellow-400">
-                {{ $lastDonation ? \Carbon\Carbon::parse($lastDonation->payment_date)->format('d M, Y') : 'N/A' }}
+        <div class="flex gap-3">
+            <button class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-lg text-sm font-medium shadow-sm hover:bg-gray-50 transition">
+              <a href="{{route('report.fiscalyearmember-wise')}}">  Export Report </a>
+            </button>
+            <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md shadow-green-200 transition">
+                <a href="{{ route('member.create') }}"> + Add Donation </a>
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="p-3 bg-green-50 dark:bg-green-900/30 rounded-xl text-green-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <span class="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">Personal Total</span>
+            </div>
+            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Added Donations</h3>
+            <p class="text-3xl font-bold text-gray-900 dark:text-white mt-1">৳ {{ number_format($totalHandledDonations, 2) }}</p>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Last Donation Added</h3>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                {{ $lastDonation ? \Carbon\Carbon::parse($lastDonation->payment_date)->format('d M, Y') : 'No Records' }}
             </p>
         </div>
-    </div>
-     {{-- Analytics Section --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        {{-- Donation Trend Chart --}}
-        <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow">
-            <h2 class="text-lg font-semibold mb-4 dark:text-gray-100">Donation Trend (Last 6 Months)</h2>
-            <canvas id="donationChart"></canvas>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+            <div class="flex items-center justify-between mb-4 text-orange-600">
+                <div class="p-3 bg-orange-50 dark:bg-orange-900/30 rounded-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+            <h3 class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Active Status</h3>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">Verified Admin</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100">Donation Trend</h2>
+                <select class="text-xs border-gray-200 dark:bg-gray-700 rounded-md">
+                    <option>Last 6 Months</option>
+                </select>
+            </div>
+            <div class="h-[300px]">
+                <canvas id="donationChart"></canvas>
+            </div>
         </div>
 
-        {{-- Top Donors --}}
-        <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl shadow">
-            <h2 class="text-lg font-semibold mb-4 dark:text-gray-100">Top Donors (Member)</h2>
-
-            <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+        <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+            <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6">Top Member Donors</h2>
+            <div class="space-y-4">
                 @foreach($topDonors as $d)
-                <li class="py-3 flex justify-between">
-                    <span class="font-medium dark:text-gray-200">{{ $d->member->member_id }} - {{ $d->member->name }}</span>
-                    <span class="font-semibold text-blue-600 dark:text-blue-300">৳ {{ number_format($d->total,2) }}</span>
-                </li>
+                <div class="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-xl transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs">
+                            {{ substr($d->member->name, 0, 2) }}
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold dark:text-white">{{ $d->member->name }}</p>
+                            <p class="text-xs text-gray-500">ID: {{ $d->member->member_id }}</p>
+                        </div>
+                    </div>
+                    <span class="text-sm font-bold text-green-600">৳{{ number_format($d->total, 0) }}</span>
+                </div>
                 @endforeach
-            </ul>
+            </div>
         </div>
-
     </div>
-    {{-- Latest Donations Table --}}
-    <div class="bg-white dark:bg-gray-800 shadow rounded-2xl p-6">
-        <h2 class="text-xl font-semibold mb-4 dark:text-gray-100">Recent Donations</h2>
 
+    <div class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm rounded-2xl overflow-hidden">
+        <div class="p-6 border-b border-gray-100 dark:border-gray-700">
+            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Recent Transactions</h2>
+        </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full text-sm">
-                <thead>
-                    <tr class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-                        <th class="px-4 py-2 text-left">Receipt No</th>
-                        <th class="px-4 py-2 text-left">Donor</th>
-                        <th class="px-4 py-2 text-left">Amount</th>
-                        <th class="px-4 py-2 text-left">Method</th>
-                        <th class="px-4 py-2 text-left">Date</th>
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 uppercase text-[10px] font-bold">
+                    <tr>
+                        <th class="px-6 py-4 text-left">Receipt No</th>
+                        <th class="px-6 py-4 text-left">Donor Details</th>
+                        <th class="px-6 py-4 text-left">Amount</th>
+                        <th class="px-6 py-4 text-left">Method</th>
+                        <th class="px-6 py-4 text-left">Date</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                     @foreach($latestDonations as $item)
-                    <tr class="border-b dark:border-gray-700">
-                        <td class="px-4 py-2 dark:text-gray-200">{{ $item->mr_no }}</td>
-                        <td class="px-4 py-2 dark:text-gray-200">{{ $item->member_id ?  $item->member->name : $item->donar_name }}</td>
-                        <td class="px-4 py-2 text-green-600 font-medium">৳ {{ number_format($item->payment_amount,2) }}</td>
-                        <td class="px-4 py-2 dark:text-gray-200">{{ $item->paymentmethod->pay_method_name }}</td>
-                        <td class="px-4 py-2 dark:text-gray-200">{{ \Carbon\Carbon::parse($item->payment_date)->format('d M, Y') }}</td>
+                    <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition">
+                        <td class="px-6 py-4 font-mono text-xs text-indigo-600">{{ $item->mr_no }}</td>
+                        <td class="px-6 py-4">
+                            <span class="font-medium text-gray-900 dark:text-gray-200">
+                                {{ $item->member_id ? $item->member->name : $item->donar_name }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-100">
+                                + ৳ {{ number_format($item->payment_amount, 2) }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->paymentmethod->pay_method_name }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">{{ \Carbon\Carbon::parse($item->payment_date)->format('M d, Y') }}</td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
     </div>
-    @endif
+</div>
+@endif
 
     {{-- Donor --}}
     @if($user->role == 3)
@@ -304,12 +368,16 @@
                 @php
                     $memberId = Auth::user()->member_id ?? '';
                     
-                    if (str_starts_with($memberId, 'OBBBM')) {
+                    if (str_starts_with($memberId, 'OTBM')) {
                         $memberType = 'Triple Brick';
-                    } elseif (str_starts_with($memberId, 'OBBM')) {
+                    } elseif (str_starts_with($memberId, 'ODBM')) {
                         $memberType = 'Double Brick';
                     } elseif (str_starts_with($memberId, 'OBM')) {
-                        $memberType = 'Brick';
+                        $memberType = 'Single Brick';
+                    }elseif (str_starts_with($memberId, 'OPM')) {
+                        $memberType = 'Single Pillar';
+                    }elseif (str_starts_with($memberId, 'ODPM')) {
+                        $memberType = 'Double Pillar';
                     } else {
                         $memberType = 'General';
                     }
@@ -435,8 +503,19 @@
                     <div class="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-800 relative overflow-hidden">
                         <div class="relative z-10">
                             <p class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tight">{{ $method['bank_name'] }}</p>
-                            <p class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tight">{{ $method['account_name'] }}</p>
-                            <p class="text-lg font-mono font-bold text-gray-800 dark:text-white mt-1">{{ $method['account_no'] }}</p>
+                            @if(!empty($method['account_name']))
+                            <p class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tight">
+                                A/C: {{ $method['account_name'] }}
+                            </p>
+                        @endif
+
+                        @if(!empty($method['branch_name']))
+                            <p class="text-[9px] font-black text-indigo-400 dark:text-indigo-200 tracking-tight">
+                                Br: {{ $method['branch_name'] }}
+                            </p>
+                        @endif
+                        <p class="text-lg font-mono font-bold text-gray-800 dark:text-white mt-1">{{ $method['account_no'] }}</p>
+                            
                         </div>
                         <svg class="absolute right-[-10px] bottom-[-10px] w-20 h-20 text-indigo-100 dark:text-indigo-800 opacity-50" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
                     </div>

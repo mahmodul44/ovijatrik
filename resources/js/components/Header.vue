@@ -24,17 +24,15 @@
       v-if="logoImg"
       :src="logoImg"
       alt="Logo"
-      class="h-11 w-auto object-contain"
+      class="h-12 w-auto object-contain"
     />
 
 
     <div>
       <h1 class="text-2xl font-bold text-green-700 leading-tight">
-        {{ i18n.currentLang === 'bn' ? 'অভিযাত্রিক' : 'Ovijatrik' }}
+        {{ i18n.currentLang === 'bn' ? 'অভিযাত্রিক সমাজ কল্যাণ সংস্থা' : 'Ovijatrik Social Welfare Organization' }}
       </h1>
-      <p class="text-sm text-gray-500">
-        {{ i18n.currentLang === 'bn' ? 'হাসিমুখের খুঁজে অভিযাত্রা' : 'A journey in search of a smile' }}
-      </p>
+      
     </div>
   </router-link>
 
@@ -72,15 +70,14 @@
       </a>
 
     <a href="/login"
-    class="flex items-center space-x-2 px-4 h-9 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-300 shadow-sm font-medium text-sm">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round"
-        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-    </svg>
+       class="flex items-center space-x-2 px-4 h-9 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-300 shadow-sm font-medium text-sm">
+       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+       </svg>
 
-    <span>{{ i18n.currentLang === 'bn' ? 'লগইন' : 'Login' }}</span>
-  </a>
+        <span>{{ i18n.currentLang === 'bn' ? 'লগইন' : 'Login' }}</span>
+    </a>
 
     </div>
 
@@ -130,6 +127,7 @@
           <li><router-link to="/blog" @click="closeMenu" class="hover:bg-green-800 px-3 py-1 rounded transition-colors">{{ i18n.t('blog') }}</router-link></li>
           <li><router-link to="/gallery" @click="closeMenu" class="hover:bg-green-800 px-3 py-1 rounded transition-colors">{{ i18n.t('gallery') }}</router-link></li>
           <li><router-link to="/contact" @click="closeMenu" class="hover:bg-green-800 px-3 py-1 rounded transition-colors">{{ i18n.t('contact') }}</router-link></li>
+          <li><router-link to="/login" @click="closeMenu" class="hover:bg-green-800 px-3 py-1 rounded transition-colors">{{ i18n.t('Login') }}</router-link></li>
         </ul>
       </nav>
     </header>

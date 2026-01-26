@@ -5,10 +5,10 @@
     <!-- Header -->
     <div class="text-center mb-8">
         <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 flex justify-center items-center gap-2">
-            📊 FIscal Year Wise Member Report
+            📊 FIscal Year Wise Expense Report
         </h2>
         <p class="text-gray-500 dark:text-gray-400 mt-1 text-sm">
-            View detailed report of each member’s transactions within a selected date range.
+            View detailed report of each Expense transactions.
         </p>
     </div>
 

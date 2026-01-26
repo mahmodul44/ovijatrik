@@ -67,7 +67,7 @@ public function update(ProfileUpdateRequest $request)
         if ($user->id_card_photo) {
             Storage::disk('public')->delete($user->id_card_photo);
         }
-        $user->id_card_photo = $request->file('id_card_photo')->store('id_cards', 'public');
+        $user->id_card_photo = $request->file('id_card_photo')->store('uploads/id_cards', 'public');
     }
 
     if ($user->isDirty('email')) {
@@ -80,7 +80,6 @@ public function update(ProfileUpdateRequest $request)
                 'message' => "Updated successful.",
                 'category' => $user
             ], 200);
-  // return Redirect::route('profile.edit')->with('message', 'Profile updated successfully!');
 }
 
     /**

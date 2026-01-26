@@ -93,7 +93,7 @@
                                                 d="M19.5 7.5l-3-3" />
                                         </svg>
                                     </a>
-
+                                 @if($project->collection_amount <= '0')        
                                 <!-- Delete -->
                                 <form action="{{ route('project.destroy', $project->project_id) }}" 
                                     method="POST" 
@@ -114,6 +114,7 @@
                                         </svg>
                                     </button>
                                 </form>
+                                @endif
                                <!-- Complete -->
                                 <form action="{{ route('project.complete', $project->project_id) }}" 
                                     method="POST" 
