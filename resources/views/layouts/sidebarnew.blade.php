@@ -50,46 +50,51 @@
     <!-- Own donation Menu -->
     @if(Auth::check() && Auth::user()->role == 3)
     @php $mydonationsActive = in_array($currentRoute, ['mytransaction.index','mytransaction.report']); @endphp
-    <div x-data="{ open: @json($mydonationsActive) }">
+    <div x-data="{ open: @json($mydonationsActive) }" 
+         class="group rounded-2xl border transition-all duration-300 shadow-sm"
+         :class="open ? 'border-indigo-500 bg-indigo-50/30 dark:bg-indigo-900/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'">
+        
         <button @click="open = !open" 
-            :class="open 
-                ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' 
-                : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
-            class="flex w-full items-center justify-between p-2 rounded-lg transition-colors">
+            class="flex w-full items-center justify-between p-1.5 rounded-2xl transition-all duration-300">
+            
+            <div class="flex items-center space-x-3">
+                <div :class="open ? 'bg-indigo-600 text-white' : 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400'"
+                     class="p-2 rounded-xl transition-colors duration-300">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M9 17v-2a4 4 0 014-4h4M5 12h.01M5 16h.01M5 8h.01M17 17h.01M17 13h.01M17 9h.01M4 21h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v15a1 1 0 001 1z"/>
+                    </svg>
+                </div>
+                <span x-show="!sidebarCollapsed" class="font-bold tracking-tight text-[15px]"
+                      :class="open ? 'text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-200'">Donations</span>
+            </div>
 
-            <span class="flex items-center space-x-2">
-                <!-- Money Receipt Icon -->
-                <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                        d="M9 17v-2a4 4 0 014-4h4M5 12h.01M5 16h.01M5 8h.01M17 17h.01M17 13h.01M17 9h.01M4 21h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v15a1 1 0 001 1z"/>
-                </svg>
-
-                <span x-show="!sidebarCollapsed" x-transition>Donations</span>
-            </span>
-
-            <!-- Arrow Icon -->
-            <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
+            <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180 text-indigo-600' : 'text-gray-400'" class="w-5 h-5 transition-transform"
                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
         </button>
-        <!-- Submenu -->
-        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+
+        <div x-show="open && !sidebarCollapsed" x-cloak x-transition class="px-3 pb-3 space-y-1.5">
+            
             <a href="{{ route('mytransaction.index') }}" 
-               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ in_array($currentRoute, ['mytransaction.index']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Receipts</span>
+               class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all
+               {{ in_array($currentRoute, ['mytransaction.index']) ? 'bg-indigo-600 text-white shadow-md' : 'text-gray-600 hover:bg-indigo-100 hover:text-indigo-700 dark:text-gray-400' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H4a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+                </svg>
+                <span>Receipts</span>
             </a>
-            {{-- <a href="{{ route('mytransaction.index') }}" 
-               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ $currentRoute == 'mytransaction.index' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Voucher</span>
-            </a> --}}
+            
             <a href="{{ route('mytransaction.report') }}" 
-               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ $currentRoute == 'mytransaction.report' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Reports</span>
+               class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all
+               {{ $currentRoute == 'mytransaction.report' ? 'bg-indigo-600 text-white shadow-md' : 'text-gray-600 hover:bg-indigo-100 hover:text-indigo-700 dark:text-gray-400' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                </svg>
+                <span>Reports</span>
             </a>
+
         </div>
     </div>
     @endif
@@ -97,41 +102,60 @@
 
     <!-- Setting Dropdown -->
     @php $aboutActive = in_array($currentRoute, ['about.index','about.create','about.missionvission','about.basicsetting']); @endphp
-    <div x-data="{ open: @json($aboutActive) }">
+    <div x-data="{ open: @json($aboutActive) }" 
+         class="group rounded-2xl border transition-all duration-300 shadow-sm"
+         :class="open ? 'border-emerald-500 bg-emerald-50/30 dark:bg-emerald-900/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'">
+        
         <button @click="open = !open" 
-                :class="open ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 dark:from-blue-900 dark:to-blue-800 dark:text-blue-200' : 'text-gray-900 dark:text-gray-200 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white'"
-                class="flex w-full items-center justify-between p-2 rounded-lg transition-colors">
-            <span class="flex items-center space-x-2">
-                <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.89 3.31.877 2.42 2.42a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.89 1.543-.877 3.31-2.42 2.42a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.89-3.31-.877-2.42-2.42a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.89-1.543.877-3.31 2.42-2.42.996.574 2.247.12 2.573-1.066z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span x-show="!sidebarCollapsed" x-transition>Setting</span>
-            </span>
-            <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform"
-                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            class="flex w-full items-center justify-between p-1.5 rounded-2xl transition-all duration-300">
+            
+            <div class="flex items-center space-x-3">
+                <div :class="open ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400'"
+                     class="p-2 rounded-xl transition-colors duration-300">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.89 3.31.877 2.42 2.42a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.89 1.543-.877 3.31-2.42 2.42a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.89-3.31-.877-2.42-2.42a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.89-1.543.877-3.31 2.42-2.42.996.574 2.247.12 2.573-1.066z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+                <span x-show="!sidebarCollapsed" class="font-bold tracking-tight text-[15px]"
+                      :class="open ? 'text-emerald-800 dark:text-emerald-300' : 'text-gray-700 dark:text-gray-200'">Setting</span>
+            </div>
+            
+            <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180 text-emerald-600' : 'text-gray-400'" 
+                 class="w-5 h-5 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
         </button>
 
-        <!-- Submenu -->
-        <div x-show="open && !sidebarCollapsed" class="ml-6 space-y-1" x-cloak>
+        <div x-show="open && !sidebarCollapsed" x-cloak x-transition class="px-3 pb-3 space-y-1.5">
+            
             <a href="{{ route('about.basicsetting') }}" 
-               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ in_array($currentRoute, ['about.basicsetting']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Basic Setting</span>
+               class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all
+               {{ in_array($currentRoute, ['about.basicsetting']) ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-600 hover:bg-emerald-100 hover:text-emerald-700 dark:text-gray-400' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 12H13.5" />
+                </svg>
+                <span>Basic Setting</span>
             </a>
+            
             <a href="{{ route('about.create') }}" 
-               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ in_array($currentRoute, ['about.create']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- About</span>
+               class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all
+               {{ in_array($currentRoute, ['about.create']) ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-600 hover:bg-emerald-100 hover:text-emerald-700 dark:text-gray-400' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.835a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                </svg>
+                <span>About</span>
             </a>
+
             <a href="{{ route('about.missionvission') }}" 
-               class="flex items-center space-x-2 p-2 rounded-md text-sm font-medium transition
-                      {{ in_array($currentRoute, ['about.missionvission']) ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-800 dark:hover:to-blue-900 hover:text-white' }}">
-               <span>- Mission & Vission</span>
+               class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all
+               {{ in_array($currentRoute, ['about.missionvission']) ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-600 hover:bg-emerald-100 hover:text-emerald-700 dark:text-gray-400' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.644C3.412 8.143 6.82 5 11.25 5c4.43 0 7.838 3.143 9.214 6.678a1.012 1.012 0 010 .644C19.088 15.857 15.68 19 11.25 19c-4.43 0-7.838-3.143-9.214-6.678z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>Mission & Vision</span>
             </a>
             
         </div>

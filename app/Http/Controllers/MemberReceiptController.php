@@ -32,7 +32,7 @@ class MemberReceiptController extends Controller
         if (auth()->user()->role != 1) {
            $query->where('money_receipts.created_by', auth()->id());
         }
-
+        $data['abouts'] = About::first();
         $data['moneyreceipts'] = $query->orderBy('money_receipts.mr_id', 'desc')->get();
         return view('admin.pages.memberreceipt.index', $data);
     }

@@ -3,227 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Wise Statement</title>
-
+    <title>Project Statement - {{ $projectInfo->project_title }}</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f3f4f6; padding: 20px; }
-
-        .statement-container {
-            max-width: 1000px;
-            margin: auto;
-            background: #fff;
-            padding: 25px 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: var(--primary-color);
         }
 
-        /* Header */
-        .header-area {
-            text-align: center;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
+        .report-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
         }
-        .header-area img {
-            max-width: 90px;
-            margin-bottom: 10px;
-        }
-        .org-name { font-size: 26px; font-weight: bold; color: #333; }
-        .org-sub { color: #555; font-size: 14px; }
 
-        /* Project info */
-        .project-info {
-            margin-bottom: 20px;
+        /* Header Styling */
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header { display: flex; justify-content: space-between; border-bottom: 4px double #036056; padding-bottom: 20px; margin-bottom: 30px; }
+        .company-info h1 { margin: 5px 0; color: #036056; font-size: 22px; }
+        .company-info p { margin: 2px 0; font-size: 13px; color: #555; }
+        .report-title { text-align: right; }
+        .report-title h2 { margin: 0; font-size: 20px; color: #006666; border-bottom: 2px solid #006666; display: inline-block; }
+        
+
+        .logo {
+            width: 150px;
+            margin-bottom: 15px;
+        }
+
+        .org-name {
+            font-size: 28px;
+            font-weight: 800;
+            margin: 0;
+            color: #1a202c;
+            text-transform: uppercase;
+        }
+
+        .org-info {
             font-size: 14px;
-            background: #f8f8f8;
-            padding: 12px;
-            border-radius: 6px;
+            color: #718096;
+            margin-top: 5px;
         }
-        .bold { font-weight: bold; }
 
-        /* Table */
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .reg-badge {
+            background: #2d3748;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Summary Box */
+        .report-summary-box {
+            display: inline-block;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
             margin-top: 20px;
-            font-size: 14px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px 12px;
+            min-width: 400px;
             text-align: left;
-            vertical-align: top;
         }
-        th {
-            background: #e9ecef;
-            font-size: 15px;
+
+        .report-summary-box h2 {
+            font-size: 18px;
+            margin: 0 0 10px 0;
+            border-bottom: 1px solid #cbd5e0;
+            padding-bottom: 8px;
+            color: #2d3748;
             text-align: center;
         }
-        .text-green { color: green; font-weight: bold; }
-        .text-red { color: crimson; font-weight: bold; }
-        .balance { font-weight: bold; }
 
-        .footer-btns {
-            margin-top: 25px;
+        .summary-grid {
             display: flex;
             justify-content: space-between;
         }
 
-        .btn {
-            padding: 10px 18px;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
+        .summary-item label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #a0aec0;
             font-weight: bold;
         }
 
+        .summary-item span {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2b6cb0;
+        }
+
+        /* Project Info Cards */
+        .info-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #edf2f7;
+        }
+
+        .project-card {
+            background-color: #ebf8ff;
+            border-left: 5px solid #3182ce;
+        }
+
+        .account-card {
+            background-color: #f0fff4;
+            border-left: 5px solid #38a169;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #2d3748;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #edf2f7;
+            vertical-align: top;
+        }
+
+        .text-right { text-align: right; }
+        .font-bold { font-weight: bold; }
+        .deposit { color: #2f855a; font-weight: bold; }
+        .withdraw { color: #c53030; font-weight: bold; }
+        
+        .opening-balance {
+            background-color: #fffaf0;
+            font-style: italic;
+        }
+
+        .footer-row {
+            background-color: #f7fafc;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .balance-total {
+            background-color: #2d3748;
+            color: white;
+        }
+
+        /* Buttons */
+        .btn-group {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            flex: 1;
+        }
+
+        .btn-print { background: #3182ce; color: white; }
+        .btn-close { background: #e2e8f0; color: #4a5568; }
+
+        /* Print Specific */
         @media print {
-            .footer-btns { display: none; }
             body { background: white; padding: 0; }
-            .statement-container { box-shadow: none; }
+            .container { box-shadow: none; border: 1px solid #eee; width: 100%; max-width: 100%; }
+            .btn-group { display: none; }
+            th { background-color: #333 !important; color: white !important; -webkit-print-color-adjust: exact; }
+            .footer-row { background-color: #eee !important; -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
-
 <body>
 
-<div class="statement-container">
+<div class="container">
+    <div class="header">
+        <div class="company-info">
+            <img src="{{ asset($abouts->logo_dark) }}" alt="Logo" style="width: 150px;">
+            <h1>Ovijatrik Social Welfare Organization</h1>
+            <p><strong>Reg No:</strong> Dinaj/2581/2024</p>
+            <p>Islambagh, Sadar, Dinajpur, Bangladesh</p>
+            <p>Phone: +880 1717-017645 | Email: ovijatrik.dinajpur@gmail.com</p>
+        </div>
 
-   @include('layouts.banner')
-
-    <!-- Project Info -->
-    @if($projectInfo)
-    <div class="project-info">
-        <div><span class="bold">Project:</span> {{ $projectInfo->project_code }} - {{ $projectInfo->project_title }}</div>
-        <div><span class="bold">Duration:</span> {{ $projectInfo->project_start_date ?? '---' }} - {{ $projectInfo->project_end_date ?? '---' }}</div>
-        <div><span class="bold">Target Amount:</span> {{ $projectInfo->target_amount ?? '---' }} <span class="bold">Collection:</span> {{ $projectInfo->collection_amount ?? '---' }} <span class="bold">Expense:</span>  {{ $projectInfo->total_expense ?? '---' }} </div>
-    </div>
-    @endif
-
-    <!-- Date Range -->
-    <div class="project-info">
-        <span class="bold">From:</span> {{ $from ?? '---' }} |
-        <span class="bold">To:</span> {{ $to ?? '---' }}
+        <div class="report-title">
+            <h2>Project Wise Summary</h2>
+            <p><strong>Period:</strong> {{ $from ?? 'All Time' }} — {{ $to ?? 'Today' }}</p>
+        </div>
     </div>
 
-    @php $balance = 0; @endphp
+    <div class="info-cards">
+        <div class="card project-card">
+            <label style="font-size: 10px; font-weight: bold; color: #2b6cb0; text-transform: uppercase;">Selected Project</label>
+            <div style="font-size: 18px; font-weight: bold; margin-top: 5px;">
+                {{ $projectInfo->project_code }} - {{ $projectInfo->project_title }}
+            </div>
+            <div style="margin-top: 10px; font-size: 12px;">
+                Target: <b>{{ number_format($projectInfo->target_amount, 2) }}</b> | 
+                Collected: <b>{{ number_format($projectInfo->collection_amount, 2) }}</b>
+            </div>
+        </div>
+        <div class="card account-card">
+            <label style="font-size: 10px; font-weight: bold; color: #276749; text-transform: uppercase;">Filter Status</label>
+            <div style="font-size: 16px; font-weight: bold; margin-top: 5px;">
+                {{ $accountInfo ? $accountInfo->bank_name : 'All Accounts' }}
+                {{ $accountInfo ? $accountInfo->account_no : '' }}
+            </div>
+            <p style="font-size: 12px; margin-top: 5px; color: #4a5568;">Generated: {{ date('d M, Y h:i A') }}</p>
+        </div>
+    </div>
 
     <table>
         <thead>
             <tr>
-                <th width="12%">Date</th>
-                <th width="45%">Description</th>
-                <th width="12%">Deposit</th>
-                <th width="12%">Withdraw</th>
-                <th width="12%">Balance</th>
+                <th width="15%">Date</th>
+                <th width="40%">Description</th>
+                <th width="15%" class="text-right">Deposit</th>
+                <th width="15%" class="text-right">Withdraw</th>
+                <th width="15%" class="text-right">Balance</th>
             </tr>
         </thead>
-
         <tbody>
-
-        {{-- =======================
-            PREVIOUS BALANCE ROW
-        ======================== --}}
-        @php 
-            $balance = $previousBalance; 
-            $totalDeposit = 0;
-            $totalWithdraw = 0;
-        @endphp
-
-        @if($previousBalance != 0)
-            <tr style="background:#fff6e6; font-weight:bold;">
-                <td>
-                    {{ $from ? \Carbon\Carbon::parse($from)->subDay()->format('d/m/Y') : '' }}
-                </td>
-                <td>Previous Balance</td>
-                <td></td>
-                <td></td>
-                <td>{{ number_format($previousBalance,2) }}</td>
+            <tr class="opening-balance">
+                <td>{{ $from ? \Carbon\Carbon::parse($from)->subDay()->format('d/m/Y') : '-' }}</td>
+                <td>Opening Balance (Brought Forward)</td>
+                <td class="text-right">---</td>
+                <td class="text-right">---</td>
+                <td class="text-right font-bold">{{ number_format($previousBalance, 2) }}</td>
             </tr>
-        @endif
 
-
-        {{-- =======================
-            MAIN RESULT ROWS
-        ======================== --}}
-        @foreach($reportData as $row)
-
-            @php
-                $deposit = $row->transaction_type == 1 ? $row->transaction_amount : 0;
-                $withdraw = $row->transaction_type == -1 ? $row->transaction_amount : 0;
-
-                $totalDeposit  += $deposit;
-                $totalWithdraw += $withdraw;
-
-                $balance += ($deposit - $withdraw);
+            @php 
+                $balance = $previousBalance; 
+                $totalDep = 0; $totalWith = 0;
             @endphp
 
-            <tr>
-                <td>{{ \Carbon\Carbon::parse($row->transaction_date)->format('d/m/Y') }}</td>
-
-                <td>
-                    @if(!$projectId)
-                        <b>{{ $row->project_code }} - {{ $row->project_title }}</b><br>
-                    @endif
-
-                    @if($row->transaction_type == '1')
-                        <strong> Receipt No: </strong> {{ $row->mr_no }}<br>
-                        <strong>Name: </strong> {{ $row->receipt_donor_name }}<br>
-                        <strong style="color: #007bff">Account: </strong> {{ $row->account_name.' '.$row->account_no }}
-                    @else
-                        @if(!empty($row->expense_cat_name))
-                            <b>{{ $row->expense_cat_name }}</b><br>
+            @foreach($reportData as $row)
+                @php
+                    $deposit = $row->transaction_type == 1 ? $row->transaction_amount : 0;
+                    $withdraw = $row->transaction_type == -1 ? $row->transaction_amount : 0;
+                    $totalDep += $deposit;
+                    $totalWith += $withdraw;
+                    $balance += ($deposit - $withdraw);
+                @endphp
+                <tr>
+                    <td>{{ \Carbon\Carbon::parse($row->transaction_date)->format('d/m/Y') }}</td>
+                    <td>
+                        @if($row->transaction_type == 1)
+                            <small style="color: #3182ce; font-weight: bold;">RECEIPT: {{ $row->mr_no }}</small><br>
+                            <strong>{{ $row->receipt_donor_name }}</strong>
+                        @else
+                            <small style="color: #e53e3e; font-weight: bold;">VOUCHER: {{ $row->expense_no }}</small><br>
+                            <strong>{{ $row->expense_cat_name }}</strong>
                         @endif
-                         <strong> Voucher No: </strong> {{ $row->expense_no }}<br>
-                        <strong style="color: #007bff">Account:  </strong> {{ $row->account_name.' '.$row->account_no }}
-                    @endif
-                </td>
-
-                <td class="text-green">
-                    {{ $deposit > 0 ? number_format($deposit,2) : '' }}
-                </td>
-
-                <td class="text-red">
-                    {{ $withdraw > 0 ? number_format($withdraw,2) : '' }}
-                </td>
-
-                <td>{{ number_format($balance,2) }}</td>
+                        <br><small style="color: #a0aec0;">{{ $row->account_name }} ({{ $row->account_no }})</small>
+                    </td>
+                    <td class="text-right deposit">{{ $deposit > 0 ? number_format($deposit, 2) : '' }}</td>
+                    <td class="text-right withdraw">{{ $withdraw > 0 ? number_format($withdraw, 2) : '' }}</td>
+                    <td class="text-right font-bold">{{ number_format($balance, 2) }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+        <tfoot>
+            <tr class="footer-row">
+                <td colspan="2" class="text-right">Total Summary:</td>
+                <td class="text-right" style="color: #2f855a;">{{ number_format($totalDep, 2) }}</td>
+                <td class="text-right" style="color: #c53030;">{{ number_format($totalWith, 2) }}</td>
+                <td class="text-right balance-total">{{ number_format($balance, 2) }}</td>
             </tr>
+        </tfoot>
+    </table>
 
-        @endforeach
-
-    </tbody>
-
-    {{-- =======================
-        FOOTER SUMMARY ROW
-    ======================== --}}
-    <tfoot>
-        <tr style="background:#f1f1f1; font-weight:bold;">
-            <td colspan="2" style="text-align:right;">Total Summary:</td>
-
-            <td style="color:green;">
-                {{ number_format($totalDeposit, 2) }}
-            </td>
-
-            <td style="color:crimson;">
-                {{ number_format($totalWithdraw, 2) }}
-            </td>
-
-            <td>
-                {{ number_format($balance, 2) }}
-            </td>
-        </tr>
-    </tfoot>
-
-</table>
-
-    <div class="footer-btns">
-        <button class="btn" onclick="window.print()">Print</button>
-        <button class="btn" onclick="window.close()">Close</button>
+    <div class="btn-group">
+        <button onclick="window.print()" class="btn btn-print">Print Statement</button>
+        <button onclick="window.close()" class="btn btn-close">Close</button>
     </div>
-
 </div>
 
 </body>

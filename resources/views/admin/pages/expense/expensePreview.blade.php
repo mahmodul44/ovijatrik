@@ -59,6 +59,11 @@
             line-height: 1.5;
         }
 
+        .company-subtitle{
+           font-size: 18px;
+            color: #1E8449; 
+        }
+
         .invoice-title {
             margin-top: 40px;
             text-align: right;
@@ -66,7 +71,7 @@
 
         .invoice-title h1 {
             font-size: 30px;
-            color: #ddd;
+            color: #e41212;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 5px;
@@ -272,7 +277,7 @@
         <header class="header">
             <div class="company-details">
                 <img width="52%" src="{{ asset($abouts->logo_dark) }}" alt="Logo">
-                {{-- <h2>Ovijatrik</h2> --}}
+                <h3 class="company-subtitle">Ovijatrik Social Welfare Organization</h3> 
                 <p>
                     Islambagh, Sadar, Dinajpur, Bangladesh<br>
                     Reg No: Dinaj/2581/2024 | Contact: +880 1717 017645<br>
@@ -330,14 +335,13 @@
         <footer class="footer">
             <div class="signature-area">
                  <div class="signature">
-                    <div class="sign-line">Cashier</div>
+                    <div class="sign-line">Chief Operations Coordinator</div>
                 </div>
                 <div class="signature">
-                    <!-- <img src="sig.png" alt="Signature" height="40"> -->
-                    <div class="sign-line">Secretary</div>
+                    <div class="sign-line">Treasurer</div>
                 </div>
                  <div class="signature">
-                    <div class="sign-line">President</div>
+                    <div class="sign-line">Secretary</div>
                 </div>
             </div>
             <div class="thank-you-msg">

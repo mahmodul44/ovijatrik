@@ -173,7 +173,7 @@
 
                                 @endif
                                 <button type="button" 
-                                onclick="shareReceipt('{{ $value->mr_no }}', '{{ \Carbon\Carbon::parse($value->payment_date)->format('d M, Y') }}', '{{ $value->member->name ?? 'N/A' }}', '{{ $value->member->member_id ?? 'N/A' }}', '{{ $value->project->project_title ?? 'General Donation' }}', '{{ number_format($value->payment_amount, 2) }}', '{{ $value->paymentmethod->pay_method_name ?? 'Cash' }}')"
+                                onclick="shareReceipt('{{ $value->mr_no }}', '{{ \Carbon\Carbon::parse($value->payment_date)->format('d M, Y') }}', '{{ $value->member->name ?? 'N/A' }}', '{{ $value->member->member_id ?? 'N/A' }}', '{{ $value->project->project_title ?? 'General Donation' }}', '{{ number_format($value->payment_amount, 2) }}', '{{ $value->paymentmethod->pay_method_name ?? 'Cash' }}','{{ $value->selected_months }}')"
                                 class="text-blue-600 hover:text-blue-900 mx-1" title="Share as Image">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -197,11 +197,13 @@
     <div id="hidden-share-card" class="w-[450px] bg-white p-6 border-t-8 border-green-600 font-sans">
         <div class="flex justify-between items-start mb-6 border-bottom pb-4 border-gray-100">
             <div>
-                <h2 class="text-green-700 text-2xl font-bold uppercase tracking-tight">Ovijatrik</h2>
-                <p class="text-[10px] text-gray-500 leading-tight">Social Walfare Organization</p>
+                <h2 class="text-green-700 text-2xl font-bold uppercase tracking-tight"> <img src="{{ asset($abouts->logo_dark) }}" alt="Logo" style="width: 150px;"> </h2>
+                <p class="text-[10px] text-green-700 leading-tight">Ovijatrik Social Walfare Organization</p>
+                <p class="text-[9px] text-gray-500 leading-tight">Reg No: Dinaj/2581/2024</p>
+                <p class="text-[9px] text-gray-500 leading-tight">Islambagh, Sadar, Dinajpur, Bangladesh</p>
             </div>
             <div class="text-right">
-                <span class="bg-green-100 text-green-800 text-[10px] font-bold px-2 py-1 rounded">DONATION RECEIPT</span>
+                <span class="bg-green-100 text-green-800 text-[10px] font-bold px-2 py-2 rounded">MEMBERSHIP DONATION RECEIPT</span>
                 <p id="s_mr_no" class="text-xs font-bold mt-1 text-gray-700"></p>
             </div>
         </div>
@@ -226,6 +228,10 @@
             <div class="flex justify-between text-sm border-b border-dashed pb-1">
                 <span class="text-gray-500">Payment:</span>
                 <span id="s_method" class="font-semibold uppercase"></span>
+            </div>
+            <div class="flex justify-between text-sm border-b border-dashed pb-1">
+                <span class="text-gray-500">Payment Month:</span>
+                <span id="s_pay_month" class="font-semibold uppercase"></span>
             </div>
         </div>
 
@@ -318,7 +324,7 @@
         );
     }
 
-async function shareReceipt(mrNo, date, name, mermberid, purpose, amount, method) {
+async function shareReceipt(mrNo, date, name, mermberid, purpose, amount, method, monthJson) {
     document.getElementById('s_mr_no').innerText = '#' + mrNo;
     document.getElementById('s_date').innerText = date;
     document.getElementById('s_name').innerText = name;
@@ -326,6 +332,29 @@ async function shareReceipt(mrNo, date, name, mermberid, purpose, amount, method
     document.getElementById('s_purpose').innerText = purpose;
     document.getElementById('s_method').innerText = method;
     document.getElementById('s_amount').innerText = '৳ ' + amount;
+    let displayMonth = 'N/A';
+    try {
+        if (monthJson) {
+            let months = JSON.parse(monthJson); 
+            
+            if (Array.isArray(months) && months.length > 0) {
+                months.sort();
+
+                if (months.length === 1) {
+                    displayMonth = formatMonthLabel(months[0]);
+                } else {
+                    let startMonth = formatMonthLabel(months[0]);
+                    let endMonth = formatMonthLabel(months[months.length - 1]);
+                    displayMonth = `${startMonth} - ${endMonth}`;
+                }
+            }
+        }
+    } catch (e) {
+        console.error("Month parsing error:", e);
+        displayMonth = 'N/A';
+    }
+
+    document.getElementById('s_pay_month').innerText = displayMonth;
 
     const element = document.getElementById("hidden-share-card");
 
@@ -386,6 +415,11 @@ async function shareReceipt(mrNo, date, name, mermberid, purpose, amount, method
         Swal.fire('Error', 'Something went wrong!', 'error');
         console.error(error);
     }
+}
+
+function formatMonthLabel(monthStr) {
+    const date = new Date(monthStr + '-01'); 
+    return date.toLocaleString('default', { month: 'short', year: 'numeric' });
 }
 </script>
 @endpush

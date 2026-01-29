@@ -33,22 +33,36 @@ class ReportController extends Controller
 
    function projectWise(){
      $data['projects'] = Project::where('status',1)->get();
+     $data['accounts'] = Account::where('status', 1)->get();
      return view('admin.pages.report.project-wise', $data);
    }
 
 function projectWiseSearch(Request $request)
 {
+    $request->validate([
+        'project_id' => 'required'
+    ], [
+        'project_id.required' => 'অনুগ্রহ করে একটি প্রজেক্ট সিলেক্ট করুন।'
+    ]);
+
     $projectId = $request->project_id;
+    $accountId = $request->account_id; 
+    
     $from = $request->from_date ? Carbon::createFromFormat('d/m/Y', $request->from_date)->format('Y-m-d') : null;
     $to   = $request->to_date   ? Carbon::createFromFormat('d/m/Y', $request->to_date)->format('Y-m-d') : null;
 
     $previousBalance = 0;
 
     if ($from && $projectId) {
-        $previousTransactions = DB::table('transactions')
+        $prevQuery = DB::table('transactions')
             ->where('project_id', $projectId)
-            ->where('transaction_date', '<', $from)
-            ->get();
+            ->where('transaction_date', '<', $from);
+            
+        if ($accountId) {
+            $prevQuery->where('account_id', $accountId);
+        }
+
+        $previousTransactions = $prevQuery->get();
 
         foreach ($previousTransactions as $p) {
             if ($p->transaction_type == 1) {
@@ -67,56 +81,41 @@ function projectWiseSearch(Request $request)
         ->leftJoin('money_receipts','money_receipts.mr_id','=','transactions.reference_id')
         ->leftJoin('projects', 'projects.project_id', '=', 'transactions.project_id')
         ->leftJoin('users as receipt_users', 'receipt_users.id', '=', 'money_receipts.member_id')
-        ->whereNotNull('transactions.project_id')
+        ->where('transactions.project_id', $projectId) 
         ->orderBy('transactions.transaction_date', 'asc')
-           ->select(
-        'transactions.transaction_id',
-        'transactions.transaction_date',
-        'transactions.project_id',
-        'transactions.transaction_type',
-        'transactions.transaction_amount',
-        'accounts.*',
-        'users.name as member_name','users.member_id as memberID',
-        'expenses.*','money_receipts.mr_no','money_receipts.donar_name','expense_categories.expense_cat_name',
-        'projects.project_title','projects.project_code','projects.target_amount',
-        'projects.collection_amount','projects.total_expense', DB::raw("
-            CASE 
-                WHEN money_receipts.member_id IS NOT NULL 
-                THEN receipt_users.name
-                ELSE money_receipts.donar_name
-            END as receipt_donor_name
-        ")
-    );
+        ->select(
+            'transactions.*',
+            'accounts.account_name', 'accounts.account_no',
+            'users.name as member_name','users.member_id as memberID',
+            'expenses.expense_no','money_receipts.mr_no','money_receipts.donar_name','expense_categories.expense_cat_name',
+            'projects.project_title','projects.project_code',
+            DB::raw("CASE WHEN money_receipts.member_id IS NOT NULL THEN receipt_users.name ELSE money_receipts.donar_name END as receipt_donor_name")
+        );
 
-    if ($projectId) {
-        $query->where('transactions.project_id', $projectId);
+    if ($accountId) {
+        $query->where('transactions.account_id', $accountId);
     }
 
     if ($from && $to) {
         $query->whereBetween('transactions.transaction_date', [$from, $to]);
     } elseif ($from) {
         $query->where('transactions.transaction_date', '>=', $from);
-    } elseif ($to) {
-        $query->where('transactions.transaction_date', '<=', $to);
     }
 
     $reportData = $query->get();
-    $projectInfo = null;
 
-    if ($projectId) {
-        $projectInfo = DB::table('projects')
-            ->where('project_id', $projectId)
-            ->select('project_id','project_title', 'project_code', 'project_details', 'project_start_date', 'project_end_date','collection_amount','target_amount','total_expense')
-            ->first();
-    }
-
+    $projectInfo = DB::table('projects')->where('project_id', $projectId)->first();
+    $accountInfo = $accountId ? DB::table('accounts')->where('account_id', $accountId)->first() : null;
+    $abouts = About::first();
     return view('admin.pages.report.project-wise-view', [
         'reportData' => $reportData,
         'from' => $from,
         'to' => $to,
         'projectId' => $projectId,
         'projectInfo' => $projectInfo,
-        'previousBalance' => $previousBalance
+        'accountInfo' => $accountInfo,
+        'previousBalance' => $previousBalance,
+        'abouts' => $abouts
     ]);
 }
 

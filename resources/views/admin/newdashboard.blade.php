@@ -85,6 +85,7 @@
                     <tr class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                         <th class="px-4 py-2 text-left">Receipt No</th>
                         <th class="px-4 py-2 text-left">Donor</th>
+                        <th class="px-4 py-2 text-left">Project</th>
                         <th class="px-4 py-2 text-left">Amount</th>
                         <th class="px-4 py-2 text-left">Method</th>
                         <th class="px-4 py-2 text-left">Date</th>
@@ -95,6 +96,13 @@
                     <tr class="border-b dark:border-gray-700">
                         <td class="px-4 py-2 dark:text-gray-200">{{ $item->mr_no }}</td>
                         <td class="px-4 py-2 dark:text-gray-200">{{ $item->member_id ?  $item->member->name : $item->donar_name }}</td>
+                        <td class="px-4 py-2 dark:text-gray-200">
+                            @if($item->project_id)
+                                {{ $item->project->project_code }}-{{ $item->project->project_title }}
+                            @else
+                                <span class="text-gray-400 text-xs italic"></span>
+                            @endif
+                        </td>
                         <td class="px-4 py-2 text-green-600 font-medium">৳ {{ number_format($item->payment_amount,2) }}</td>
                         <td class="px-4 py-2 dark:text-gray-200">{{ $item->paymentmethod->pay_method_name }}</td>
                         <td class="px-4 py-2 dark:text-gray-200">{{ \Carbon\Carbon::parse($item->payment_date)->format('d M, Y') }}</td>
@@ -214,6 +222,7 @@
                     <tr>
                         <th class="px-6 py-4 text-left">Receipt No</th>
                         <th class="px-6 py-4 text-left">Donor Details</th>
+                        <th class="px-6 py-4 text-left">Project</th>
                         <th class="px-6 py-4 text-left">Amount</th>
                         <th class="px-6 py-4 text-left">Method</th>
                         <th class="px-6 py-4 text-left">Date</th>
@@ -226,6 +235,15 @@
                         <td class="px-6 py-4">
                             <span class="font-medium text-gray-900 dark:text-gray-200">
                                 {{ $item->member_id ? $item->member->name : $item->donar_name }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="font-medium text-gray-900 dark:text-gray-200">
+                            @if($item->project_id)
+                                {{ $item->project->project_code }}-{{ $item->project->project_title }}
+                            @else
+                                <span class="text-gray-400 text-xs italic"></span>
+                            @endif
                             </span>
                         </td>
                         <td class="px-6 py-4">
