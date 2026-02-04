@@ -38,7 +38,7 @@
                 @foreach ($accounts->groupBy('account_type') as $type => $items)
                     <optgroup label="{{ strtoupper($type == 1 ? 'MEMBERSHIP ACCOUNTS' : 'OTHER ACCOUNTS') }}" class="bg-gray-100 dark:bg-gray-700 font-bold text-blue-400">
                         @foreach ($items as $item)
-                            <option value="{{ $item->account_id }}" class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
+                            <option data-account-no="{{ $item->account_no }}" data-bank-name="{{ $item->bank_name }}" value="{{ $item->account_id }}" class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
                                 {{ $item->bank_name }} - {{ $item->account_no }}
                             </option>
                         @endforeach
@@ -49,7 +49,15 @@
                         Current Balance: <span id="from_balance">--</span>
                     </p>
                     
-                     
+                <div id="from_reference_wrap" class="hidden mt-3">
+                <label class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                    From Account Reference
+                </label>
+                <input type="text" name="from_reference"
+                    class="block w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 text-sm">
+            </div>
+
+     
                 </div>
                 <div>
                     <label for="to_account" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
@@ -63,22 +71,30 @@
                 @foreach ($accounts->groupBy('account_type') as $type => $items)
                     <optgroup label="{{ strtoupper($type == 1 ? 'MEMBERSHIP ACCOUNTS' : 'OTHER ACCOUNTS') }}" class="bg-gray-100 dark:bg-gray-700 font-bold text-blue-400">
                         @foreach ($items as $item)
-                            <option value="{{ $item->account_id }}" class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
+                            <option data-account-no="{{ $item->account_no }}" data-bank-name="{{ $item->bank_name }}" value="{{ $item->account_id }}" class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
                                 {{ $item->bank_name }} - {{ $item->account_no }}
                             </option>
                         @endforeach
                     </optgroup>
                 @endforeach
             </select>
-                   
-                    <p class="mt-2 text-sm text-white">
+             <p class="mt-2 text-sm text-white">
                         Current Balance: <span id="to_balance">--</span>
                     </p>
+                <div id="to_reference_wrap" class="hidden mt-3">
+                <label class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                    To Account Reference
+                </label>
+                <input type="text" name="to_reference"
+                    class="block w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 text-sm">
+                </div>
+
+                   
                 </div>
             </div>
 
             <!-- Date & Amount -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                     <label for="transfer_date" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
                         Date <span class="text-red-600">*</span>
@@ -93,6 +109,15 @@
                         Amount <span class="text-red-600">*</span>
                     </label>
                     <input type="text" required name="transfer_amount" id="transfer_amount" value="{{ old('transfer_amount') }}"
+                           autocomplete="off"
+                           class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm 
+                                  bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="transfer_fee" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                        Fee <span class="text-red-600"></span>
+                    </label>
+                    <input type="text" name="transfer_fee" id="transfer_fee" value="{{ old('transfer_fee') }}"
                            autocomplete="off"
                            class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm 
                                   bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -129,6 +154,27 @@ flatpickr("#transfer_date", {
     allowInput: true
 });
 
+function toggleReference(selectId, wrapperId) {
+    let selected = $(selectId + ' option:selected');
+    let accountNo = selected.data('account-no');
+    let accountType = selected.data('bank-name');
+
+    if (accountType != 0 && accountNo) {
+        $(wrapperId).removeClass('hidden');
+    } else {
+        $(wrapperId).addClass('hidden')
+            .find('input').val('');
+    }
+}
+
+$('#from_account').on('change', function () {
+    toggleReference('#from_account', '#from_reference_wrap');
+});
+
+$('#to_account').on('change', function () {
+    toggleReference('#to_account', '#to_reference_wrap');
+});
+
 $("#accbalancetransferInsertForm").on('submit', function(e){
     e.preventDefault();
     let thisForm = $(this);
@@ -136,13 +182,11 @@ $("#accbalancetransferInsertForm").on('submit', function(e){
     let fromAccount = $('#from_account').val();
     let toAccount = $('#to_account').val();
 
-    // 1. Validation Check
     if(fromAccount && toAccount && fromAccount === toAccount){
         toastr.error('From Account and To Account cannot be the same.');
         return; 
     }
 
-    // 2. SweetAlert confirmation
     Swal.fire({
         title: 'Are you sure?',
         text: "Do you want to transfer this balance?",
@@ -153,11 +197,10 @@ $("#accbalancetransferInsertForm").on('submit', function(e){
         confirmButtonText: 'Yes, transfer it!'
     }).then((result) => {
         if (result.isConfirmed) {
-            // 3. Move AJAX inside the confirmation
             $.ajax({
                 type: "POST",
                 url: "{{route('accbalancetransfer.store')}}",
-                data: new FormData(thisForm[0]), // Use thisForm[0] for FormData
+                data: new FormData(thisForm[0]), 
                 dataType: "json",
                 contentType: false,
                 cache: false,
@@ -178,7 +221,6 @@ $("#accbalancetransferInsertForm").on('submit', function(e){
                     let responseText = jQuery.parseJSON(xhr.responseText);
                     toastr.error(responseText.message);
                     
-                    // Clear previous errors
                     thisForm.find('.text-danger').text(''); 
                     
                     $.each(responseText.errors, function(key, val) {

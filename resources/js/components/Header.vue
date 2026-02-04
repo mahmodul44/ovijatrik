@@ -13,28 +13,27 @@
 
     <!-- Header -->
     <header class="bg-white shadow sticky top-0 z-40">
-      <div class="flex justify-between items-center p-4 md:p-5 bg-white border-b border-gray-200 shadow-sm">
+      <div class="flex justify-between items-center p-2 md:p-2 bg-white border-b border-gray-200 shadow-sm">
 
   <!-- Left: Logo + Title -->
  <router-link
   to="/"
-  class="flex items-center space-x-4 cursor-pointer select-none"
+  class="flex flex-col items-center justify-center space-y-1 cursor-pointer select-none group py-2"
 >
-      <img
-      v-if="logoImg"
+  <div v-if="logoImg" class="transition-all duration-300">
+    <img
       :src="logoImg"
       alt="Logo"
-      class="h-12 w-auto object-contain"
+      class="h-14 w-auto object-contain" 
     />
+  </div>
 
-
-    <div>
-      <h1 class="text-2xl font-bold text-green-700 leading-tight">
-        {{ i18n.currentLang === 'bn' ? 'অভিযাত্রিক সমাজ কল্যাণ সংস্থা' : 'Ovijatrik Social Welfare Organization' }}
-      </h1>
-      
-    </div>
-  </router-link>
+  <div class="text-center px-2">
+    <h4 class="text-[10px] md:text-[17px] font-bold text-green-700 leading-tight tracking-tight">
+      {{ i18n.currentLang === 'bn' ? 'অভিযাত্রিক সমাজ কল্যাণ সংস্থা' : 'Ovijatrik Social Welfare Organization' }}
+    </h4>
+  </div>
+</router-link>
 
   <!-- Right: Social + Language + Mobile Menu -->
   <div class="flex items-center space-x-5">
@@ -69,20 +68,19 @@
         </svg>
       </a>
 
-    <a href="/login"
+    </div>
+<a href="/login"
        class="flex items-center space-x-2 px-4 h-9 rounded-full bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-300 shadow-sm font-medium text-sm">
        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round"
           d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
        </svg>
 
-        <span>{{ i18n.currentLang === 'bn' ? 'লগইন' : 'Login' }}</span>
+        <span>{{ i18n.currentLang === 'bn' ? 'লগইন' : 'Login' }} </span>
     </a>
-
-    </div>
-
     <!-- Language Switch -->
     <div class="flex border border-indigo-300 rounded-lg overflow-hidden">
+      
       <button
         @click="changeLanguage('bn')"
         :class="i18n.currentLang === 'bn'
@@ -127,7 +125,6 @@
           <li><router-link to="/blog" @click="closeMenu" class="hover:bg-green-800 px-3 py-1 rounded transition-colors">{{ i18n.t('blog') }}</router-link></li>
           <li><router-link to="/gallery" @click="closeMenu" class="hover:bg-green-800 px-3 py-1 rounded transition-colors">{{ i18n.t('gallery') }}</router-link></li>
           <li><router-link to="/contact" @click="closeMenu" class="hover:bg-green-800 px-3 py-1 rounded transition-colors">{{ i18n.t('contact') }}</router-link></li>
-          <li><router-link to="/login" @click="closeMenu" class="hover:bg-green-800 px-3 py-1 rounded transition-colors">{{ i18n.t('Login') }}</router-link></li>
         </ul>
       </nav>
     </header>

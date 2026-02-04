@@ -17,19 +17,9 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        /* Header */
-        .header-area {
-            text-align: center;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-        }
-        .header-area img {
-            max-width: 90px;
-            margin-bottom: 10px;
-        }
-        .org-name { font-size: 26px; font-weight: bold; color: #333; }
-        .org-sub { color: #555; font-size: 14px; }
+        .header { display: flex; justify-content: space-between; border-bottom: 4px double #036056; padding-bottom: 20px; margin-bottom: 30px; }
+        .company-info h1 { margin: 5px 0; color: #036056; font-size: 22px; }
+        .company-info p { margin: 2px 0; font-size: 13px; color: #555; }
 
         /* Project info */
         .project-info {
@@ -95,7 +85,19 @@
 
 <div class="statement-container">
 
-    @include('layouts.banner')
+    <div class="header">
+        <div class="company-info">
+            <img src="{{ asset($abouts->logo_dark) }}" alt="Logo" style="width: 150px;">
+            <h1>Ovijatrik Social Welfare Organization</h1>
+            <p><strong>Reg No:</strong> Dinaj/2581/2024</p>
+            <p>Islambagh, Sadar, Dinajpur, Bangladesh</p>
+            <p>Phone: +880 1717-017645 | Email: ovijatrik.dinajpur@gmail.com</p>
+        </div>
+
+        <div class="report-title">
+            <h2>Project Receipt Details</h2>
+        </div>
+    </div>
 
     <!-- Project Info -->
     @if($projectInfo)
@@ -148,7 +150,7 @@
                     @endif
                         <strong>Receipt No:</strong> {{ $row->mr_no ?? '---' }}<br>
                         <strong>Name:</strong> {{ $row->member_id ? $row->member_name : '---' }} {{ $row->member_id == null ? $row->donar_name : '---' }}<br>
-                        <strong>Account:</strong> <span style="color: #007bff">{{ $row->account_name ?? '' }} {{ $row->account_no ?? '' }} </span>
+                        <strong>Account:</strong> <span style="color: #007bff">{{ $row->bank_name ?? '' }} {{ $row->account_no ?? '' }} </span>
                 </td>
                 <td class="text-green" style="text-align: right">
                     {{ $deposit > 0 ? number_format($deposit,2) : '' }}

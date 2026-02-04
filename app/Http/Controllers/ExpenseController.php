@@ -101,7 +101,6 @@ class ExpenseController extends Controller
             ->first();
 
         if ($lastExpense) {
-            // prefix বাদ দিয়ে নাম্বার অংশ নিলাম
             $lastNumber = (int) substr($lastExpense->expense_no, strlen($prefix));
             $newNumber  = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
         } else {

@@ -9,7 +9,6 @@
     .report-card {
         max-width: 1000px;
         margin: 0 auto;
-        background: white;
         border-radius: 12px;
         box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         overflow: hidden;
@@ -21,8 +20,8 @@
         justify-content: space-between;
         align-items: center;
         padding: 25px 40px;
-        background: #1e293b;
-        color: white;
+        background: #ffffff;
+        color: rgb(19, 19, 19);
         border-bottom: 4px solid #3b82f6;
     }
 
@@ -35,7 +34,6 @@
     .brand-logo img {
         width: 120px;
         height: auto;
-        filter: brightness(0) invert(1);
     }
 
     .brand-text h1 {
@@ -43,6 +41,7 @@
         font-weight: 800;
         margin: 0;
         line-height: 1.2;
+        color: #036056;
     }
 
     .brand-text p {
@@ -56,7 +55,7 @@
     }
 
     .report-title-badge {
-        background: #3b82f6;
+        background: #bcd5ff;
         padding: 5px 15px;
         border-radius: 6px;
         font-weight: 700;
@@ -152,13 +151,14 @@
                 </div>
                 <div class="brand-text">
                     <h1>Ovijatrik Social Welfare Organization</h1>
-                    <p>Reg: Dinaj/2581/2024 | Islambagh, Dinajpur</p>
-                    <p>Phone: +880 1717-017645 | ovijatrik.dinajpur@gmail.com</p>
+                    <p><strong>Reg No:</strong> Dinaj/2581/2024</p>
+                    <p>Islambagh, Sadar, Dinajpur, Bangladesh</p>
+                    <p>Phone: +880 1717-017645 | Email: ovijatrik.dinajpur@gmail.com</p>
                 </div>
             </div>
 
             <div class="info-side">
-                <div class="report-title-badge">Membership Payment Report</div>
+                <div class="report-title-badge">Official Expense Report</div>
                 <div class="fiscal-info">
                     <strong>FY:</strong> {{ $fiscalYear }} <br>
                     @if($month) <strong>Month:</strong> {{ date('F', mktime(0, 0, 0, $month, 1)) }} @endif
@@ -169,42 +169,60 @@
 
         <div class="table-section">
             <table class="compact-table">
-                <thead>
-                    <tr>
-                        <th style="width: 60px;">SL</th>
-                        <th>Expenditure Head / Category</th>
+            <thead>
+                <tr>
+                    <th style="width: 60px;">SL</th>
+                    @if($isDetailed)
+                        <th>Date & Invoice No</th>
+                    @endif
+                    <th>Expense Head</th>
+                    @if(!$isDetailed)
                         <th style="text-align: center;">Tran. Qty</th>
-                        <th style="text-align: right;">Net Amount (BDT)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $grandTotal = 0; @endphp
-                    @foreach($reports as $key => $report)
-                    @php $grandTotal += $report->total_amount; @endphp
-                    <tr>
-                        <td>{{ $key + 1 }}</td>
-                        <td class="category-cell">
-                            {{ $report->expense_cat_id == 'salary' ? '💼 Staff Salary & Benefits' : '📑 ' . ($report->expense_cat_name ?? 'General Expense') }}
-                        </td>
-                        <td style="text-align: center;">{{ $report->transaction_count }}</td>
-                        <td class="amount-cell">{{ number_format($report->total_amount, 2) }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-                <tfoot>
-                    <tr style="background: #f8fafc; border-top: 2px solid #cbd5e1;">
-                        <td colspan="3" style="text-align: right; padding: 15px; font-weight: 800; color: #475569; text-transform: uppercase;">Grand Total Expenditure</td>
-                        <td class="amount-cell" style="font-size: 18px; color: #1e293b; padding: 15px;">
-                            ৳ {{ number_format($grandTotal, 2) }}
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
+                    @endif
+                    <th style="text-align: right;">Net Amount (BDT)</th>
+                </tr>
+            </thead>
 
+            <tbody>
+                @php $grandTotal = 0; @endphp
+                @foreach($reports as $key => $report)
+                @php $grandTotal += $report->total_amount; @endphp
+                <tr>
+                    <td>{{ $key + 1 }}</td>
+                    
+                    @if($isDetailed)
+                        <td>{{ date('d-m-Y', strtotime($report->expense_date)) }}  <strong style="color: cadetblue;margin-left:5px"> {{ $report->invNo }} </strong></td>
+                    @endif
+
+                    <td class="category-cell">
+                    {{ $report->expense_cat_id == 'salary' ? '💼 Staff Salary & Benefits' : '📑 ' . ($report->expense_cat_name ?? 'General Expense') }} 
+                    </td>
+
+                    @if(!$isDetailed)
+                        <td style="text-align: center;">{{ $report->transaction_count }}</td>
+                    @endif
+
+                    <td class="amount-cell">{{ number_format($report->total_amount, 2) }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+
+            <tfoot>
+                <tr style="background: #f8fafc; border-top: 2px solid #cbd5e1;">
+                    <td colspan="{{ $isDetailed ? 3 : 3 }}" style="text-align: right; padding: 15px; font-weight: 800; color: #475569; text-transform: uppercase;">
+                        Grand Total
+                    </td>
+                    <td class="amount-cell" style="font-size: 18px; color: #1e293b; padding: 15px;">
+                        ৳ {{ number_format($grandTotal, 2) }}
+                    </td>
+                </tr>
+            </tfoot>
+            </table>
+{{-- 
             <div style="margin-top: 60px; display: flex; justify-content: space-between; padding: 0 20px;">
                 <div style="text-align: center; border-top: 1px solid #94a3b8; width: 180px; padding-top: 8px; font-size: 12px; color: #64748b;">Accountant Signature</div>
                 <div style="text-align: center; border-top: 1px solid #94a3b8; width: 180px; padding-top: 8px; font-size: 12px; color: #64748b;">Executive Director</div>
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>

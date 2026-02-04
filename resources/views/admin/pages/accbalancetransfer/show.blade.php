@@ -11,7 +11,7 @@
 
 body {
     background: #f3f4f6;
-    padding: 10px;
+    padding: 5px;
 }
 
 .receipt-container {
@@ -50,7 +50,7 @@ body {
 }
 
 .section {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .section h4 {
@@ -145,7 +145,7 @@ body {
             <p>Phone: +880 1717-017645 | Email: ovijatrik.dinajpur@gmail.com</p>
         </div>
         <div class="report-title">
-            <h2>Account Balance <br> Transfer Report</h2>
+            <h2>Account Balance <br> Transfer Receipt</h2>
             
         </div>
     </div>
@@ -187,6 +187,10 @@ body {
                 <span>Amount</span>
                 <strong>৳ {{ $transferPreview->transfer_amount }}</strong>
             </div>
+            <div class="row">
+                <span>Reference</span>
+                <strong>{{ $transferPreview->from_reference }}</strong>
+            </div>
         </div>
     </div>
 
@@ -206,6 +210,10 @@ body {
                 <span>Amount</span>
                 <strong>৳ {{ $transferPreview->transfer_amount }}</strong>
             </div>
+            <div class="row">
+                <span>Reference</span>
+                <strong>{{ $transferPreview->to_reference }}</strong>
+            </div>
         </div>
     </div>
 
@@ -219,9 +227,7 @@ body {
 
     <!-- FOOTER -->
     <div class="receipt-footer">
-        <p>Processed By: Admin</p>
         <p class="note">This is a system generated receipt. No signature required.</p>
-
         <div class="actions">
             <button onclick="window.print()">Print</button>
             <button onclick="window.close()">Close</button>

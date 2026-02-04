@@ -10,6 +10,12 @@
             max-width: 1000px; margin: auto; background: #fff; padding: 25px 30px;
             border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
+        .header { display: flex; justify-content: space-between; border-bottom: 4px double #036056; padding-bottom: 20px; margin-bottom: 30px; }
+        .company-info h1 { margin: 5px 0; color: #036056; font-size: 22px; }
+        .company-info p { margin: 2px 0; font-size: 13px; color: #555; }
+        .report-title { text-align: right; }
+        .report-title h2 { margin: 0; font-size: 20px; color: #006666; border-bottom: 2px solid #006666; display: inline-block; }
+        
         h2 { text-align:center; font-size: 26px; margin-bottom:5px; color:#333; }
         .subtitle { text-align:center; font-size:14px; color:#555; margin-bottom:20px; }
 
@@ -29,16 +35,23 @@
 <body>
 
 <div class="statement-container">
-     @include('layouts.banner')
-    <h2>📑 Member Wise Report</h2>
+    <div class="header">
+        <div class="company-info">
+            <img src="{{ asset($abouts->logo_dark) }}" alt="Logo" style="width: 150px;">
+            <h1>Ovijatrik Social Welfare Organization</h1>
+            <p><strong>Reg No:</strong> Dinaj/2581/2024</p>
+            <p>Islambagh, Sadar, Dinajpur, Bangladesh</p>
+            <p>Phone: +880 1717-017645 | Email: ovijatrik.dinajpur@gmail.com</p>
+        </div>
 
-    @if($memberName)
-        <p class="subtitle"><b>Member:</b> {{ $memberName->member_id }} - {{ $memberName->name }}</p>
-    @endif
-
-    @if($from || $to)
-        <p class="subtitle"><b>From:</b> {{ $from ?? '---' }} → <b>To:</b> {{ $to ?? '---' }}</p>
-    @endif
+        <div class="report-title">
+            <h2>Member Wise Summary</h2>
+            <p><strong>Period:</strong> {{ $from ?? 'All Time' }} — {{ $to ?? 'Today' }}</p>
+             @if($memberName)
+            <p class="subtitle"><b>Member:</b> {{ $memberName->member_id }} - {{ $memberName->name }}</p>
+            @endif
+        </div>
+    </div>
 
     @php 
         $balance = 0; 
@@ -71,7 +84,7 @@
                             <strong>Project:</strong> {{ $row->project_title }}<br>
                         @endif
                         @if($row->account_name)
-                            <strong>Account:</strong> <span style="color: #007bff">{{ $row->account_name }} {{ $row->account_no ?? '' }} </span>
+                            <strong>Account:</strong> <span style="color: #007bff">{{ $row->bank_name }} {{ $row->account_no ?? '' }} </span>
                         @endif
                     </td>
                     <td class="text-green" style="text-align: right">{{ $deposit > 0 ? number_format($deposit,2) : '' }}</td>

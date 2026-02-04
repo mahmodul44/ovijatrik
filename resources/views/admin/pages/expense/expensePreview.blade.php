@@ -279,13 +279,13 @@
                 <img width="52%" src="{{ asset($abouts->logo_dark) }}" alt="Logo">
                 <h3 class="company-subtitle">Ovijatrik Social Welfare Organization</h3> 
                 <p>
-                    Islambagh, Sadar, Dinajpur, Bangladesh<br>
+                    Islambagh, Sadar, Dinajpur, Dhaka, Bangladesh<br>
                     Reg No: Dinaj/2581/2024 | Contact: +880 1717 017645<br>
                     Email: ovijatrik.dinajpur@gmail.com
                 </p>
             </div>
             <div class="invoice-title">
-                <h1>DEBIT VOUCHER</h1>
+                <h1>DEBIT VOUCHER RECEIPT</h1>
                 {{-- <div class="receipt-id">Voucher No#: {{ $expense->expense_no }}</div> --}}
             </div>
         </header>
@@ -307,7 +307,7 @@
                 <div class="info-content">
                     <p><strong>Prepared  Date:</strong> {{ \Carbon\Carbon::parse($expense->created_at)->format('d M, Y') }}</p>
                     <p><strong>Prepared By:</strong>  {{ $expense->createdUser->name ?? 'N/A' }}</p>
-                    <p><strong>Expense Account:</strong> {{ $expense->account->account_name }} - {{ $expense->account->account_no }}</p>
+                    <p><strong>Expense Account:</strong> {{ $expense->account->bank_name }} - {{ $expense->account->account_no }}</p>
                 </div>
             </div>
         </section>
@@ -345,8 +345,7 @@
                 </div>
             </div>
             <div class="thank-you-msg">
-                "Those who spend their wealth in charity will be rewarded."<br>
-                Thank you for your generous contribution to humanity.
+                 "A Journey in Search of a Smile"
             </div>
             <div style="text-align: center; font-size: 10px; color: #999; margin-top: 20px;">
                 This is a computer-generated receipt and does not require a physical seal.

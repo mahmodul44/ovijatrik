@@ -66,11 +66,11 @@
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center">{{ $index + 1 }}</td>
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center">  {{ \Carbon\Carbon::parse($value->acc_transfer_date)->format('d/m/Y') }}</td>
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-center text-gray-600 dark:text-gray-300">{{ $value->acc_transfer_no }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-left text-gray-700 dark:text-gray-200">{{ $value->fromAccount->bank_name }} - {{ $value->fromAccount->account_no }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-left text-gray-700 dark:text-gray-200">{{ $value->toAccount->bank_name }} - {{ $value->toAccount->account_no }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-right font-medium text-gray-900 dark:text-gray-100">৳ {{ number_format($value->transfer_amount, 2) }}</td>
+                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-left text-gray-700 dark:text-gray-200">{{ $value->fromAccount->bank_name }} - {{ $value->fromAccount->account_no }} <br> Ref: {{ $value->from_reference }}</td>
+                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-left text-gray-700 dark:text-gray-200">{{ $value->toAccount->bank_name }} - {{ $value->toAccount->account_no }} <br> Ref: {{ $value->to_reference }}</td>
+                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-right font-medium text-gray-900 dark:text-gray-100">Net: ৳ {{ number_format($value->transfer_amount, 2) }} <br> Fee: ৳ {{ number_format($value->transfer_fee, 2) }}</td>
                        
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 flex justify-center items-center gap-2">
+                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 align-top">
                             <button onclick="openPreviewWindow('{{ route('accbalancetransfer.show', $value->acc_transfer_id) }}')" 
                                 title="Preview"
                                 class="inline-flex items-center justify-center w-7 h-7 text-blue-600 bg-blue-50 rounded hover:bg-blue-100 mr-1">

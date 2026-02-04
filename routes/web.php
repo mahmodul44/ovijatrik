@@ -202,7 +202,8 @@ Route::get('/admin/fsyrmonth-wise-report-view',[ReportController::class,'fsyrmon
 Route::get('/admin/expense-wise',[ReportController::class,'expenseWise'])->name('report.expense-wise');
 Route::get('/admin/expense-wise-report-view',[ReportController::class,'expenseReportview'])->name('report.expense-wise-report-view');
 
-
+// Membership Report
+Route::get('/admin/membership-all-ledger',[ReportController::class,'membershipAllledger'])->name('report.membership-all-ledger');
 
 Route::put('/project/{id}/complete', [ProjectController::class, 'complete'])->name('project.complete');
 Route::get('/project/complete-projectlist', [ProjectController::class, 'completeProjectlist'])->name('project.completeprojectlist');

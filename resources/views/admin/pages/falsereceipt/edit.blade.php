@@ -74,7 +74,7 @@
                         @foreach ($accounts as $item)
                             <option value="{{ $item->account_id }}" 
                                 {{ $falsereceiptEdit->account_id == $item->account_id ? 'selected' : '' }}>
-                                {{ $item->account_name }} ({{ $item->account_no }})
+                                {{ $item->bank_name }} ({{ $item->account_no }})
                             </option>
                         @endforeach
                     </select>

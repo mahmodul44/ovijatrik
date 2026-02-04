@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\About;
+use App\Models\Account;
+use App\Models\Expense;
+use App\Models\Project;
 use App\Models\FiscalYear;
 use Illuminate\Http\Request;
 use App\Models\AccBalanceTransfer;
-use App\Models\Account;
-use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
 USE DB;
 
 class AccbalanceTransferController extends Controller
@@ -42,6 +43,8 @@ class AccbalanceTransferController extends Controller
             'to_account'      => 'required|integer|different:from_account',
             'transfer_date'   => 'required',
             'transfer_amount' => 'required|numeric|min:1',
+            'transfer_fee'    => 'nullable|numeric|min:0'
+
         ]);
 
         if ($validator->fails()) {
@@ -75,13 +78,23 @@ class AccbalanceTransferController extends Controller
             ], 400);
         }
 
-        if ($fromAccount->current_balance < $request->transfer_amount) {
+        // if ($fromAccount->current_balance < $request->transfer_amount) {
+        //     DB::rollBack();
+        //     return response()->json([
+        //         'status'  => false,
+        //         'message' => 'Insufficient balance in From Account!',
+        //     ], 400);
+        // }
+
+        $totalDebit     = ($request->transfer_amount + $request->transfer_fee);
+        if ($fromAccount->current_balance < $totalDebit) {
             DB::rollBack();
             return response()->json([
                 'status'  => false,
-                'message' => 'Insufficient balance in From Account!',
+                'message' => 'Insufficient balance (including transfer fee)!',
             ], 400);
         }
+
 
         do {
             $transferNo = 'OVIJ' . rand(111, 999) . date('y');
@@ -96,6 +109,9 @@ class AccbalanceTransferController extends Controller
         $transfer->fiscal_year        = $fiscalYear;
         $transfer->acc_transfer_date  = $transferDate;
         $transfer->transfer_amount    = $request->transfer_amount;
+        $transfer->transfer_fee       = $request->transfer_fee;
+        $transfer->from_reference     = $request->from_reference;
+        $transfer->to_reference       = $request->to_reference;
         $transfer->transfer_remarks   = $request->transfer_remarks;
         $transfer->created_by         = Auth::id();
         $transfer->transfer_status    = $request->status ?? 1;
@@ -103,7 +119,7 @@ class AccbalanceTransferController extends Controller
 
         $generatedId = $transfer->acc_transfer_id;
        
-        $fromNewBalance = $fromAccount->current_balance - $request->transfer_amount;
+        $fromNewBalance = $fromAccount->current_balance - ($request->transfer_amount- $request->transfer_fee);
         $toNewBalance   = $toAccount->current_balance + $request->transfer_amount;
 
         DB::table('transactions')->insert([
@@ -115,7 +131,7 @@ class AccbalanceTransferController extends Controller
                 'transaction_type'     => -5,
                 'transaction_amount'   => $request->transfer_amount,
                 'transaction_date'     => $transferDate,
-                'pay_method_id'        => 101,
+                'pay_method_id'        => $fromAccount->pay_method_id,
                 'transaction_added_by' => Auth::id(),
                 'transaction_added_on' => now(),
             ],
@@ -127,7 +143,7 @@ class AccbalanceTransferController extends Controller
                 'transaction_type'     => 5,
                 'transaction_amount'   => $request->transfer_amount,
                 'transaction_date'     => $transferDate,
-                'pay_method_id'        => 101,
+                'pay_method_id'        => $toAccount->pay_method_id,
                 'transaction_added_by' => Auth::id(),
                 'transaction_added_on' => now(),
             ],
@@ -140,6 +156,67 @@ class AccbalanceTransferController extends Controller
         DB::table('accounts')
             ->where('account_id', $request->to_account)
             ->update(['current_balance' => $toNewBalance]);
+
+
+
+        $prefix = 'OVJEXP';
+        $projectId     = '10000001';
+        $lastExpense = Expense::where('expense_no', 'LIKE', $prefix.'%')
+            ->orderBy('expense_id', 'desc')
+            ->first();
+
+        if ($lastExpense) {
+            $lastNumber = (int) substr($lastExpense->expense_no, strlen($prefix));
+            $newNumber  = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        } else {
+            $newNumber = '0001';
+        }
+
+        $expNo = $prefix . $newNumber;
+
+        while (Expense::where('expense_no', $expNo)->exists()) {
+            $newNumber = str_pad(((int)$newNumber) + 1, 4, '0', STR_PAD_LEFT);
+            $expNo = $prefix . $newNumber;
+        }
+
+
+        // =========================
+        // SAVE EXPENSE (AUTO APPROVE)
+        // =========================
+        $expense = new Expense();
+        $expense->expense_no        = $expNo;
+        $expense->expense_type      = 2;
+        $expense->expense_cat_id    = 9; // Balance Transfer Fee
+        $expense->fiscal_year       = $fiscalYear;
+        $expense->expense_date      = $transferDate;
+        $expense->account_id        = $request->from_account;
+        $expense->project_id        = $projectId;
+        $expense->expense_amount    = $request->transfer_fee;
+        $expense->pay_method_id     = $fromAccount->pay_method_id;
+        $expense->transaction_no    = $request->from_reference;
+        $expense->expense_remarks   = $request->transfer_remarks;
+        $expense->expense_added_by  = Auth::id();
+        $expense->status            = 1; 
+        $expense->save();
+
+        $lastExpId = DB::table('expenses')
+                ->where('expense_type', 2)
+                ->where('expense_no', $expNo)
+                ->value('expense_id');
+
+        DB::table('transactions')->insert([
+            'transaction_date'     => $transferDate,
+            'fiscal_year'          => $fiscalYear,
+            'project_id'           => $projectId,
+            'transaction_type'     => -1,  
+            'account_id'           => $request->from_account,
+            'transaction_amount'   => $request->transfer_fee ?? 0,
+            'reference_type'       => 'expenses-transfer-fee',
+            'reference_id'         => $lastExpId, 
+            'pay_method_id'        => $fromAccount->pay_method_id,
+            'transaction_added_by' => Auth::id(),
+            'transaction_added_on' => now(),
+        ]);    
 
         DB::commit();
 

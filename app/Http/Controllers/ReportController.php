@@ -24,6 +24,7 @@ class ReportController extends Controller
         'project_id',
           DB::raw('SUM(ledger_amount) as total_amount')
          )
+         ->whereNotNull('project_id')
         ->with('project')  
         ->groupBy('project_id')
         ->get();
@@ -85,7 +86,7 @@ function projectWiseSearch(Request $request)
         ->orderBy('transactions.transaction_date', 'asc')
         ->select(
             'transactions.*',
-            'accounts.account_name', 'accounts.account_no',
+            'accounts.account_name', 'accounts.account_no', 'accounts.bank_name',
             'users.name as member_name','users.member_id as memberID',
             'expenses.expense_no','money_receipts.mr_no','money_receipts.donar_name','expense_categories.expense_cat_name',
             'projects.project_title','projects.project_code',
@@ -121,7 +122,7 @@ function projectWiseSearch(Request $request)
 
 function memberWise(){
      $data['members'] = User::where(['status' =>1 , 'role' => 3])->get();
-     $data['accounts'] = Account::where('status', 1)->where('account_type', 2)->get();
+     $data['accounts'] = Account::where('status', 1)->where('account_type', 1)->get();
      return view('admin.pages.report.member-wise', $data);
    }
 
@@ -143,7 +144,7 @@ function memberWiseSearch(Request $request)
             'transactions.member_id',
             'users.name as member_name',
             'projects.project_title',
-            'accounts.account_name',
+            'accounts.account_name','accounts.bank_name',
             'accounts.account_no',
             'transactions.transaction_type',
             'transactions.transaction_amount',
@@ -170,13 +171,14 @@ function memberWiseSearch(Request $request)
     $reportData = $query->get();
 
     $memberName = $memberId ? DB::table('users')->where('id', $memberId)->first() : null;
-
+     $abouts = About::first();
     return view('admin.pages.report.member-wise-view', [
         'reportData' => $reportData,
         'from' => $from,
         'to' => $to,
         'memberId' => $memberId,
-        'memberName' => $memberName
+        'memberName' => $memberName,
+        'abouts' => $abouts
     ]);
 }
 
@@ -334,8 +336,9 @@ function dateWiseAccountDetails(Request $request)
             'projects.project_title',
             'projects.project_code',
             'accounts.account_name',
+            'accounts.bank_name',
             'accounts.account_no',
-            'users.name as member_name',
+            'users.name as member_name','users.member_id',
             'money_receipts.mr_no','money_receipts.donar_name'
         )
         ->orderBy('transactions.transaction_date', 'asc');
@@ -365,14 +368,15 @@ function dateWiseAccountDetails(Request $request)
             ->select('project_id','project_title','project_code','project_details','project_start_date','project_end_date','collection_amount','target_amount','total_expense')
             ->first();
     }
-
+    $abouts = About::first();
     return view('admin.pages.report.date-wise-account-view', [
         'reportData' => $reportData,
         'from' => $from,
         'to' => $to,
         'projectId' => $projectId,
         'projectInfo' => $projectInfo,
-        'previousBalance' => 0
+        'previousBalance' => 0,
+        'abouts' => $abouts
     ]);
 }
 
@@ -493,7 +497,31 @@ public function fsyrmembertypeWiseReport(Request $request) {
     }
 
     $abouts = About::first();
-    ksort($reportData);
+
+    $typeOrder = [
+        'Single Brick',   // OBM
+        'Double Brick',   // ODBM
+        'Triple Brick',   // OTBM
+        'Single Piller',  // OPM
+        'Double Piller',  // ODPM
+    ];
+    $orderedReportData = [];
+
+    foreach ($typeOrder as $typeName) {
+        if (isset($reportData[$typeName])) {
+            $orderedReportData[$typeName] = $reportData[$typeName];
+        }
+    }
+
+    // add any unexpected types at the end (optional but safe)
+    foreach ($reportData as $key => $value) {
+        if (!isset($orderedReportData[$key])) {
+            $orderedReportData[$key] = $value;
+        }
+    }
+
+    $reportData = $orderedReportData;
+    //ksort($reportData);
 
     return view('admin.pages.report.fsyrmember-type-wise-info', compact('reportData', 'months', 'fiscalYear', 'abouts'));
 }
@@ -600,14 +628,16 @@ public function expenseReportview(Request $request)
     $startDate = "$startYear-07-01";
     $endDate = "$endYear-06-30";
 
+    $isDetailed = ($month && $expenseCatId);
+
     $expensesQuery = DB::table('expenses')
-        ->select('expense_cat_id', 'expense_amount as amount', 'expense_date')
+        ->select('expense_cat_id', 'expense_amount as amount', 'expense_date','expense_no as invNo')
         ->where('project_id', '10000001')
         ->where('expense_type', 2)
         ->whereBetween('expense_date', [$startDate, $endDate]);
 
     $salariesQuery = DB::table('salaries')
-        ->select(DB::raw("'salary' as expense_cat_id"), 'total_salary as amount', 'salary_date as expense_date')
+        ->select(DB::raw("'salary' as expense_cat_id"), 'total_salary as amount', 'salary_date as expense_date','salary_no as invNo')
         ->where('project_id', '10000001')
         ->whereBetween('salary_date', [$startDate, $endDate]);
 
@@ -627,10 +657,21 @@ public function expenseReportview(Request $request)
 
     $combinedData = $expensesQuery->unionAll($salariesQuery);
 
-    $reports = DB::table(DB::raw("({$combinedData->toSql()}) as combined"))
+    $query = DB::table(DB::raw("({$combinedData->toSql()}) as combined"))
         ->mergeBindings($combinedData)
-        ->leftJoin('expense_categories', 'combined.expense_cat_id', '=', 'expense_categories.expense_cat_id')
-        ->select(
+        ->leftJoin('expense_categories', 'combined.expense_cat_id', '=', 'expense_categories.expense_cat_id');
+
+    if ($isDetailed) {
+        $reports = $query->select(
+            'combined.expense_cat_id',
+            'expense_categories.expense_cat_name',
+            'combined.amount as total_amount',
+            'combined.expense_date','combined.invNo'
+        )
+        ->orderBy('combined.expense_date', 'asc')
+        ->get();
+    } else {
+        $reports = $query->select(
             'combined.expense_cat_id',
             'expense_categories.expense_cat_name',
             DB::raw('SUM(combined.amount) as total_amount'),
@@ -638,10 +679,30 @@ public function expenseReportview(Request $request)
         )
         ->groupBy('combined.expense_cat_id', 'expense_categories.expense_cat_name')
         ->get();
+    }
+
     $abouts = About::first();
-    return view('admin.pages.report.expense-wise-report-info', compact('reports', 'fiscalYear', 'month','abouts'));
+    
+    return view('admin.pages.report.expense-wise-report-info', compact('reports', 'fiscalYear', 'month', 'abouts', 'isDetailed'));
 }
 
+// membershipt Report 
+function membershipAllledger(){
+   $data['ledgers'] = Ledger::select(
+        'project_id',
+          DB::raw('SUM(ledger_amount) as total_amount')
+         )
+         ->whereNotNull('project_id')
+        ->with('project')  
+        ->groupBy('project_id')
+        ->get();
+
+    $data['membershipAccounts'] = Account::where('account_type', 1)
+        ->orderBy('account_id', 'desc')
+        ->get(); 
+
+     return view('admin.pages.report.membership-all-ledger', $data); 
+}
 
 
 }

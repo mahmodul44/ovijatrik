@@ -66,7 +66,7 @@
 
         .invoice-title h1 {
             font-size: 30px;
-            color: #ddd;
+            color: #03865f;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 5px;
@@ -300,9 +300,9 @@
         <header class="header">
             <div class="company-details">
                 <img width="52%" src="{{ asset($abouts->logo_dark) }}" alt="Logo">
-                {{-- <h2>Ovijatrik</h2> --}}
+                 <h3>Ovijatrik Social Welfare Organization</h3>
                 <p>
-                    Islambagh, Dinajpur, Dhaka, Bangladesh<br>
+                    Islambagh, Sadar, Dinajpur, Dhaka, Bangladesh<br>
                     Reg No: OVJ-88923 | Contact: +880 1717 017645<br>
                     Email: ovijatrik.dinajpur@gmail.com
                 </p>
@@ -331,7 +331,7 @@
                     <p><strong>Date:</strong> {{ \Carbon\Carbon::parse($invoiceInfo->fls_receipt_date)->format('d M, Y') }}</p>
                     {{-- <p><strong>Time:</strong> {{ \Carbon\Carbon::parse($invoiceInfo->created_at)->format('h:i A') }}</p> --}}
                     <p><strong>Received By:</strong>  {{ $invoiceInfo->createdUser->name ?? 'N/A' }}</p>
-                    <p><strong>Received Account:</strong> {{ $invoiceInfo->account->account_name }} - {{ $invoiceInfo->account->account_no }}</p>
+                    <p><strong>Received Account:</strong> {{ $invoiceInfo->account->bank_name }} - {{ $invoiceInfo->account->account_no }}</p>
                 </div>
             </div>
         </section>

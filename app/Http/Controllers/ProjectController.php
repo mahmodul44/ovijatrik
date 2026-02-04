@@ -32,6 +32,11 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         try {
+            $inputAmount = str_replace([',', ' '], '', $request->target_amount);
+            $bn = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+            $en = ['0','1','2','3','4','5','6','7','8','9'];
+            $cleantargetAmount = str_replace($bn, $en, $inputAmount);
+
               $validate = Validator::make($request->all(), [
                 'project_title'     => 'required|max:100',
                 'project_title_bn'  => 'required|max:100',
@@ -62,7 +67,7 @@ class ProjectController extends Controller
             $project->project_title   = $request->project_title;
             $project->project_title_bn   = $request->project_title_bn;
             $project->project_code    = $request->project_code;
-            $project->target_amount   = $request->target_amount;
+            $project->target_amount   = $cleantargetAmount;
             $project->project_details = $request->project_details;
             $project->project_details_bn = $request->project_details_bn;
             $project->project_start_date = $startDate;
@@ -115,6 +120,11 @@ class ProjectController extends Controller
     public function update(Request $request, $id)
     {
     try {
+         $inputAmount = str_replace([',', ' '], '', $request->target_amount);
+            $bn = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+            $en = ['0','1','2','3','4','5','6','7','8','9'];
+            $cleantargetAmount = str_replace($bn, $en, $inputAmount);
+
         $validate = Validator::make($request->all(), [
             'project_title'       => 'required|max:100',
             'project_title_bn'    => 'required|max:100',
@@ -144,7 +154,7 @@ class ProjectController extends Controller
         $project->project_title      = $request->project_title;
         $project->project_title_bn      = $request->project_title_bn;
         $project->project_code       = $request->project_code;
-        $project->target_amount      = $request->target_amount;
+        $project->target_amount      = $cleantargetAmount;
         $project->project_details    = $request->project_details;
         $project->project_details_bn    = $request->project_details_bn;
         $project->project_start_date = $startDate;

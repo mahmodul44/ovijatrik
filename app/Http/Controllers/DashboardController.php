@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
-use App\Models\MoneyReceipt;
-use App\Models\Project;
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\About;
+use App\Models\Account;
+use App\Models\Project;
+use App\Models\MoneyReceipt;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+
 class DashboardController extends Controller
 {
 
 public function index()
 {
     $user = auth()->user();
+    $abouts = About::first();
     $chartData = null;
     // Admin
     if($user->role == 1){
@@ -43,7 +46,7 @@ public function index()
 
          $chartData = $this->getDonationChartData();
         // dd($latestDonations);
-        return view('admin.newdashboard', compact('user','totalDonations','totalDonors','lastDonation','donationThisMonth','topDonors','latestDonations','chartData'));
+        return view('admin.newdashboard', compact('user','totalDonations','totalDonors','lastDonation','donationThisMonth','topDonors','latestDonations','chartData','abouts'));
     }
 
     // Employee
@@ -69,7 +72,7 @@ public function index()
                                    ->get();
 
          $chartData = $this->getDonationChartData();
-        return view('admin.newdashboard', compact('user','totalHandledDonations','lastDonation','donationThisMonth','topDonors','latestDonations','chartData'));
+        return view('admin.newdashboard', compact('user','totalHandledDonations','lastDonation','donationThisMonth','topDonors','latestDonations','chartData','abouts'));
     }
 
     // Donor
@@ -81,7 +84,7 @@ public function index()
 
         $donations = MoneyReceipt::where('member_id', $donorId)->where('status',1)->get();
         $activeProjects = Project::where('status',1)->where('project_code','!=','FHP001')->get();
-        $paymentMethods = Account::where('account_type',1)->where('status',1)->get();
+        $paymentMethods = Account::where('account_type',1)->where('status',1)->orderBy('account_order','asc')->get();
 
         $totalThisYear = $donations->whereBetween('payment_date', [$fiscalYearStart, $fiscalYearEnd])->sum('payment_amount');
         $totalAllTime  = $donations->sum('payment_amount');
@@ -158,7 +161,7 @@ public function index()
             'amounts' => []
         ];
         
-        return view('admin.newdashboard', compact('user','totalThisYear','totalAllTime','lastDonation','frequency','fiscalSummary','lastDonateAmount','chartData','activeProjects','paymentMethods'));
+        return view('admin.newdashboard', compact('user','totalThisYear','totalAllTime','lastDonation','frequency','fiscalSummary','lastDonateAmount','chartData','activeProjects','paymentMethods','abouts'));
     }
 
     abort(403);

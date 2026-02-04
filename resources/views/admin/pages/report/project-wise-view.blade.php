@@ -138,6 +138,7 @@
             border-collapse: collapse;
             margin-top: 10px;
             font-size: 14px;
+            border: 1px solid #cbd5e0;
         }
 
         th {
@@ -147,11 +148,13 @@
             text-align: left;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            border: 1px solid #cbd5e0;
         }
 
         td {
             padding: 12px;
             border-bottom: 1px solid #edf2f7;
+            border: 1px solid #cbd5e0;
             vertical-align: top;
         }
 
@@ -198,7 +201,6 @@
         /* Print Specific */
         @media print {
             body { background: white; padding: 0; }
-            .container { box-shadow: none; border: 1px solid #eee; width: 100%; max-width: 100%; }
             .btn-group { display: none; }
             th { background-color: #333 !important; color: white !important; -webkit-print-color-adjust: exact; }
             .footer-row { background-color: #eee !important; -webkit-print-color-adjust: exact; }
@@ -286,7 +288,7 @@
                             <small style="color: #e53e3e; font-weight: bold;">VOUCHER: {{ $row->expense_no }}</small><br>
                             <strong>{{ $row->expense_cat_name }}</strong>
                         @endif
-                        <br><small style="color: #a0aec0;">{{ $row->account_name }} ({{ $row->account_no }})</small>
+                        <br><small style="color: #a0aec0;">{{ $row->bank_name }} ({{ $row->account_no }})</small>
                     </td>
                     <td class="text-right deposit">{{ $deposit > 0 ? number_format($deposit, 2) : '' }}</td>
                     <td class="text-right withdraw">{{ $withdraw > 0 ? number_format($withdraw, 2) : '' }}</td>

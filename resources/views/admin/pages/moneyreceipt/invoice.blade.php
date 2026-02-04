@@ -293,11 +293,12 @@
         <header class="header">
             <div class="company-details">
                 <img width="52%" src="{{ asset($abouts->logo_dark) }}" alt="Logo">
-                {{-- <h2>Ovijatrik</h2> --}}
+                <h3>Ovijatrik Social Welfare Organization</h3> 
                 <p>
-                    Islambagh, Dinajpur, Dhaka, Bangladesh<br>
-                    Reg No: OVJ-88923 | Contact: +880 1717 017645<br>
+                    Islambagh, Sadar, Dinajpur, Dhaka, Bangladesh<br>
+                    Reg No: Dinaj/2581/2024 | Contact: +880 1717 017645<br>
                     Email: ovijatrik.dinajpur@gmail.com
+                </p>ail: ovijatrik.dinajpur@gmail.com
                 </p>
             </div>
             <div class="invoice-title">

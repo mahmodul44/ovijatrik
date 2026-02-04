@@ -17,21 +17,16 @@
         <form id="reportForm">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Member -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                    Member Name
+            <div class="w-full">
+                <label for="member_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">
+                    Member <span class="text-red-600">*</span>
                 </label>
-                <select name="member_id" 
-                    class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                    <option value="">-- Select Member --</option>
-                    @foreach($members as $value)
-                        <option value="{{ $value->id }}">{{ $value->name }}</option>
-                    @endforeach
+                <select required id="member_id" name="member_id" class="member-select block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
                 </select>
-            </div>
+            </div> 
             <div>
                 <label class="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">
-                    Account 
+                   Membership Project Account 
                 </label>
                 <select id="account_id" name="account_id"
                     class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
@@ -80,7 +75,33 @@
 <script>
 flatpickr("#from_date", { dateFormat: "d/m/Y", allowInput: true });
 flatpickr("#to_date", { dateFormat: "d/m/Y", allowInput: true });
+$('.member-select').select2({
+        placeholder: "Search by Name, ID, or Mobile",
+        minimumInputLength: 2,
+        allowClear: true,
+        ajax: {
+            url: '{{ route("member.search") }}', 
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term 
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
+        }
+    });
 
+    $('.member-select').on('select2:open', function () {
+        setTimeout(() => {
+            document.querySelector('.select2-container--open .select2-search__field').focus();
+        }, 100);
+    });
 function openMemberWReportWindow(url) {
     let memberId = document.querySelector("[name='member_id']").value;
     let fromDate  = document.querySelector("[name='from_date']").value;

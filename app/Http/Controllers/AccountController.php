@@ -66,7 +66,7 @@ class AccountController extends Controller
     }
 
     function accountLedger(){
-          $membershipAccounts = Account::where('account_type', 1)
+    $membershipAccounts = Account::where('account_type', 1)
         ->orderBy('account_id', 'desc')
         ->get();
 

@@ -128,11 +128,11 @@
             <p class="text-gray-500 dark:text-gray-400">Welcome back, <span class="font-semibold text-green-600">{{ $user->name }}</span>. Here is your activity summary.</p>
         </div>
         <div class="flex gap-3">
-            <button class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-lg text-sm font-medium shadow-sm hover:bg-gray-50 transition">
+            <button class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-lg text-sm dark:text-white font-medium shadow-sm hover:bg-gray-50 transition">
               <a href="{{route('report.fiscalyearmember-wise')}}">  Export Report </a>
             </button>
             <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md shadow-green-200 transition">
-                <a href="{{ route('member.create') }}"> + Add Donation </a>
+                <a href="{{ route('moneyreceipt.create') }}"> + Add Donation </a>
             </button>
         </div>
     </div>
@@ -192,14 +192,28 @@
         </div>
 
         <div class="p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
-            <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6">Top Member Donors</h2>
+            <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6">Top Five Member Donors</h2>
             <div class="space-y-4">
                 @foreach($topDonors as $d)
                 <div class="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-xl transition">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs">
-                            {{ substr($d->member->name, 0, 2) }}
-                        </div>
+                        @php
+                        $nameParts = explode(' ', trim($d->member->name));
+                        $initials = '';
+
+                        if (count($nameParts) >= 2) {
+                            $initials = strtoupper(
+                                substr($nameParts[0], 0, 1) .
+                                substr(end($nameParts), 0, 1)
+                            );
+                        } else {
+                            $initials = strtoupper(substr($nameParts[0], 0, 2));
+                        }
+                    @endphp
+
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs">
+                        {{ $initials }}
+                    </div>
                         <div>
                             <p class="text-sm font-semibold dark:text-white">{{ $d->member->name }}</p>
                             <p class="text-xs text-gray-500">ID: {{ $d->member->member_id }}</p>
@@ -216,48 +230,77 @@
         <div class="p-6 border-b border-gray-100 dark:border-gray-700">
             <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Recent Transactions</h2>
         </div>
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 uppercase text-[10px] font-bold">
-                    <tr>
-                        <th class="px-6 py-4 text-left">Receipt No</th>
-                        <th class="px-6 py-4 text-left">Donor Details</th>
-                        <th class="px-6 py-4 text-left">Project</th>
-                        <th class="px-6 py-4 text-left">Amount</th>
-                        <th class="px-6 py-4 text-left">Method</th>
-                        <th class="px-6 py-4 text-left">Date</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                    @foreach($latestDonations as $item)
-                    <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition">
-                        <td class="px-6 py-4 font-mono text-xs text-indigo-600">{{ $item->mr_no }}</td>
-                        <td class="px-6 py-4">
-                            <span class="font-medium text-gray-900 dark:text-gray-200">
-                                {{ $item->member_id ? $item->member->name : $item->donar_name }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="font-medium text-gray-900 dark:text-gray-200">
-                            @if($item->project_id)
-                                {{ $item->project->project_code }}-{{ $item->project->project_title }}
-                            @else
-                                <span class="text-gray-400 text-xs italic"></span>
-                            @endif
-                            </span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-100">
-                                + ৳ {{ number_format($item->payment_amount, 2) }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $item->paymentmethod->pay_method_name }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-500">{{ \Carbon\Carbon::parse($item->payment_date)->format('M d, Y') }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+        <div class="overflow-x-auto rounded-xl border-2 border-gray-200 dark:border-gray-700 shadow-lg">
+    <table class="min-w-full table-auto border-collapse">
+        <thead class="bg-gray-100 dark:bg-gray-900">
+            <tr>
+                <th class="px-6 py-4 text-left text-[12px] font-black uppercase tracking-wider text-gray-700 dark:text-white border-b-2 border-r border-gray-200 dark:border-gray-700 bg-gray-200/50 dark:bg-gray-800">
+                    Receipt No
+                </th>
+                <th class="px-6 py-4 text-left text-[12px] font-black uppercase tracking-wider text-gray-700 dark:text-white border-b-2 border-r border-gray-200 dark:border-gray-700 bg-gray-200/50 dark:bg-gray-800">
+                    Donor Details
+                </th>
+                <th class="px-6 py-4 text-left text-[12px] font-black uppercase tracking-wider text-gray-700 dark:text-white border-b-2 border-r border-gray-200 dark:border-gray-700 bg-gray-200/50 dark:bg-gray-800">
+                    Project
+                </th>
+                <th class="px-6 py-4 text-left text-[12px] font-black uppercase tracking-wider text-gray-700 dark:text-white border-b-2 border-r border-gray-200 dark:border-gray-700 bg-gray-200/50 dark:bg-gray-800">
+                    Amount
+                </th>
+                <th class="px-6 py-4 text-left text-[12px] font-black uppercase tracking-wider text-gray-700 dark:text-white border-b-2 border-r border-gray-200 dark:border-gray-700 bg-gray-200/50 dark:bg-gray-800">
+                    Method
+                </th>
+                <th class="px-6 py-4 text-left text-[12px] font-black uppercase tracking-wider text-gray-700 dark:text-white border-b-2 border-gray-200 dark:border-gray-700 bg-gray-200/50 dark:bg-gray-800">
+                    Date
+                </th>
+            </tr>
+        </thead>
+
+        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            @foreach($latestDonations as $item)
+            <tr class="hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-blue-700 dark:text-blue-400 border-r border-gray-200 dark:border-gray-700">
+                    {{ $item->mr_no }}
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap border-r border-gray-200 dark:border-gray-700">
+                    <div class="text-sm font-bold text-gray-900 dark:text-gray-100">
+                        {{ $item->member_id ? $item->member->name : $item->donar_name }}
+                    </div>
+                </td>
+
+                <td class="px-6 py-4 text-sm font-medium text-gray-800 dark:text-gray-300 border-r border-gray-200 dark:border-gray-700">
+                    @if($item->project_id)
+                        {{ $item->project->project_code }}-{{ $item->project->project_title }}
+                    @else
+                        <span class="text-gray-400 italic">General</span>
+                    @endif
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap border-r border-gray-200 dark:border-gray-700">
+                    <span class="inline-flex items-center px-3 py-1 rounded-md text-sm font-black bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
+                        ৳ {{ number_format($item->payment_amount, 2) }}
+                    </span>
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-700 dark:text-gray-200 border-r border-gray-200 dark:border-gray-700">
+                    {{ $item->paymentmethod->pay_method_name }}
+                </td>
+
+                <td class="px-6 py-4 whitespace-nowrap border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-col">
+                        <span class="text-sm font-black text-gray-900 dark:text-white">
+                            {{ \Carbon\Carbon::parse($item->payment_date)->format('d M, Y') }}
+                        </span>
+                        <span class="text-[11px] font-bold text-blue-600 dark:text-blue-400">
+                            {{ \Carbon\Carbon::parse($item->payment_date)->format('l') }}
+                        </span>
+                    </div>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
     </div>
 </div>
 @endif
