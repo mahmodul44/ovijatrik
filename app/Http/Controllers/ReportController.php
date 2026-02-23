@@ -9,6 +9,7 @@ use App\Models\About;
 use App\Models\Ledger;
 use App\Models\Salary;
 use App\Models\Account;
+use App\Models\Category;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Project;
@@ -702,6 +703,38 @@ function membershipAllledger(){
         ->get(); 
 
      return view('admin.pages.report.membership-all-ledger', $data); 
+}
+
+function headWise(){
+    $data['categories'] = Category::where('status',1)->get();
+    return view('admin.pages.report.head-wise-report',$data);
+}
+
+public function headWiseSearch(Request $request)
+{
+    $category_id = $request->category_id;
+    $fiscal_year = $request->fiscal_year;
+
+    $category = Category::findOrFail($category_id);
+    $abouts = DB::table('abouts')->first();
+
+    $reportData = DB::table('projects')
+        ->leftJoin('transactions', function ($join) use ($fiscal_year) {
+            $join->on('projects.project_id', '=', 'transactions.project_id')
+                 ->where('transactions.fiscal_year', $fiscal_year);
+        })
+        ->select(
+            'projects.project_title',
+            DB::raw('SUM(CASE WHEN transactions.transaction_type < 0 THEN ABS(transactions.transaction_amount) ELSE 0 END) as total_debit'),
+            DB::raw('SUM(CASE WHEN transactions.transaction_type > 0 THEN transactions.transaction_amount ELSE 0 END) as total_credit')
+        )
+        ->where('projects.category_id', $category_id)
+        ->groupBy('projects.project_id', 'projects.project_title')
+        ->get();
+
+    return view('admin.pages.report.head-wise-result',
+        compact('reportData', 'category', 'fiscal_year', 'abouts')
+    );
 }
 
 

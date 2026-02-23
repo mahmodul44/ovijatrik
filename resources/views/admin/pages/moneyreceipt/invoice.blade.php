@@ -298,7 +298,6 @@
                     Islambagh, Sadar, Dinajpur, Dhaka, Bangladesh<br>
                     Reg No: Dinaj/2581/2024 | Contact: +880 1717 017645<br>
                     Email: ovijatrik.dinajpur@gmail.com
-                </p>ail: ovijatrik.dinajpur@gmail.com
                 </p>
             </div>
             <div class="invoice-title">
@@ -369,14 +368,15 @@
 
         <div class="signature-section">
             <div class="sig-box">
-                <div class="sig-line">Cashier</div>
+                <div class="sig-line">Chief Operations Coordinator</div>
+            </div>
+            <div class="sig-box">
+                <div class="sig-line">Treasurer</div>
             </div>
             <div class="sig-box">
                 <div class="sig-line">Secretary</div>
             </div>
-            <div class="sig-box">
-                <div class="sig-line">President</div>
-            </div>
+           
         </div>
 
         <span class="box-title" style="margin-bottom: 5px;">Our Official Payment Channels</span>

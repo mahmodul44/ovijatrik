@@ -202,6 +202,9 @@ Route::get('/admin/fsyrmonth-wise-report-view',[ReportController::class,'fsyrmon
 Route::get('/admin/expense-wise',[ReportController::class,'expenseWise'])->name('report.expense-wise');
 Route::get('/admin/expense-wise-report-view',[ReportController::class,'expenseReportview'])->name('report.expense-wise-report-view');
 
+Route::get('/admin/head-wise',[ReportController::class,'headWise'])->name('report.head-wise');
+Route::get('/admin/head-wise-search',[ReportController::class,'headWiseSearch'])->name('report.head-wise-search');
+
 // Membership Report
 Route::get('/admin/membership-all-ledger',[ReportController::class,'membershipAllledger'])->name('report.membership-all-ledger');
 
