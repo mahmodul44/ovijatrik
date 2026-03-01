@@ -1,17 +1,18 @@
 <?php
 
 namespace App\Http\Controllers;
-use Carbon\Carbon;
-use App\Models\User;
 use App\Models\About;
-use App\Models\Ledger;
 use App\Models\Account;
-use App\Models\Expense;
 use App\Models\Category;
-use App\Models\FiscalYear;
-use Illuminate\Http\Request;
-use App\Models\PaymentMethod;
+use App\Models\Expense;
 use App\Models\ExpenseCategory;
+use App\Models\FiscalYear;
+use App\Models\Ledger;
+use App\Models\PaymentMethod;
+use App\Models\ProjectExpenseCategory;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 USE DB;
@@ -33,6 +34,7 @@ class ProjectExpenseController extends Controller
     {
         $data['paymentmethod'] = PaymentMethod::where('status', 1)->get();
         $data['accounts'] = Account::where('status', 1)->where('account_type',2)->get();
+        $data['projectexpenseCat'] = ProjectExpenseCategory::where('status',1)->get();
         return view('admin.pages.projectexpense.create', $data);
     }
 
@@ -48,6 +50,7 @@ class ProjectExpenseController extends Controller
             'expense_date'      => 'required',
             'expense_amount'    => 'required|numeric|min:1',
             'account_id'        => 'required',
+            'project_exp_cat_id'  => 'required',
             'project_id'        => 'required',
             'pay_method_id'     => 'required',
             'bank_name'         => 'nullable|Max:100',
@@ -147,6 +150,7 @@ class ProjectExpenseController extends Controller
         $expense->fiscal_year       = $fiscalYear;
         $expense->expense_date      = $expenseDate;
         $expense->account_id        = $accountID;
+        $expense->project_exp_cat_id  = $request->project_exp_cat_id;
         $expense->expense_amount    = $expenseAmount;
         $expense->receiver_name     = $request->receiver_name;
         $expense->pay_method_id     = $request->pay_method_id;
@@ -211,6 +215,7 @@ class ProjectExpenseController extends Controller
         $data['paymentmethod'] = PaymentMethod::where('status', 1)->get();
         $data['accounts'] = Account::where('status', 1)->get();
         $data['expense'] = Expense::findOrFail($id);
+        $data['projectexpenseCat'] = ProjectExpenseCategory::where('status',1)->get();
         return view('admin.pages.projectexpense.edit', $data);
     }
 
@@ -222,6 +227,7 @@ class ProjectExpenseController extends Controller
             'expense_date'      => 'required',
             'expense_amount'    => 'required',
             'account_id'        => 'required',
+            'project_exp_cat_id'  => 'required',
             'pay_method_id'     => 'required',
             'bank_name'         => 'nullable|Max:100',
             'bank_account_no'   => 'nullable|Max:50',
@@ -249,6 +255,7 @@ class ProjectExpenseController extends Controller
         $expense->expense_date      = $expenseDate;
         $expense->expense_amount    = $request->expense_amount;
         $expense->account_id        = $request->account_id;
+        $expense->project_exp_cat_id  = $request->project_exp_cat_id;
         $expense->pay_method_id     = $request->pay_method_id;
         $expense->bank_account_no   = $request->bank_account_no;
         $expense->mobile_account_no = $request->mobile_account_no;
@@ -441,6 +448,112 @@ public function destroy($id)
     }
 }
 
+public function projectExpenseCat(){
+    $data['categories'] = ProjectExpenseCategory::orderBy('project_exp_cat_id', 'desc')->get();
+    return view('admin.pages.projectexpcategory.index',  $data);
+}
 
+public function projectExpenseCatCreate(){
+        $data = array();
+        $data['menu'] = "Category";
+        $data['submenu'] = "Create-Category";
+        return view('admin.pages.projectexpcategory.create', $data);
+}
+
+function projectExpenseCatStore(Request $request)
+    {
+        try {
+            $validate = Validator::make($request->all(), [
+                'category_name'  => 'required|max:200',
+                'category_name_bn'     => 'required|max:200',
+            ]);
+
+            if ($validate->fails()) {
+                $data['status'] = false;
+                $data['message'] = "Validation failed! Please check your inputs...";
+                $data['errors'] = $validate->errors();
+                return response(json_encode($data, JSON_PRETTY_PRINT), 400)->header('Content-Type', 'application/json');
+            }
+          
+            $category = new ProjectExpenseCategory();
+            $category->project_exp_cat_name        = $request->category_name;
+            $category->project_exp_cat_name_bn     = $request->category_name_bn;
+            $category->created_by           = Auth::id();
+            $category->status               = $request->status ? $request->status : 1;
+            
+            if ($category->save()) {
+                $data['status'] = true;
+                $data['message'] = "Saved successful.";
+                $data['category'] = $category;
+                return response(json_encode($data, JSON_PRETTY_PRINT), 200)->header('Content-Type', 'application/json');
+            } else {
+                $data['status'] = false;
+                $data['message'] = "Save failed! Please try again...";
+                $data['category'] = $category;
+                return response(json_encode($data, JSON_PRETTY_PRINT), 500)->header('Content-Type', 'application/json');
+            }
+        } catch (\Throwable $th) {
+            $data['status'] = false;
+            $data['message'] = "Something went wrong! Please try again...";
+            $data['errors'] = $th;
+            return response(json_encode($data, JSON_PRETTY_PRINT), 500)->header('Content-Type', 'application/json');
+        }
+    }
+
+public function projectExpenseCatEdit($id){
+    $data = array();
+    $data['category'] = ProjectExpenseCategory::findOrFail($id); 
+    return view('admin.pages.projectexpcategory.edit', $data);
+}
+
+function projectExpenseCatUpdate(Request $request, $id)
+    {
+    try {
+        $validate = Validator::make($request->all(), [
+            'category_name'       => 'required|max:100',
+            'category_name_bn'     => 'nullable|min:3|max:250',
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => "Validation failed! Please check your inputs...",
+                'errors'  => $validate->errors()
+            ], 400);
+        }
+
+            $category = ProjectExpenseCategory::findOrFail($id);
+            $category->project_exp_cat_name        = $request->category_name;
+            $category->project_exp_cat_name_bn     = $request->category_name_bn;
+            $category->updated_by           = Auth::id();
+            $category->status               = $request->status ? $request->status : 1;
+
+        if ($category->save()) {
+            return response()->json([
+                'status'  => true,
+                'message' => "Updated successful.",
+                'category' => $category
+            ], 200);
+        } else {
+            return response()->json([
+                'status'  => false,
+                'message' => "Update failed! Please try again..."
+            ], 500);
+        }
+    } catch (\Throwable $th) {
+        return response()->json([
+            'status'  => false,
+            'message' => "Something went wrong! Please try again...",
+            'errors'  => $th->getMessage()
+        ], 500);
+      }
+    }
+
+public function projectExpenseCatDestroy($id){
+    $category = ProjectExpenseCategory::findOrFail($id);
+    $category->delete();
+
+    return response()->json(['success' => true, 'message' => 'Deleted successful']);
+}
 
 }

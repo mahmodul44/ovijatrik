@@ -238,7 +238,7 @@
     $projectActive = in_array($currentRoute, [
         'category.index', 'category.create', 'subcategory.index', 
         'subcategory.create', 'category.edit','expensecategory.index',
-        'expensecategory.edit','expensecategory.create'
+        'expensecategory.edit','expensecategory.create','project-exp-cat','project-expcat-create'
     ]); 
 @endphp
 <div x-data="{ open: @json($projectActive) }" 
@@ -286,6 +286,17 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
             <span>Project Sub Category</span>
+        </a>
+
+        <a href="{{ route('project-exp-cat') }}" 
+           class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all
+           {{ in_array($currentRoute, ['project-exp-cat','project-expcat-create']) 
+              ? 'bg-rose-600 text-white shadow-md' 
+              : 'text-gray-600 dark:text-gray-400 hover:bg-rose-100/80 hover:text-rose-800 dark:hover:bg-rose-900/40 dark:hover:text-rose-200' }}">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+            <span>Project Expense Category</span>
         </a>
 
         <a href="{{ route('expensecategory.index') }}" 

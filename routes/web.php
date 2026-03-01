@@ -116,6 +116,15 @@ Route::delete('/admin/falsereceipt/destroy/{id}', [MoneyReceiptController::class
 
 Route::get('/admin/falsereceipt/edit/{id}', [MoneyReceiptController::class, 'flasereceiptEdit'])->name('falsereceipt.falsereceiptedit');
  False Receipt END */
+/* Project Expense Category */
+Route::get('admin/project-expense-categories', [ProjectExpenseController::class, 'projectExpenseCat'])->name('project-exp-cat'); 
+Route::get('/admin/project-expcat-edit/{id}', [ProjectExpenseController::class, 'projectExpenseCatEdit'])->name('project-expcat-edit'); 
+Route::delete('admin/project-expcat-destroy/{id}', [ProjectExpenseController::class, 'projectExpenseCatDestroy'])->name('project-expcat-destroy'); 
+Route::get('admin/project-expcat-create', [ProjectExpenseController::class, 'projectExpenseCatCreate'])->name('project-expcat-create'); 
+Route::post('admin/project-expcat-store', [ProjectExpenseController::class, 'projectExpenseCatStore'])->name('project-expcat-store'); 
+Route::put('admin/project-expcat-update/{id}', [ProjectExpenseController::class, 'projectExpenseCatUpdate'])->name('project-expcat-update'); 
+
+
 
 Route::get('/admin/memberreceiptpending', [MemberReceiptController::class, 'memberreceiptpendingList'])->name('memberreceipt.memberreceiptpending');
 Route::post('/admin/memberreceipt-approve', [MemberReceiptController::class, 'memberreceiptApprove'])->name('memberreceipt.memberreceiptapprove');
