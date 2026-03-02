@@ -14,6 +14,7 @@ use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Project;
 use App\Models\MoneyReceipt;
+use App\Models\ProjectExpenseCategory;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -737,5 +738,36 @@ public function headWiseSearch(Request $request)
     );
 }
 
+function projectexpenseHead(){
+    $data['categories'] = ProjectExpenseCategory::where('status',1)->get();
+    return view('admin.pages.report.project-expense-head',$data);
+}
+
+public function projectexpenseHeadSearch(Request $request)
+{
+    $category_id = $request->category_id;
+    $fiscal_year = $request->fiscal_year;
+
+    $category = ProjectExpenseCategory::findOrFail($category_id);
+    $abouts = DB::table('abouts')->first();
+
+    $reportData = DB::table('expenses')
+        ->leftJoin('projects', 'expenses.project_id', '=', 'projects.project_id')
+        ->select(
+            'projects.project_title',
+            DB::raw('SUM(expenses.expense_amount) as total_expense')
+        )
+        ->where('expenses.project_exp_cat_id', $category_id)
+        ->where('expenses.expense_type', 1)
+        ->when($fiscal_year, function ($query) use ($fiscal_year) {
+            $query->where('expenses.fiscal_year', $fiscal_year);
+        })
+        ->groupBy('projects.project_id', 'projects.project_title')
+        ->get();
+
+    return view('admin.pages.report.project-expense-head-result',
+        compact('reportData', 'category', 'fiscal_year', 'abouts')
+    );
+}
 
 }

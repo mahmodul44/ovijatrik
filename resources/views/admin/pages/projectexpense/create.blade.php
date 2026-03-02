@@ -60,22 +60,22 @@
     </div>
      <div class="flex flex-col md:flex-row md:items-end gap-6">
         <div class="w-full md:w-2/4">
-            <label for="account_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Account <span class="text-red-600">*</span></label>
-            <select required id="account_id" name="account_id"
-                class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
-                <option value="">-- Select --</option>
-                @foreach ($accounts as $item)
-                <option value="{{ $item->account_id }}">{{ $item->bank_name }} - {{ $item->account_no }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="w-full md:w-2/4">
             <label for="project_exp_cat_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Exp Category <span class="text-red-600">*</span></label>
             <select required id="project_exp_cat_id" name="project_exp_cat_id"
                 class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
                 <option value="">-- Select --</option>
                 @foreach ($projectexpenseCat as $item)
                 <option value="{{ $item->project_exp_cat_id }}">{{ $item->project_exp_cat_name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="w-full md:w-2/4">
+            <label for="account_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Account <span class="text-red-600">*</span></label>
+            <select required id="account_id" name="account_id"
+                class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
+                <option value="">-- Select --</option>
+                @foreach ($accounts as $item)
+                <option value="{{ $item->account_id }}">{{ $item->bank_name }} - {{ $item->account_no }}</option>
                 @endforeach
             </select>
         </div>

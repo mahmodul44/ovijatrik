@@ -465,7 +465,7 @@
   @php 
     $reportActive = in_array($currentRoute, [
         'report.index','report.project-wise','report.account-wise',
-        'report.account-ledger','report.date-wise-account','report.paymethod-wise','report.head-wise'
+        'report.account-ledger','report.date-wise-account','report.paymethod-wise','report.head-wise','report.project-expense-head'
     ]); 
 @endphp
 
@@ -508,6 +508,7 @@
                 ['route' => 'report.paymethod-wise', 'label' => 'Pay Account Statement'],
                 ['route' => 'report.project-wise', 'label' => 'Project Wise Statement'],
                 ['route' => 'report.head-wise', 'label' => 'Head Wise Statement'],
+                ['route' => 'report.project-expense-head', 'label' => 'Project Expense Head'],
             ];
         @endphp
 

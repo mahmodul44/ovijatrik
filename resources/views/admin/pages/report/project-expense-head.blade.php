@@ -5,10 +5,10 @@
     <!-- Header -->
     <div class="text-center mb-6">
         <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 tracking-tight">
-            📊 Head Wise Report
+            📊 Project Expense Head Wise Report
         </h2>
         <p class="text-gray-500 dark:text-gray-400 mt-1">
-            Filter and view head wise summaries
+            Filter and view Head Wise summaries
         </p>
     </div>
 
@@ -19,13 +19,13 @@
             <!-- Head -->
             <div>
                 <label class="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-1">
-                    Head Name
+                   Project Head Name
                 </label>
                 <select name="category_id" 
                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
                     <option value="">-- Select Head --</option>
                     @foreach($categories as $cat)
-                        <option value="{{ $cat->category_id }}">{{ $cat->category_name }}</option>
+                        <option value="{{ $cat->project_exp_cat_id }}">{{ $cat->project_exp_cat_name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -56,7 +56,7 @@
             <!-- Search Button -->
             <div class="md:col-span-3 flex justify-end mt-4">
                 <button type="button"
-                    onclick="openHeadWReportWindow('{{ route('report.head-wise-search') }}')"
+                    onclick="openHeadWReportWindow('{{ route('report.project-expense-head-search') }}')"
                     class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transform transition-transform hover:-translate-y-0.5 active:scale-95">
                     🔍 Generate Report
                 </button>

@@ -213,6 +213,10 @@ Route::get('/admin/expense-wise-report-view',[ReportController::class,'expenseRe
 
 Route::get('/admin/head-wise',[ReportController::class,'headWise'])->name('report.head-wise');
 Route::get('/admin/head-wise-search',[ReportController::class,'headWiseSearch'])->name('report.head-wise-search');
+Route::get('/admin/project-expense-head',[ReportController::class,'projectexpenseHead'])->name('report.project-expense-head');
+Route::get('/admin/project-expense-head-search',[ReportController::class,'projectexpenseHeadSearch'])->name('report.project-expense-head-search');
+
+
 
 // Membership Report
 Route::get('/admin/membership-all-ledger',[ReportController::class,'membershipAllledger'])->name('report.membership-all-ledger');
