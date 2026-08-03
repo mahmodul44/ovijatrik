@@ -32,7 +32,8 @@
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-35%" style="text-align: center">Name</th>
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-10%" style="text-align: center">Phone no</th>
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-15%" style="text-align: center">Email</th>
-                <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-15%" style="text-align: center">Occupation</th>
+                {{-- <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-15%" style="text-align: center">Occupation</th> --}}
+                <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-15%" style="text-align: center">Donation Frequency</th>
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-10%" style="text-align: center">Monthly Amount</th>
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-10%" style="text-align: center">Status</th>
                 <th class="px-6 py-3 border border-gray-200 dark:border-gray-600 text-center w-10%" style="text-align: center">Actions</th>
@@ -46,7 +47,16 @@
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 font-medium text-gray-900 dark:text-gray-100" style="text-align: left">{{ $value->member_id }} - {{ $value->name }}</td>
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300" style="text-align: center">{{ $value->phone_no }}</td>
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300" style="text-align: left">{{ $value->email }}</td>
-                        <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 truncate" style="text-align: left">{{ $value->occupation }}</td>
+                        {{-- <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 truncate" style="text-align: left">{{ $value->occupation }}</td> --}}
+                       <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 truncate" style="text-align: left">
+                        {{ match((int)$value->donation_frequency) {
+                            1 => 'Monthly',
+                            4 => 'Quarterly',   
+                            6 => 'Half Yearly', 
+                            12 => 'Yearly',
+                            default => 'Unknown'
+                        } }}
+                        </td>
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 truncate" style="text-align: right">{{ $value->monthly_donate }}</td>
                         <td class="px-6 py-4 border border-gray-200 dark:border-gray-600 space-x-2 text-center">
                             <span class="px-3 py-1 text-xs font-medium rounded-full {{ getStatusLabel($value->status)['class'] }}">

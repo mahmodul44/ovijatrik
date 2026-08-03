@@ -26,6 +26,7 @@ class User extends Authenticatable
         'role',
         'status',
         'occupation',
+        'donation_frequency',
         'monthly_donate',
         'id_card_photo',
         'profile_photo'

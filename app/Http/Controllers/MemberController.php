@@ -20,7 +20,8 @@ class MemberController extends Controller
     $request->validate([
         'name'       => 'required|string|max:255',
         'email'      => 'required|email|unique:users,email',
-        'occupation' => 'required|string|max:255',
+        'donation_frequency' => 'required',
+        // 'occupation' => 'required|string|max:255',
         'phone_no'   => 'required',
         'monthly_donate' => 'required',
         'password'   => 'required|string|min:8|confirmed',
@@ -43,7 +44,8 @@ class MemberController extends Controller
     $member->email           = $request->email;
     $member->password        = bcrypt($request->password);
     $member->member_id       = $request->member_id;
-    $member->occupation      = $request->occupation;
+    $member->donation_frequency       = $request->donation_frequency;
+    //$member->occupation      = $request->occupation;
     $member->monthly_donate  = $request->monthly_donate;
     $member->save();
 
@@ -69,7 +71,8 @@ class MemberController extends Controller
         $member = User::findOrFail($id);
         $request->validate([
             'name'              => 'required|string|max:255',
-            'occupation'        => 'required|string|max:255',
+            'donation_frequency' => 'required',
+            // 'occupation'        => 'required|string|max:255',
             'phone_no'          => 'required',
             'monthly_donate'    => 'required',
             'email'             => 'required|email|unique:users,email,' . $id,
@@ -93,7 +96,8 @@ class MemberController extends Controller
         $member->phone_no       = $request->phone_no;
         $member->email          = $request->email;
         $member->member_id      = $request->member_id;
-        $member->occupation     = $request->occupation;
+        $member->donation_frequency       = $request->donation_frequency;
+        // $member->occupation     = $request->occupation;
         $member->monthly_donate = $request->monthly_donate;
 
         if ($request->filled('password')) {

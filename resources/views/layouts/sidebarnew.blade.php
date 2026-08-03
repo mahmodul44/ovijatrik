@@ -402,6 +402,199 @@
   
 @endif
 @if(Auth::check() && in_array(Auth::user()->role, [1, 2]))
+  <!-- Member Menu -->
+    @php $userActive = in_array($currentRoute, ['member.index', 'member.create','member.edit','member.pendinglist']); @endphp
+<div x-data="{ open: @json($userActive) }" 
+     class="group rounded-2xl border transition-all duration-300 shadow-sm mb-2"
+     :class="open ? 'border-cyan-500 bg-cyan-50/30 dark:bg-cyan-900/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'">
+    
+    <button @click="open = !open" 
+        class="flex w-full items-center justify-between p-1.5 rounded-2xl transition-all duration-300 hover:bg-cyan-50 dark:hover:bg-cyan-900/20">
+        
+        <div class="flex items-center space-x-3">
+            <div :class="open ? 'bg-cyan-600 text-white shadow-md shadow-cyan-200' : 'bg-cyan-100 text-cyan-600 dark:bg-cyan-900/50 dark:text-cyan-400 group-hover:bg-cyan-500 group-hover:text-white'"
+                 class="p-2 rounded-xl transition-all duration-300">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </div>
+            <span x-show="!sidebarCollapsed" class="font-bold tracking-tight text-[15px] transition-colors duration-300"
+                  :class="open ? 'text-cyan-700 dark:text-cyan-300' : 'text-gray-700 dark:text-gray-200 group-hover:text-cyan-600 dark:group-hover:text-cyan-400'">
+                  Member
+            </span>
+        </div>
+        <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180 text-cyan-600' : 'text-gray-400 group-hover:text-cyan-500'" 
+             class="w-5 h-5 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+    </button>
+
+    <div x-show="open && !sidebarCollapsed" x-cloak x-transition class="px-3 pb-3 space-y-1.5">
+        <a href="{{ route('member.create') }}" 
+           class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all
+           {{ $currentRoute == 'member.create' ? 'bg-cyan-600 text-white shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-cyan-100 hover:text-cyan-800 dark:hover:bg-cyan-900/40 dark:hover:text-cyan-200' }}">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            <span>Add Member</span>
+        </a>
+        <a href="{{ route('member.index') }}" 
+           class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all
+           {{ in_array($currentRoute, ['member.index','member.edit']) ? 'bg-cyan-600 text-white shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-cyan-100 hover:text-cyan-800 dark:hover:bg-cyan-900/40 dark:hover:text-cyan-200' }}">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" /></svg>
+            <span>Member List</span>
+        </a>
+        @if(Auth::check() && Auth::user()->role == 2)
+        <a href="{{ route('member.pendinglist') }}" 
+           class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all
+           {{ $currentRoute == 'member.pendinglist' ? 'bg-cyan-600 text-white shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-cyan-100 hover:text-cyan-800 dark:hover:bg-cyan-900/40 dark:hover:text-cyan-200' }}">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span>Pending Request</span>
+        </a>
+        @endif
+    </div>
+</div>
+
+<!-- Member Receipt Menu -->
+    @php $mrActive = in_array($currentRoute, ['memberreceipt.index', 'memberreceipt.create','memberreceipt.edit','memberreceipt.memberreceiptpending']); @endphp
+    <div x-data="{ open: @json($mrActive) }" 
+         class="group rounded-2xl border transition-all duration-300 shadow-sm"
+         :class="open ? 'border-emerald-500 bg-emerald-50/30 dark:bg-emerald-900/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'">
+        
+        <button @click="open = !open" 
+            class="relative flex w-full items-center justify-between p-1.5 rounded-2xl transition-all duration-300">
+            
+            <div class="flex items-center space-x-3">
+                <div :class="open ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400'"
+                     class="p-2 rounded-xl transition-colors duration-300">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+
+                <span x-show="!sidebarCollapsed" 
+                      class="font-bold tracking-tight text-[15px] transition-colors"
+                      :class="open ? 'text-emerald-700 dark:text-emerald-300' : 'text-gray-700 dark:text-gray-200'">
+                    Member Receipt
+                </span>
+            </div>
+
+            <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180 text-emerald-600' : 'text-gray-400'" 
+                class="w-5 h-5 transition-transform duration-300"
+                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+
+        <div x-show="open && !sidebarCollapsed" 
+             x-cloak x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             class="px-3 pb-3 space-y-1.5">
+            
+            <a href="{{ route('memberreceipt.create') }}" 
+               class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all duration-200
+                      {{ $currentRoute == 'memberreceipt.create' ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:text-emerald-700' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Add New</span>
+            </a>
+            
+            <a href="{{ route('memberreceipt.index') }}" 
+               class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all duration-200
+                      {{ in_array($currentRoute, ['memberreceipt.index','memberreceipt.edit']) ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:text-emerald-700' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <span>View All List</span>
+            </a>
+
+            {{-- Pending List (যদি প্রয়োজন হয়) --}}
+            {{-- @if(Auth::check() && Auth::user()->role == 1)
+            <a href="{{ route('memberreceipt.memberreceiptpending') }}" 
+               class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all duration-200
+                      {{ $currentRoute == 'memberreceipt.memberreceiptpending' ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:text-emerald-700' }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Pending Approvals</span>
+            </a>
+            @endif --}}
+        </div>
+    </div>
+
+
+     <!-- Membership Report Menu -->
+   @php 
+    $reportActive = in_array($currentRoute, [
+        'report.member-wise','report.date-wise-account','report.membership-all-ledger',
+        'report.paymethod-wise','report.fiscalyearmember-wise','report.fsyrmember-type-wise','report.fsyrmonth-wise','report.expense-wise'
+    ]); 
+@endphp
+
+<div x-data="{ open: @json($reportActive) }" 
+     class="group rounded-2xl border transition-all duration-300 shadow-sm mb-2"
+     :class="open 
+        ? 'border-indigo-500 bg-indigo-50/60 dark:bg-indigo-900/20' 
+        : 'border-indigo-100 bg-indigo-50/30 dark:border-indigo-900/30 dark:bg-indigo-900/10 hover:border-indigo-300'">
+    
+    <button @click="open = !open" 
+        class="flex w-full items-center justify-between p-2 rounded-2xl transition-all duration-300">
+
+        <span class="flex items-center space-x-3">
+            <div :class="open ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 dark:shadow-none' : 'bg-indigo-100 text-indigo-600 dark:bg-indigo-800 dark:text-indigo-400'"
+                 class="p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+            </div>
+            
+            <span x-show="!sidebarCollapsed" 
+                  class="font-bold tracking-tight text-[15px] transition-colors duration-300"
+                  :class="open ? 'text-indigo-900 dark:text-indigo-200' : 'text-indigo-800/80 dark:text-indigo-300/80'">
+                  Member Report
+            </span>
+        </span>
+
+        <svg x-show="!sidebarCollapsed" 
+             :class="open ? 'rotate-180 text-indigo-600' : 'text-indigo-400'" 
+             class="w-4 h-4 transition-transform duration-500"
+            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+        </svg>
+    </button>
+
+    <div x-show="open" 
+         x-cloak 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 -translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         class="px-3 pb-3 space-y-1">
+
+        @php
+            $links = [
+                ['route' => 'report.membership-all-ledger', 'label' => 'All Ledger Balance'],
+                ['route' => 'report.member-wise', 'label' => 'Member Receipt Details'],
+                ['route' => 'report.fiscalyearmember-wise', 'label' => 'Fiscal Year Member Report'],
+                ['route' => 'report.fsyrmember-type-wise', 'label' => 'FY Member Type Collection'],
+                ['route' => 'report.fsyrmonth-wise', 'label' => 'Monthly Report'],
+                ['route' => 'report.expense-wise', 'label' => 'Expense Report'],
+            ];
+        @endphp
+
+        @foreach($links as $link)
+            <a href="{{ route($link['route']) }}" 
+               class="flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200
+               {{ $currentRoute == $link['route'] 
+                  ? 'bg-indigo-600 text-white shadow-md' 
+                  : 'text-indigo-900/70 dark:text-indigo-300/60 hover:bg-indigo-100 dark:hover:bg-indigo-800/40 hover:text-indigo-800 dark:hover:text-indigo-200' }}">
+                <span class="w-1.5 h-1.5 rounded-full {{ $currentRoute == $link['route'] ? 'bg-white' : 'bg-indigo-300' }}"></span>
+                <span>{{ $link['label'] }}</span>
+            </a>
+        @endforeach
+    </div>
+</div>
+
+     
+
     @php $projectActive = in_array($currentRoute, ['project.index', 'project.create', 'project.edit', 'project.show','project.completeprojectlist']); @endphp
     <div x-data="{ open: @json($projectActive) }" 
      class="group rounded-2xl border transition-all duration-300 shadow-sm"
@@ -524,145 +717,6 @@
         @endforeach
     </div>
 </div>
-    
-    <!-- Membership Report Menu -->
-   @php 
-    $reportActive = in_array($currentRoute, [
-        'report.member-wise','report.date-wise-account','report.membership-all-ledger',
-        'report.paymethod-wise','report.fiscalyearmember-wise','report.fsyrmember-type-wise','report.fsyrmonth-wise','report.expense-wise'
-    ]); 
-@endphp
-
-<div x-data="{ open: @json($reportActive) }" 
-     class="group rounded-2xl border transition-all duration-300 shadow-sm mb-2"
-     :class="open 
-        ? 'border-indigo-500 bg-indigo-50/60 dark:bg-indigo-900/20' 
-        : 'border-indigo-100 bg-indigo-50/30 dark:border-indigo-900/30 dark:bg-indigo-900/10 hover:border-indigo-300'">
-    
-    <button @click="open = !open" 
-        class="flex w-full items-center justify-between p-2 rounded-2xl transition-all duration-300">
-
-        <span class="flex items-center space-x-3">
-            <div :class="open ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 dark:shadow-none' : 'bg-indigo-100 text-indigo-600 dark:bg-indigo-800 dark:text-indigo-400'"
-                 class="p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110">
-                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-            </div>
-            
-            <span x-show="!sidebarCollapsed" 
-                  class="font-bold tracking-tight text-[15px] transition-colors duration-300"
-                  :class="open ? 'text-indigo-900 dark:text-indigo-200' : 'text-indigo-800/80 dark:text-indigo-300/80'">
-                  Member Report
-            </span>
-        </span>
-
-        <svg x-show="!sidebarCollapsed" 
-             :class="open ? 'rotate-180 text-indigo-600' : 'text-indigo-400'" 
-             class="w-4 h-4 transition-transform duration-500"
-            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
-        </svg>
-    </button>
-
-    <div x-show="open" 
-         x-cloak 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 -translate-y-2"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         class="px-3 pb-3 space-y-1">
-
-        @php
-            $links = [
-                ['route' => 'report.membership-all-ledger', 'label' => 'All Ledger Balance'],
-                ['route' => 'report.member-wise', 'label' => 'Member Receipt Details'],
-                ['route' => 'report.fiscalyearmember-wise', 'label' => 'Fiscal Year Member Report'],
-                ['route' => 'report.fsyrmember-type-wise', 'label' => 'FY Member Type Collection'],
-                ['route' => 'report.fsyrmonth-wise', 'label' => 'Monthly Report'],
-                ['route' => 'report.expense-wise', 'label' => 'Expense Report'],
-            ];
-        @endphp
-
-        @foreach($links as $link)
-            <a href="{{ route($link['route']) }}" 
-               class="flex items-center space-x-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200
-               {{ $currentRoute == $link['route'] 
-                  ? 'bg-indigo-600 text-white shadow-md' 
-                  : 'text-indigo-900/70 dark:text-indigo-300/60 hover:bg-indigo-100 dark:hover:bg-indigo-800/40 hover:text-indigo-800 dark:hover:text-indigo-200' }}">
-                <span class="w-1.5 h-1.5 rounded-full {{ $currentRoute == $link['route'] ? 'bg-white' : 'bg-indigo-300' }}"></span>
-                <span>{{ $link['label'] }}</span>
-            </a>
-        @endforeach
-    </div>
-</div>
-
-     <!-- Member Receipt Menu -->
-    @php $mrActive = in_array($currentRoute, ['memberreceipt.index', 'memberreceipt.create','memberreceipt.edit','memberreceipt.memberreceiptpending']); @endphp
-    <div x-data="{ open: @json($mrActive) }" 
-         class="group rounded-2xl border transition-all duration-300 shadow-sm"
-         :class="open ? 'border-emerald-500 bg-emerald-50/30 dark:bg-emerald-900/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'">
-        
-        <button @click="open = !open" 
-            class="relative flex w-full items-center justify-between p-1.5 rounded-2xl transition-all duration-300">
-            
-            <div class="flex items-center space-x-3">
-                <div :class="open ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400'"
-                     class="p-2 rounded-xl transition-colors duration-300">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                    </svg>
-                </div>
-
-                <span x-show="!sidebarCollapsed" 
-                      class="font-bold tracking-tight text-[15px] transition-colors"
-                      :class="open ? 'text-emerald-700 dark:text-emerald-300' : 'text-gray-700 dark:text-gray-200'">
-                    Member Receipt
-                </span>
-            </div>
-
-            <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180 text-emerald-600' : 'text-gray-400'" 
-                class="w-5 h-5 transition-transform duration-300"
-                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-        </button>
-
-        <div x-show="open && !sidebarCollapsed" 
-             x-cloak x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 -translate-y-2"
-             class="px-3 pb-3 space-y-1.5">
-            
-            <a href="{{ route('memberreceipt.create') }}" 
-               class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all duration-200
-                      {{ $currentRoute == 'memberreceipt.create' ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:text-emerald-700' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>Add New</span>
-            </a>
-            
-            <a href="{{ route('memberreceipt.index') }}" 
-               class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all duration-200
-                      {{ in_array($currentRoute, ['memberreceipt.index','memberreceipt.edit']) ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:text-emerald-700' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                </svg>
-                <span>View All List</span>
-            </a>
-
-            {{-- Pending List (যদি প্রয়োজন হয়) --}}
-            {{-- @if(Auth::check() && Auth::user()->role == 1)
-            <a href="{{ route('memberreceipt.memberreceiptpending') }}" 
-               class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all duration-200
-                      {{ $currentRoute == 'memberreceipt.memberreceiptpending' ? 'bg-emerald-600 text-white shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 hover:text-emerald-700' }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>Pending Approvals</span>
-            </a>
-            @endif --}}
-        </div>
-    </div>
 
     @php $mrActive = in_array($currentRoute, ['moneyreceipt.index', 'moneyreceipt.create', 'moneyreceipt.edit', 'moneyreceipt.moneyreceiptpending']); @endphp
     <div x-data="{ open: @json($mrActive) }" 
@@ -1095,56 +1149,7 @@
     </a>
 </div>
 </div>
-    <!-- Member Menu -->
-    @php $userActive = in_array($currentRoute, ['member.index', 'member.create','member.edit','member.pendinglist']); @endphp
-<div x-data="{ open: @json($userActive) }" 
-     class="group rounded-2xl border transition-all duration-300 shadow-sm mb-2"
-     :class="open ? 'border-cyan-500 bg-cyan-50/30 dark:bg-cyan-900/10' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'">
-    
-    <button @click="open = !open" 
-        class="flex w-full items-center justify-between p-1.5 rounded-2xl transition-all duration-300 hover:bg-cyan-50 dark:hover:bg-cyan-900/20">
-        
-        <div class="flex items-center space-x-3">
-            <div :class="open ? 'bg-cyan-600 text-white shadow-md shadow-cyan-200' : 'bg-cyan-100 text-cyan-600 dark:bg-cyan-900/50 dark:text-cyan-400 group-hover:bg-cyan-500 group-hover:text-white'"
-                 class="p-2 rounded-xl transition-all duration-300">
-                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-            </div>
-            <span x-show="!sidebarCollapsed" class="font-bold tracking-tight text-[15px] transition-colors duration-300"
-                  :class="open ? 'text-cyan-700 dark:text-cyan-300' : 'text-gray-700 dark:text-gray-200 group-hover:text-cyan-600 dark:group-hover:text-cyan-400'">
-                  Member
-            </span>
-        </div>
-        <svg x-show="!sidebarCollapsed" :class="open ? 'rotate-180 text-cyan-600' : 'text-gray-400 group-hover:text-cyan-500'" 
-             class="w-5 h-5 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-        </svg>
-    </button>
-
-    <div x-show="open && !sidebarCollapsed" x-cloak x-transition class="px-3 pb-3 space-y-1.5">
-        <a href="{{ route('member.create') }}" 
-           class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all
-           {{ $currentRoute == 'member.create' ? 'bg-cyan-600 text-white shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-cyan-100 hover:text-cyan-800 dark:hover:bg-cyan-900/40 dark:hover:text-cyan-200' }}">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-            <span>Add Member</span>
-        </a>
-        <a href="{{ route('member.index') }}" 
-           class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all
-           {{ in_array($currentRoute, ['member.index','member.edit']) ? 'bg-cyan-600 text-white shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-cyan-100 hover:text-cyan-800 dark:hover:bg-cyan-900/40 dark:hover:text-cyan-200' }}">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" /></svg>
-            <span>Member List</span>
-        </a>
-        @if(Auth::check() && Auth::user()->role == 2)
-        <a href="{{ route('member.pendinglist') }}" 
-           class="flex items-center space-x-3 p-2.5 rounded-xl text-sm font-semibold transition-all
-           {{ $currentRoute == 'member.pendinglist' ? 'bg-cyan-600 text-white shadow-md' : 'text-gray-600 dark:text-gray-400 hover:bg-cyan-100 hover:text-cyan-800 dark:hover:bg-cyan-900/40 dark:hover:text-cyan-200' }}">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <span>Pending Request</span>
-        </a>
-        @endif
-    </div>
-</div>
+  
 
     <!-- Employee Menu -->
     @php $empActive = in_array($currentRoute, ['employee.index', 'employee.create','employee.edit']); @endphp

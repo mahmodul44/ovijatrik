@@ -56,7 +56,7 @@
                 </div>
                 <!-- Member ID & Phone No in same row -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
+                    {{-- <div>
                     <x-input-label for="occupation" :value="__('Occupation')" class="text-gray-700 dark:text-gray-200 font-medium" />
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
@@ -67,8 +67,26 @@
                             required autofocus autocomplete="occupation" />
                     </div>
                        <x-input-error :messages="$errors->get('occupation')" class="mt-2" />
+                    </div> --}}
+                    <div>
+                    <x-input-label for="donation_frequency" :value="__('Donation Frequency')" class="text-gray-700 dark:text-gray-200 font-medium" />
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 pointer-events-none">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        
+                        <select id="donation_frequency" name="donation_frequency" required autofocus
+                            class="block w-full pl-10 pr-3 py-2 rounded-xl border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-900 dark:text-gray-100 shadow-sm">
+                            <option value="" disabled>Select Frequency</option>
+                            
+                            <option value="1" {{ old('donation_frequency', $member->donation_frequency) == 1 ? 'selected' : '' }}>Monthly</option>
+                            <option value="4" {{ old('donation_frequency', $member->donation_frequency) == 4 ? 'selected' : '' }}>Quarterly</option>
+                            <option value="6" {{ old('donation_frequency', $member->donation_frequency) == 6 ? 'selected' : '' }}>Half Yearly</option>
+                            <option value="12" {{ old('donation_frequency', $member->donation_frequency) == 12 ? 'selected' : '' }}>Yearly</option>
+                        </select>
                     </div>
-
+                    <x-input-error :messages="$errors->get('donation_frequency')" class="mt-2" />
+                </div>
                     <div>
                         <x-input-label for="phone_no" :value="__('Phone No')"
                             class="text-gray-700 dark:text-gray-200 font-medium" />
