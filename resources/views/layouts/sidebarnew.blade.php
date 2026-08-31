@@ -574,6 +574,7 @@
                 ['route' => 'report.membership-all-ledger', 'label' => 'All Ledger Balance'],
                 ['route' => 'report.member-wise', 'label' => 'Member Receipt Details'],
                 ['route' => 'report.fiscalyearmember-wise', 'label' => 'Fiscal Year Member Report'],
+                ['route' => 'report.fymember-wise-due', 'label' => 'Fiscal Year Member Due'],
                 ['route' => 'report.fsyrmember-type-wise', 'label' => 'FY Member Type Collection'],
                 ['route' => 'report.fsyrmonth-wise', 'label' => 'Monthly Report'],
                 ['route' => 'report.expense-wise', 'label' => 'Expense Report'],

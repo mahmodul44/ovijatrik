@@ -237,27 +237,30 @@ class MoneyReceiptController extends Controller
 
     function memberSearch(Request $request)
     {
-    $search = $request->q;
+        $search = $request->q;
 
-    $results = User::select('id','member_id', 'name', 'phone_no')
-        ->where(['role' => 3, 'status' => 1])
-        ->where('name', 'like', "%{$search}%")
-        ->orWhere('member_id', 'like', "%{$search}%")
-        ->orWhere('phone_no', 'like', "%{$search}%")
-        ->limit(10)
-        ->get();
+        $results = User::select('id', 'member_id', 'name', 'phone_no')
+            ->where('role', 3)
+            ->where('status', 1)
+            ->where(function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('member_id', 'like', "%{$search}%")
+                    ->orWhere('phone_no', 'like', "%{$search}%");
+            })
+            ->limit(10)
+            ->get();
 
-        $formatted = [];
+            $formatted = [];
 
-        foreach ($results as $user) {
-            $formatted[] = [
-                'id' => $user->id,
-                'text' => "{$user->member_id} - {$user->name} ({$user->phone_no})"
-            ];
-        }
+            foreach ($results as $user) {
+                $formatted[] = [
+                    'id' => $user->id,
+                    'text' => "{$user->member_id} - {$user->name} ({$user->phone_no})"
+                ];
+            }
 
-    return response()->json($formatted);
-}
+        return response()->json($formatted);
+    }
 
 // function invoiceDownload($id){
 //     $data['abouts'] = About::first();

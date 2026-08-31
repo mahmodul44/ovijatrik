@@ -401,7 +401,8 @@ public function fiscalYearMemberWiseReport(Request $request) {
                     ->when($memberID, function ($query) use ($memberID) {
                         return $query->where('id', $memberID);
                     })
-                    ->get();
+                    ->get()
+                    ->sortBy('member_id', SORT_NATURAL);
 
     $activities = MoneyReceipt::where('fiscal_year', $fiscalYear)->get();
 
@@ -440,6 +441,87 @@ public function fiscalYearMemberWiseReport(Request $request) {
     }
     $abouts = About::first();
     return view('admin.pages.report.fiscalyrmember-wise-report', compact('reportData', 'months', 'fiscalYear','abouts'));
+}
+
+function fiscalyearmemberWiseDue(){
+     return view('admin.pages.report.fymember-wise-due');
+}
+
+public function fiscalyearmemberWiseDueReport(Request $request) {
+    $fiscalYear = $request->fiscal_year; 
+    $memberID   = $request->member_id;
+    [$startYear, $endYear] = explode('-', $fiscalYear);
+
+    $allMonths = [
+        "$startYear-07", "$startYear-08", "$startYear-09", "$startYear-10", "$startYear-11", "$startYear-12",
+        "$endYear-01", "$endYear-02", "$endYear-03", "$endYear-04", "$endYear-05", "$endYear-06"
+    ];
+
+    $currentMonth = date('Y-m');
+
+    $months = array_values(array_filter($allMonths, function($m) use ($currentMonth) {
+        return strcmp($m, $currentMonth) <= 0;
+    }));
+
+    $members = User::whereNotNull('member_id')
+                    ->where('member_id', '!=', '0')
+                    ->when($memberID, function ($query) use ($memberID) {
+                        return $query->where('id', $memberID);
+                    })
+                    ->get()
+                    ->sortBy('member_id', SORT_NATURAL);
+
+    $activities = MoneyReceipt::where('fiscal_year', $fiscalYear)->get();
+
+    $reportData = [];
+    $totalElapsedMonths = count($months);
+
+    foreach ($members as $member) {
+        $row = [
+            'id'             => $member->member_id,
+            'name'           => $member->name,
+            'phone'          => $member->phone_no,
+            'monthly_donate' => $member->monthly_donate,
+            'individual_total' => 0, 
+            'total_due'      => 0,
+            'due_months_count' => 0,
+            'payments'       => array_fill_keys($months, 0) 
+        ];
+
+        $memberActivities = $activities->where('member_id', $member->id);
+
+        foreach ($memberActivities as $activity) {
+            $selectedMonths = json_decode($activity->selected_months, true);
+            $totalPayment = $activity->payment_amount;
+
+            if (is_array($selectedMonths) && count($selectedMonths) > 0) {
+                $amountPerMonth = $totalPayment / count($selectedMonths);
+
+                foreach ($selectedMonths as $mKey) {
+                    if (array_key_exists($mKey, $row['payments'])) {
+                        $row['payments'][$mKey] += $amountPerMonth;
+                        $row['individual_total'] += $amountPerMonth;
+                    }
+                }
+            }
+        }
+
+        $paidCount = 0;
+        foreach ($months as $mKey) {
+            if ($row['payments'][$mKey] >= $member->monthly_donate && $member->monthly_donate > 0) {
+                $paidCount++;
+            }
+        }
+
+        $expectedTotalTillNow = $totalElapsedMonths * $member->monthly_donate;
+        $row['total_due'] = max(0, $expectedTotalTillNow - $row['individual_total']);
+        $row['due_months_count'] = $totalElapsedMonths - $paidCount;
+        
+        $reportData[] = $row;
+    }
+
+    $abouts = About::first();
+    return view('admin.pages.report.fymember-wise-due-report', compact('reportData', 'months', 'fiscalYear', 'abouts'));
 }
 
 function fsyrmembertypeWise(){

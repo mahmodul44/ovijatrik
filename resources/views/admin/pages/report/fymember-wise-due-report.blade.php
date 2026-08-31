@@ -149,15 +149,18 @@
         </div>
 
         <div class="report-title">
-            <h2>Membership Payment Report</h2>
+            <h2>Membership Due Report</h2>
             <span class="fiscal-tag">Fiscal Year: {{ $fiscalYear }}</span>
+            <span style="font-size: 11px; color: #036056; font-weight: bold; display: block; margin-top: 3px;">
+                (Up to {{ date('d M, Y') }})
+            </span>
             <br>
-           
+            
             <!-- Action Buttons Container -->
-                <div class="action-buttons">
-                    <button class="btn-action" onclick="window.print()">🖨️ Print</button>
-                    <button class="btn-action" onclick="downloadImage()">📥 Download Image</button>
-                </div>
+            <div class="action-buttons">
+                <button class="btn-action" onclick="window.print()">🖨️ Print</button>
+                <button class="btn-action" onclick="downloadImage()">📥 Download Image</button>
+            </div>
         </div>
     </div>
 
@@ -167,10 +170,11 @@
                 <th>Member ID</th>
                 <th>Name</th>
                 <th>Phone</th>
-                <th>Individual Total</th>
+                <th>Monthly Rate</th>
                 <th class="highlight-total">Total Paid</th>
+                <th style="background-color: #d9534f; color: white;">Total Due</th>
                 @foreach($months as $month)
-                    <th>{{ date('M/y', strtotime($month)) }}</th>
+                    <th> {{ date('M/y', strtotime($month)) }}</th>
                 @endforeach
             </tr>
         </thead>
@@ -178,13 +182,14 @@
             @php 
                 $columnTotals = array_fill_keys($months, 0); 
                 $grandTotalPaid = 0; 
+                $grandTotalDue = 0;
                 $grandFixedTotal = 0;
             @endphp
 
             @foreach($reportData as $data)
                 @php
-                    $paidMonthsCount = collect($data['payments'])->filter(fn($amt) => $amt > 0)->count();
-                    $rowClass = ($paidMonthsCount == 12) ? 'full-paid' : (($paidMonthsCount > 0) ? 'partial-paid' : 'unpaid');
+                    $isFullyPaid = $data['total_due'] <= 0;
+                    $rowClass = $isFullyPaid ? 'full-paid' : ($data['individual_total'] > 0 ? 'partial-paid' : 'unpaid');
                 @endphp
                 <tr class="{{ $rowClass }}">
                     <td>{{ $data['id'] }}</td>
@@ -192,16 +197,30 @@
                     <td>{{ $data['phone'] }}</td>
                     <td style="background: #f9f9f9;">{{ number_format($data['monthly_donate']) }}</td>
                     <td class="highlight-total">{{ number_format($data['individual_total']) }}</td>
+                    <td style="background-color: #fff0f0; color: #d9534f; font-weight: bold;">
+                        {{ number_format($data['total_due']) }}
+                    </td>
+                    
                     @foreach($months as $month)
                         @php 
                             $amt = $data['payments'][$month];
                             $columnTotals[$month] += $amt;
+                            $monthlyDonate = $data['monthly_donate'];
                         @endphp
-                        <td style="text-align: right">{{ $amt > 0 ? number_format($amt) : '-' }}</td>
+                        <td style="text-align: right;">
+                            @if($amt >= $monthlyDonate && $monthlyDonate > 0)
+                                <span style="color: #2e7d32; font-weight: bold;">{{ number_format($amt) }}</span>
+                            @elseif($amt > 0)
+                                <span style="color: #ed6c02; font-weight: bold;">{{ number_format($amt) }}</span>
+                            @else
+                                <span style="color: #d9534f; font-weight: bold;">Due</span>
+                            @endif
+                        </td>
                     @endforeach
                 </tr>
                 @php 
                     $grandTotalPaid += $data['individual_total']; 
+                    $grandTotalDue  += $data['total_due'];
                     $grandFixedTotal += $data['monthly_donate'];
                 @endphp
             @endforeach
@@ -211,13 +230,14 @@
                 <td colspan="3" style="text-align: right; padding-right: 15px;">TOTAL COLLECTION</td>
                 <td>{{ number_format($grandFixedTotal) }}</td>
                 <td style="background: #ffd700; color: #000;">{{ number_format($grandTotalPaid) }}</td>
+                <td style="background: #d9534f; color: #fff; font-weight: bold;">{{ number_format($grandTotalDue) }}</td>
                 @foreach($months as $month)
                     <td style="text-align: right">{{ number_format($columnTotals[$month]) }}</td>
                 @endforeach
             </tr>
         </tfoot>
     </table>
-    </div>
+</div>
     <!-- html2canvas Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
