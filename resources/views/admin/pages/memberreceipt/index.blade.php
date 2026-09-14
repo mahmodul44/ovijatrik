@@ -198,7 +198,7 @@
         <div class="flex justify-between items-start mb-6 border-bottom pb-4 border-gray-100">
             <div>
                 <h2 class="text-green-700 text-2xl font-bold uppercase tracking-tight"> <img src="{{ asset($abouts->logo_dark) }}" alt="Logo" style="width: 150px;"> </h2>
-                <p class="text-[10px] text-green-700 leading-tight">Ovijatrik Social Walfare Organization</p>
+                <p class="text-[10px] text-green-700 leading-tight">Ovijatrik Social Welfare Organization</p>
                 <p class="text-[9px] text-gray-500 leading-tight">Reg No: Dinaj/2581/2024</p>
                 <p class="text-[9px] text-gray-500 leading-tight">Islambagh, Sadar, Dinajpur, Bangladesh</p>
             </div>
@@ -214,7 +214,7 @@
                 <span id="s_date" class="font-semibold"></span>
             </div>
             <div class="flex justify-between text-sm border-b border-dashed pb-1">
-                <span class="text-gray-500">Donor Name:</span>
+                <span class="text-gray-500">Member Name:</span>
                 <span id="s_name" class="font-semibold text-green-700"></span>
             </div>
             <div class="flex justify-between text-sm border-b border-dashed pb-1">
@@ -226,23 +226,24 @@
                 <span id="s_purpose" class="font-semibold"></span>
             </div>
             <div class="flex justify-between text-sm border-b border-dashed pb-1">
-                <span class="text-gray-500">Payment:</span>
+                <span class="text-gray-500">Payment Method:</span>
                 <span id="s_method" class="font-semibold uppercase"></span>
             </div>
             <div class="flex justify-between text-sm border-b border-dashed pb-1">
-                <span class="text-gray-500">Payment Month:</span>
+                <span class="text-gray-500">Payment Period:</span>
                 <span id="s_pay_month" class="font-semibold uppercase"></span>
             </div>
         </div>
 
         <div class="bg-green-50 p-4 rounded-lg text-center mb-6">
             <p class="text-xs text-green-600 uppercase font-bold tracking-widest mb-1">Total Received</p>
-            <h1 id="s_amount" class="text-3xl font-black text-green-800"></h1>
+            <h3 id="s_amount" class="text-3xl font-black text-green-800"></h3>
+            <p id="s_amount_words" class="text-sm font-semibold text-green-700 capitalize mt-1"></p>
         </div>
 
         <div class="text-center border-t pt-4 border-gray-100">
             <p class="text-[10px] text-gray-400 italic mb-2">Thank you for your generous contribution.</p>
-            <p class="text-[9px] font-bold text-gray-500 tracking-tighter uppercase">www.ovijatrik.org</p>
+            <p class="text-[9px] font-bold text-gray-500 tracking-tighter">www.ovijatrik.org</p>
         </div>
     </div>
 </div>
@@ -332,6 +333,7 @@ async function shareReceipt(mrNo, date, name, mermberid, purpose, amount, method
     document.getElementById('s_purpose').innerText = purpose;
     document.getElementById('s_method').innerText = method;
     document.getElementById('s_amount').innerText = '৳ ' + amount;
+    document.getElementById('s_amount_words').innerText = convertAmountToWords(amount);
     let displayMonth = 'N/A';
     try {
         if (monthJson) {
@@ -420,6 +422,27 @@ async function shareReceipt(mrNo, date, name, mermberid, purpose, amount, method
 function formatMonthLabel(monthStr) {
     const date = new Date(monthStr + '-01'); 
     return date.toLocaleString('default', { month: 'short', year: 'numeric' });
+}
+
+function convertAmountToWords(amount) {
+    const cleanAmount = String(amount).replace(/,/g, '');
+    const num = Math.floor(Number(cleanAmount));
+    if (isNaN(num) || num === 0) return 'Zero Taka Only';
+
+    const words = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 
+                   'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+    function inWords(n) {
+        if (n < 20) return words[n];
+        if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + words[n % 10] : '');
+        if (n < 1000) return words[Math.floor(n / 100)] + ' Hundred' + (n % 100 !== 0 ? ' ' + inWords(n % 100) : '');
+        if (n < 100000) return inWords(Math.floor(n / 1000)) + ' Thousand' + (n % 1000 !== 0 ? ' ' + inWords(n % 1000) : '');
+        if (n < 10000000) return inWords(Math.floor(n / 100000)) + ' Lakh' + (n % 100000 !== 0 ? ' ' + inWords(n % 100000) : '');
+        return inWords(Math.floor(n / 10000000)) + ' Crore' + (n % 10000000 !== 0 ? ' ' + inWords(n % 10000000) : '');
+    }
+
+    return inWords(num) + ' Taka Only';
 }
 </script>
 @endpush

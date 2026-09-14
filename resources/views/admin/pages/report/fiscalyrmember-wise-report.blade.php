@@ -105,6 +105,13 @@
             background-color: #1eb956;
         }
 
+        .btn-copy {
+            background-color: #007bff; 
+        }
+        .btn-copy:hover {
+            background-color: #0056b3;
+        }
+
         /* Table Design */
         table {
             width: 100%;
@@ -157,6 +164,7 @@
                 <div class="action-buttons">
                     <button class="btn-action" onclick="window.print()">🖨️ Print</button>
                     <button class="btn-action" onclick="downloadImage()">📥 Download Image</button>
+                    <button class="btn-action btn-copy" onclick="copyImageToClipboard()">📋 Copy Image</button>
                 </div>
         </div>
     </div>
@@ -246,6 +254,43 @@
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             });
+        }
+
+         async function copyImageToClipboard() {
+            const copyBtn = document.querySelector('.btn-copy');
+            const originalText = copyBtn.innerHTML;
+
+            try {
+                copyBtn.innerHTML = '⏳ Copying...';
+                const canvas = await generateCanvas();
+                canvas.toBlob(async (blob) => {
+                    if (!blob) {
+                      
+                        copyBtn.innerHTML = originalText;
+                        return;
+                    }
+
+                    try {
+                        const item = new ClipboardItem({ 'image/png': blob });
+                        await navigator.clipboard.write([item]);
+
+                        copyBtn.innerHTML = '✅ Copied!';
+                       
+                        setTimeout(() => {
+                            copyBtn.innerHTML = originalText;
+                        }, 2000);
+
+                    } catch (err) {
+                        console.error(err);
+                        copyBtn.innerHTML = originalText;
+                    }
+                }, 'image/png');
+
+            } catch (error) {
+                console.error('Error generating image:', error);
+                alert('Could not process image.');
+                copyBtn.innerHTML = originalText;
+            }
         }
 
     </script>

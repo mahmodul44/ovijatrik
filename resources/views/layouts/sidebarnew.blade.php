@@ -526,7 +526,7 @@
    @php 
     $reportActive = in_array($currentRoute, [
         'report.member-wise','report.date-wise-account','report.membership-all-ledger',
-        'report.paymethod-wise','report.fiscalyearmember-wise','report.fsyrmember-type-wise','report.fsyrmonth-wise','report.expense-wise'
+        'report.paymethod-wise','report.fiscalyearmember-wise','report.fymember-wise-due','report.fsyrmember-type-wise','report.fsyrmonth-wise','report.expense-wise'
     ]); 
 @endphp
 
@@ -1700,7 +1700,7 @@
    @php 
     $reportActive = in_array($currentRoute, [
         'report.member-wise','report.date-wise-account','report.membership-all-ledger',
-        'report.paymethod-wise','report.fiscalyearmember-wise','report.fsyrmember-type-wise','report.fsyrmonth-wise','report.expense-wise'
+        'report.paymethod-wise','report.fiscalyearmember-wise','report.fymember-wise-due','report.fsyrmember-type-wise','report.fsyrmonth-wise','report.expense-wise'
     ]); 
 @endphp
 
@@ -1748,6 +1748,7 @@
                 ['route' => 'report.membership-all-ledger', 'label' => 'All Ledger Balance'],
                 ['route' => 'report.member-wise', 'label' => 'Member Receipt Details'],
                 ['route' => 'report.fiscalyearmember-wise', 'label' => 'Fiscal Year Member Report'],
+                ['route' => 'report.fymember-wise-due', 'label' => 'Fiscal Year Member Due'],
                 ['route' => 'report.fsyrmember-type-wise', 'label' => 'FY Member Type Collection'],
                 ['route' => 'report.fsyrmonth-wise', 'label' => 'Monthly Report'],
                 ['route' => 'report.expense-wise', 'label' => 'Expense Report'],

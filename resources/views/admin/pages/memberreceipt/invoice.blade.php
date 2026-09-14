@@ -435,14 +435,13 @@
     function downloadImage() {
         const receipt = document.querySelector(".invoice-container");
         
-        // বাটন চাপলে একটু লোডিং ফিল দেওয়ার জন্য মাউস কার্সার পরিবর্তন
         document.body.style.cursor = 'wait';
 
         html2canvas(receipt, {
             scale: 2, 
-            useCORS: true, // যদি লোগো অন্য ডোমেইন থেকে আসে তবে এটি দরকার
+            useCORS: true, 
             logging: false,
-            backgroundColor: "#ffffff" // ব্যাকগ্রাউন্ড সাদা নিশ্চিত করা
+            backgroundColor: "#ffffff" 
         }).then(canvas => {
             const link = document.createElement('a');
             link.download = 'Receipt_{{ $invoiceInfo->mr_no }}.png';
